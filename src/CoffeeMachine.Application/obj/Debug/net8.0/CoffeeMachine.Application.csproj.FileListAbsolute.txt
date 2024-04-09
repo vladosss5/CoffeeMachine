@@ -1,0 +1,15 @@
+C:\Users\KiporovVA\Desktop\CoffeeMachinee\src\CoffeeMachine.Application\bin\Debug\net8.0\CoffeeMachine.Application.deps.json
+C:\Users\KiporovVA\Desktop\CoffeeMachinee\src\CoffeeMachine.Application\bin\Debug\net8.0\CoffeeMachine.Application.dll
+C:\Users\KiporovVA\Desktop\CoffeeMachinee\src\CoffeeMachine.Application\bin\Debug\net8.0\CoffeeMachine.Application.pdb
+C:\Users\KiporovVA\Desktop\CoffeeMachinee\src\CoffeeMachine.Application\bin\Debug\net8.0\CoffeeMachine.Domain.dll
+C:\Users\KiporovVA\Desktop\CoffeeMachinee\src\CoffeeMachine.Application\bin\Debug\net8.0\CoffeeMachine.Domain.pdb
+C:\Users\KiporovVA\Desktop\CoffeeMachinee\src\CoffeeMachine.Application\obj\Debug\net8.0\CoffeeMachine.Application.csproj.AssemblyReference.cache
+C:\Users\KiporovVA\Desktop\CoffeeMachinee\src\CoffeeMachine.Application\obj\Debug\net8.0\CoffeeMachine.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\KiporovVA\Desktop\CoffeeMachinee\src\CoffeeMachine.Application\obj\Debug\net8.0\CoffeeMachine.Application.AssemblyInfoInputs.cache
+C:\Users\KiporovVA\Desktop\CoffeeMachinee\src\CoffeeMachine.Application\obj\Debug\net8.0\CoffeeMachine.Application.AssemblyInfo.cs
+C:\Users\KiporovVA\Desktop\CoffeeMachinee\src\CoffeeMachine.Application\obj\Debug\net8.0\CoffeeMachine.Application.csproj.CoreCompileInputs.cache
+C:\Users\KiporovVA\Desktop\CoffeeMachinee\src\CoffeeMachine.Application\obj\Debug\net8.0\CoffeeMachine.Application.dll
+C:\Users\KiporovVA\Desktop\CoffeeMachinee\src\CoffeeMachine.Application\obj\Debug\net8.0\refint\CoffeeMachine.Application.dll
+C:\Users\KiporovVA\Desktop\CoffeeMachinee\src\CoffeeMachine.Application\obj\Debug\net8.0\CoffeeMachine.Application.pdb
+C:\Users\KiporovVA\Desktop\CoffeeMachinee\src\CoffeeMachine.Application\obj\Debug\net8.0\ref\CoffeeMachine.Application.dll
+C:\Users\KiporovVA\Desktop\CoffeeMachinee\src\CoffeeMachine.Application\obj\Debug\net8.0\CoffeeMa.CBEC0ADF.Up2Date

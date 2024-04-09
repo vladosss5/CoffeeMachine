@@ -1,0 +1,49 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "CoffeeMachine.Persistence/1.0.0": {
+        "dependencies": {
+          "CoffeeMachine.Application": "1.0.0"
+        },
+        "runtime": {
+          "CoffeeMachine.Persistence.dll": {}
+        }
+      },
+      "CoffeeMachine.Application/1.0.0": {
+        "dependencies": {
+          "CoffeeMachine.Domain": "1.0.0"
+        },
+        "runtime": {
+          "CoffeeMachine.Application.dll": {}
+        }
+      },
+      "CoffeeMachine.Domain/1.0.0": {
+        "runtime": {
+          "CoffeeMachine.Domain.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "CoffeeMachine.Persistence/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "CoffeeMachine.Application/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "CoffeeMachine.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
