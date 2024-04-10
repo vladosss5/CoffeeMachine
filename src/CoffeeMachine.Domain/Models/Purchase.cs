@@ -2,14 +2,16 @@
 
 public class Purchase
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
     
     public string Status { get; set; }
     public DateTime Date { get; set; }
     
-    public Guid IdCoffee { get; set; }
+    public int IdCoffee { get; set; }
     public Coffee Coffee {get; set;}
     
-    public Guid IdPayment { get; set; }
-    public Payment Payment { get; set; }
+    public int IdMachine { get; set; }
+    public Machine Machine { get; set; }
+
+    public List<Transaction> Transactions { get; set; } = new List<Transaction>();
 }

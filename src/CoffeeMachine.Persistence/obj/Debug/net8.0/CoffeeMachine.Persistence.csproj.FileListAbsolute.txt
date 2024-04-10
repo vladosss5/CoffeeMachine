@@ -15,3 +15,5 @@ C:\Users\KiporovVA\Desktop\CoffeeMachinee\src\CoffeeMachine.Persistence\obj\Debu
 C:\Users\KiporovVA\Desktop\CoffeeMachinee\src\CoffeeMachine.Persistence\obj\Debug\net8.0\CoffeeMachine.Persistence.pdb
 C:\Users\KiporovVA\Desktop\CoffeeMachinee\src\CoffeeMachine.Persistence\obj\Debug\net8.0\ref\CoffeeMachine.Persistence.dll
 C:\Users\KiporovVA\Desktop\CoffeeMachinee\src\CoffeeMachine.Persistence\obj\Debug\net8.0\CoffeeMa.A8CF55CE.Up2Date
+C:\Users\KiporovVA\Desktop\CoffeeMachinee\src\CoffeeMachine.Persistence\bin\Debug\net8.0\CoffeeMachine.Persistence.runtimeconfig.json
+C:\Users\KiporovVA\Desktop\CoffeeMachinee\src\CoffeeMachine.Persistence\obj\Debug\net8.0\CoffeeMachine.Persistence.genruntimeconfig.cache
