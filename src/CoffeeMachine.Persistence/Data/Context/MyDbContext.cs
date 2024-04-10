@@ -31,6 +31,7 @@ public partial class MyDbContext : DbContext
             entity.Property(e => e.Id).UseIdentityAlwaysColumn();
             entity.Property(e => e.Name).IsRequired().HasMaxLength(30);
             entity.Property(e=> e.Price).IsRequired();
+            entity.Property(e => e.Size).IsRequired();
         });
 
         modelBuilder.Entity<Banknote>(entity =>

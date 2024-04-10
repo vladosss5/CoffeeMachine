@@ -2,7 +2,7 @@
 
 public class Banknote
 {
-    public int Id { get; set; }
+    public long Id { get; set; }
     public int Par { get; set; }
 
     public List<Transaction> Transactions { get; set; } = new List<Transaction>();

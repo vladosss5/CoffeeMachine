@@ -82,6 +82,9 @@ namespace CoffeeMachine.Persistence.Data.Migrations
                     b.Property<int>("Price")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Size")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id")
                         .HasName("coffee_pk");
 

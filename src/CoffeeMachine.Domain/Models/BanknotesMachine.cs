@@ -2,12 +2,12 @@
 
 public class BanknotesMachine
 {
-    public int Id { get; set; }
+    public long Id { get; set; }
     
-    public int IdMachine { get; set; }
+    public long IdMachine { get; set; }
     public Machine Machine { get; set; }
     
-    public int IdBanknote { get; set; }
+    public long IdBanknote { get; set; }
     public Banknote Banknote { get; set; }
     public int CountBanknotes { get; set; }
 }
