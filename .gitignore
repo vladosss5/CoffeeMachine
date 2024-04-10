@@ -1,7 +1,11 @@
 /src/CoffeeMachine.API/bin
 /src/CoffeeMachine.API/obj
 /src/CoffeeMachine.API/Logs
+
+
+
 .idea
+.vs
 *.bkp
 *.drawio
 [Dd]ebug/
@@ -11,6 +15,8 @@
 x64/
 x86/
 build/
+bin/
+obj/
 bld/
 [Bb]in/
 [Oo]bj/
