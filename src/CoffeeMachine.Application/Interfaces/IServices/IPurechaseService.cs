@@ -4,8 +4,8 @@ namespace CoffeeMachine.Infrastructure.Interfaces.IServices;
 
 public interface IPurechaseService : IBaseService<Purchase>
 {
-    public Task<List<Purchase>> GetByCoffee(Coffee coffee);
-    public Task<List<Purchase>> GetByMachine(Machine machine);
-    public Task<List<Purchase>> GetByStatus(string status);
-    public Task<List<Purchase>> GetByDate(DateTime dateStart, DateTime dateEnd);
+    public Task<List<Purchase>> GetByCoffeeAsync(Coffee coffee);
+    public Task<List<Purchase>> GetByMachineAsync(Machine machine);
+    public Task<List<Purchase>> GetByStatusAsync(string status);
+    public Task<List<Purchase>> GetByDateAsync(DateTime dateStart, DateTime dateEnd);
 }

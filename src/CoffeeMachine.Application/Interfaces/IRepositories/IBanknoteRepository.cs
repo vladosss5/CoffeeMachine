@@ -4,5 +4,5 @@ namespace CoffeeMachine.Infrastructure.Interfaces.IRepositories;
 
 public interface IBanknoteRepository : IBaseRepository<Banknote>
 {
-    public Task<Banknote> GetByPar(int par);
+    public Task<Banknote> GetByParAsynk(int par);
 }

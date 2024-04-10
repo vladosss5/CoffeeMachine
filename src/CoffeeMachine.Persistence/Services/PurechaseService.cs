@@ -13,47 +13,47 @@ public class PurechaseService : IBaseService<Purchase>, IPurechaseService
         _purechaseRepository = purechaseRepository;
     }
     
-    public Task<Purchase> GetById(int id)
+    public Task<Purchase> GetByIdAsync(long id)
     {
         throw new NotImplementedException();
     }
 
-    public Task<List<Purchase>> GetAll()
+    public Task<List<Purchase>> GetAllAsync()
     {
         throw new NotImplementedException();
     }
 
-    public Task<Purchase> Add(Purchase entity)
+    public Task<Purchase> AddAsync(Purchase entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Purchase> Update(Purchase entity)
+    public Task<Purchase> UpdateAsync(Purchase entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> Delete(Purchase entity)
+    public Task<bool> DeleteAsync(Purchase entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<List<Purchase>> GetByCoffee(Coffee coffee)
+    public Task<List<Purchase>> GetByCoffeeAsync(Coffee coffee)
     {
         throw new NotImplementedException();
     }
 
-    public Task<List<Purchase>> GetByMachine(Machine machine)
+    public Task<List<Purchase>> GetByMachineAsync(Machine machine)
     {
         throw new NotImplementedException();
     }
 
-    public Task<List<Purchase>> GetByStatus(string status)
+    public Task<List<Purchase>> GetByStatusAsync(string status)
     {
         throw new NotImplementedException();
     }
 
-    public Task<List<Purchase>> GetByDate(DateTime dateStart, DateTime dateEnd)
+    public Task<List<Purchase>> GetByDateAsync(DateTime dateStart, DateTime dateEnd)
     {
         throw new NotImplementedException();
     }

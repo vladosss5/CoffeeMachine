@@ -13,7 +13,7 @@ public class TransactionRepository : IBaseRepository<Transaction>, ITransactionR
         _dbContext = dbContext;
     }
     
-    public Task<Transaction> GetByIdAsynk(int id)
+    public Task<Transaction> GetByIdAsynk(long id)
     {
         throw new NotImplementedException();
     }
@@ -28,22 +28,22 @@ public class TransactionRepository : IBaseRepository<Transaction>, ITransactionR
         throw new NotImplementedException();
     }
 
-    public Task<Transaction> Update(Transaction entity)
+    public Task<Transaction> UpdateAsync(Transaction entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> Delete(Transaction entity)
+    public Task<bool> DeleteAsync(Transaction entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<List<Transaction>> GetByType(bool type)
+    public Task<List<Transaction>> GetByTypeAsync(bool type)
     {
         throw new NotImplementedException();
     }
 
-    public Task<List<Transaction>> GetByPurchase(Purchase purchase)
+    public Task<List<Transaction>> GetByPurchaseAsync(Purchase purchase)
     {
         throw new NotImplementedException();
     }

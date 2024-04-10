@@ -4,5 +4,5 @@ namespace CoffeeMachine.Infrastructure.Interfaces.IRepositories;
 
 public interface ICoffeeRepository : IBaseRepository<Coffee>
 {
-    public Task<Coffee> GetByName(string nameCoffe);
+    public Task<Coffee> GetByNameAsync(string nameCoffe);
 }

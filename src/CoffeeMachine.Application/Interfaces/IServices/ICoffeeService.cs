@@ -4,5 +4,5 @@ namespace CoffeeMachine.Infrastructure.Interfaces.IServices;
 
 public interface ICoffeeService : IBaseService<Coffee>
 {
-    public Task<Coffee> GetByName(string nameCoffe);
+    public Task<Coffee> GetByNameAsync(string nameCoffe);
 }

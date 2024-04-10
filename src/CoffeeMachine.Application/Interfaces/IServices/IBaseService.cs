@@ -2,9 +2,9 @@
 
 public interface IBaseService<T> where T : class
 {
-    public Task<T> GetById(int id);
-    public Task<List<T>> GetAll();
-    public Task<T> Add(T entity);
-    public Task<T> Update(T entity);
-    public Task<bool> Delete(T entity);
+    public Task<T> GetByIdAsync(long id);
+    public Task<List<T>> GetAllAsync();
+    public Task<T> AddAsync(T entity);
+    public Task<T> UpdateAsync(T entity);
+    public Task<bool> DeleteAsync(T entity);
 }

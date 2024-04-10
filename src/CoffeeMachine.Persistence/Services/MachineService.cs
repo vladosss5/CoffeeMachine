@@ -13,32 +13,32 @@ public class MachineService: IBaseService<Machine>, IMachineService
         _machineRepository = machineRepository;
     }
     
-    public Task<Machine> GetById(int id)
+    public Task<Machine> GetByIdAsync(long id)
     {
         throw new NotImplementedException();
     }
 
-    public Task<List<Machine>> GetAll()
+    public Task<List<Machine>> GetAllAsync()
     {
         throw new NotImplementedException();
     }
 
-    public Task<Machine> Add(Machine entity)
+    public Task<Machine> AddAsync(Machine entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Machine> Update(Machine entity)
+    public Task<Machine> UpdateAsync(Machine entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> Delete(Machine entity)
+    public Task<bool> DeleteAsync(Machine entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Machine> GetBySerialNumber(string serialNumber)
+    public Task<Machine> GetBySerialNumberAsync(string serialNumber)
     {
         throw new NotImplementedException();
     }

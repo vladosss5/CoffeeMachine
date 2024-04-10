@@ -1,6 +1,8 @@
 ﻿using CoffeeMachine.Domain.Models;
+using CoffeeMachine.Infrastructure.Exceptions;
 using CoffeeMachine.Infrastructure.Interfaces.IRepositories;
 using CoffeeMachine.Persistence.Data.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeMachine.Persistence.Repositories;
 
@@ -13,33 +15,78 @@ public class MachineRepository : IBaseRepository<Machine>, IMachineRepository
         _dbContext = dbContext;
     }
     
-    public Task<Machine> GetByIdAsynk(int id)
+    public async Task<Machine> GetByIdAsynk(long id)
     {
-        throw new NotImplementedException();
+        var machine = await _dbContext.Machines.FirstOrDefaultAsync(x => x.Id == id);
+        
+        if (machine == null)
+            throw new NotFoundException(nameof(Machine), id);
+        
+        return machine;
     }
 
-    public Task<IEnumerable<Machine>> GetAllAsynk()
+    public async Task<IEnumerable<Machine>> GetAllAsynk()
     {
-        throw new NotImplementedException();
+        return await _dbContext.Machines.ToListAsync();
     }
 
-    public Task<Machine> AddAsynk(Machine entity)
+    public async Task<Machine> AddAsynk(Machine entity)
     {
-        throw new NotImplementedException();
+        var identity = await _dbContext.Machines.AnyAsync(x => x.SerialNumber == entity.SerialNumber);
+        
+        if (identity != false)
+            throw new AlreadyExistsException(nameof(Machine), entity.SerialNumber);
+
+        Machine newMachine = new Machine()
+        {
+            SerialNumber = entity.SerialNumber,
+            Description = entity.Description
+        };
+        
+        await _dbContext.Machines.AddAsync(newMachine);
+        await _dbContext.SaveChangesAsync();
+        
+        return newMachine;
     }
 
-    public Task<Machine> Update(Machine entity)
+    public async Task<Machine> UpdateAsync(Machine entity)
     {
-        throw new NotImplementedException();
+        var machine = await _dbContext.Machines
+            .FirstOrDefaultAsync(x => x.SerialNumber == entity.SerialNumber);
+        
+        if (machine == null)
+            throw new NotFoundException(nameof(Machine), entity.SerialNumber);
+        
+        machine.Description = entity.Description;
+        
+        _dbContext.Machines.Update(machine);
+        await _dbContext.SaveChangesAsync();
+        
+        return machine;
     }
 
-    public Task<bool> Delete(Machine entity)
+    public async Task<bool> DeleteAsync(Machine entity)
     {
-        throw new NotImplementedException();
+        var machine = await _dbContext.Machines
+            .FirstOrDefaultAsync(x => x.SerialNumber == entity.SerialNumber);
+        
+        if (machine == null)
+            throw new NotFoundException(nameof(Machine), entity.SerialNumber);
+        
+        _dbContext.Machines.Remove(machine);
+        await _dbContext.SaveChangesAsync();
+        
+        return true;
     }
 
-    public Task<Machine> GetBySerialNumber(string serialNumber)
+    public async Task<Machine> GetBySerialNumberAsync(string serialNumber)
     {
-        throw new NotImplementedException();
+        var machine = await _dbContext.Machines
+            .FirstOrDefaultAsync(x => x.SerialNumber == serialNumber);
+        
+        if (machine == null)
+            throw new NotFoundException(nameof(Machine), serialNumber);
+        
+        return machine;
     }
 }

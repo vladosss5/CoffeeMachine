@@ -4,5 +4,5 @@ namespace CoffeeMachine.Infrastructure.Interfaces.IRepositories;
 
 public interface IMachineRepository : IBaseRepository<Machine>
 {
-    public Task<Machine> GetBySerialNumber(string serialNumber);
+    public Task<Machine> GetBySerialNumberAsync(string serialNumber);
 }

@@ -13,32 +13,32 @@ public class CoffeeService : IBaseService<Coffee>, ICoffeeService
         _coffeeRepository = coffeeRepository;
     }
     
-    public Task<Coffee> GetById(int id)
+    public Task<Coffee> GetByIdAsync(long id)
     {
         throw new NotImplementedException();
     }
 
-    public Task<List<Coffee>> GetAll()
+    public Task<List<Coffee>> GetAllAsync()
     {
         throw new NotImplementedException();
     }
 
-    public Task<Coffee> Add(Coffee entity)
+    public Task<Coffee> AddAsync(Coffee entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Coffee> Update(Coffee entity)
+    public Task<Coffee> UpdateAsync(Coffee entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> Delete(Coffee entity)
+    public Task<bool> DeleteAsync(Coffee entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Coffee> GetByName(string nameCoffe)
+    public Task<Coffee> GetByNameAsync(string nameCoffe)
     {
         throw new NotImplementedException();
     }

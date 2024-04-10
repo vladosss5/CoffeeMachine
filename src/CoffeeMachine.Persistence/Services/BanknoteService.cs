@@ -14,32 +14,32 @@ public class BanknoteService : IBaseService<Banknote>, IBanknoteService
     }
 
 
-    public Task<Banknote> GetById(int id)
+    public Task<Banknote> GetByIdAsync(long id)
     {
         throw new NotImplementedException();
     }
 
-    public Task<List<Banknote>> GetAll()
+    public Task<List<Banknote>> GetAllAsync()
     {
         throw new NotImplementedException();
     }
 
-    public Task<Banknote> Add(Banknote entity)
+    public Task<Banknote> AddAsync(Banknote entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Banknote> Update(Banknote entity)
+    public Task<Banknote> UpdateAsync(Banknote entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> Delete(Banknote entity)
+    public Task<bool> DeleteAsync(Banknote entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Banknote> GetByPar(int par)
+    public Task<Banknote> GetByParAsync(int par)
     {
         throw new NotImplementedException();
     }

@@ -13,37 +13,37 @@ public class TransactionService : IBaseService<Transaction>, ITransactionService
         _transactionRepository = transactionRepository;
     }
     
-    public Task<Transaction> GetById(int id)
+    public Task<Transaction> GetByIdAsync(long id)
     {
         throw new NotImplementedException();
     }
 
-    public Task<List<Transaction>> GetAll()
+    public Task<List<Transaction>> GetAllAsync()
     {
         throw new NotImplementedException();
     }
 
-    public Task<Transaction> Add(Transaction entity)
+    public Task<Transaction> AddAsync(Transaction entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Transaction> Update(Transaction entity)
+    public Task<Transaction> UpdateAsync(Transaction entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> Delete(Transaction entity)
+    public Task<bool> DeleteAsync(Transaction entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<List<Transaction>> GetByType(bool type)
+    public Task<List<Transaction>> GetByTypeAsync(bool type)
     {
         throw new NotImplementedException();
     }
 
-    public Task<List<Transaction>> GetByPurchase(Purchase purchase)
+    public Task<List<Transaction>> GetByPurchaseAsync(Purchase purchase)
     {
         throw new NotImplementedException();
     }

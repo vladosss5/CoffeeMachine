@@ -17,33 +17,64 @@ public class BanknoteRepository : IBaseRepository<Banknote>, IBanknoteRepository
     }
 
 
-    public Task<Banknote> GetByIdAsynk(int id)
+    public async Task<Banknote> GetByIdAsynk(long id)
+    {
+        var banknote = await _dbContext.Banknotes.FirstOrDefaultAsync(x => x.Id == id);
+
+        if (banknote == null)
+            throw new NotFoundException(nameof(Banknote), id);
+
+        return banknote;
+    }
+
+    public async Task<IEnumerable<Banknote>> GetAllAsynk()
+    {
+        return await _dbContext.Banknotes.ToListAsync();
+    }
+
+    public async Task<Banknote> AddAsynk(Banknote entity)
+    {
+        var identity = await _dbContext.Banknotes.AnyAsync(x => x.Par == entity.Par);
+
+        if (identity != false)
+            throw new AlreadyExistsException(nameof(Banknote), entity.Par);
+        
+        Banknote newBanknote = new Banknote()
+        {
+            Par = entity.Par
+        };
+        
+        await _dbContext.Banknotes.AddAsync(newBanknote);
+        await _dbContext.SaveChangesAsync();
+        
+        return newBanknote;
+    }
+
+    public Task<Banknote> UpdateAsync(Banknote entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<Banknote>> GetAllAsynk()
+    public async Task<bool> DeleteAsync(Banknote entity)
     {
-        throw new NotImplementedException();
+        var deletingBanknote = _dbContext.Banknotes.FirstOrDefault(x => x.Id == entity.Id);
+        
+        if (deletingBanknote == null)
+            throw new NotFoundException(nameof(Banknote), entity.Id);
+        
+        _dbContext.Banknotes.Remove(deletingBanknote);
+        await _dbContext.SaveChangesAsync();
+        
+        return true;
     }
 
-    public Task<Banknote> AddAsynk(Banknote entity)
+    public async Task<Banknote> GetByParAsynk(int par)
     {
-        throw new NotImplementedException();
-    }
+        var banknote = await _dbContext.Banknotes.FirstOrDefaultAsync(x => x.Par == par);
+        
+        if (banknote == null)
+            throw new NotFoundException(nameof(Banknote), par);
 
-    public Task<Banknote> Update(Banknote entity)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<bool> Delete(Banknote entity)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<Banknote> GetByPar(int par)
-    {
-        throw new NotImplementedException();
+        return banknote;
     }
 }

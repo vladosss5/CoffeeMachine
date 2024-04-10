@@ -1,3 +1,4 @@
+using CoffeeMachine.Infrastructure.Extensions;
 using CoffeeMachine.Persistence.DIExtentions;
 using Serilog;
 
@@ -12,6 +13,7 @@ logger.Information("Starting web host");
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.Services.AddApplicationCore();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
