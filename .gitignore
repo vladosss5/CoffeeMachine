@@ -1,9 +1,12 @@
 /src/CoffeeMachine.API/bin
 /src/CoffeeMachine.API/obj
 /src/CoffeeMachine.API/Logs
-
-
-
+/src/CoffeeMachine.Application/bin
+/src/CoffeeMachine.Application/obj
+/src/CoffeeMachine.Domain/bin
+/src/CoffeeMachine.Domain/obj
+/src/CoffeeMachine.Persistence/bin
+/src/CoffeeMachine.Persistence/obj
 .idea
 .vs
 *.bkp
