@@ -16,7 +16,7 @@ public class CoffeeRepository : IBaseRepository<Coffee>, ICoffeeRepository
         _dbContext = dbContext;
     }
     
-    public async Task<Coffee> GetByIdAsynk(long id)
+    public async Task<Coffee> GetByIdAsync(long id)
     {
         var coffee = await _dbContext.Coffees.FirstOrDefaultAsync(x => x.Id == id);
         
@@ -26,12 +26,12 @@ public class CoffeeRepository : IBaseRepository<Coffee>, ICoffeeRepository
         return coffee;
     }
 
-    public async Task<IEnumerable<Coffee>> GetAllAsynk()
+    public async Task<IEnumerable<Coffee>> GetAllAsync()
     {
         return await _dbContext.Coffees.ToListAsync();
     }
 
-    public async Task<Coffee> AddAsynk(Coffee entity)
+    public async Task<Coffee> AddAsync(Coffee entity)
     {
         var identity = await _dbContext.Coffees.AnyAsync(x => x.Name == entity.Name);
         

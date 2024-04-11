@@ -23,6 +23,7 @@ public static class DIExtentions
         services.AddScoped<IMachineService, MachineService>();
         services.AddScoped<ITransactionService, TransactionService>();
         services.AddScoped<IPurchaseService, PurchaseService>();
+        services.AddScoped<IBuyService, BuyService>();
         
         services.AddScoped<IMachineRepository, MachineRepository>();
         services.AddScoped<ICoffeeRepository, CoffeeRepository>();

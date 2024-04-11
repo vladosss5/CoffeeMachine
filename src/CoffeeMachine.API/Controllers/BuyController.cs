@@ -14,19 +14,23 @@ namespace CoffeeMachine.API.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IPurchaseService _purchaseService;
+        private readonly IBuyService _buyService;
 
-        public BuyController(IPurchaseService purchaseService, IMapper mapper)
+        public BuyController(IPurchaseService purchaseService, IMapper mapper, IBuyService buyService)
         {
             _mapper = mapper;
             _purchaseService = purchaseService;
+            _buyService = buyService;
         }
 
         [HttpPost]
         public async Task<IActionResult> Buy([FromBody] PurchaseRequest request)
         {
-            var purechase = _purchaseService.AddAsync(_mapper.Map<Purchase>(request)).Result;
+            var buy = _mapper.Map<PurchaseResponce>(
+                _buyService.BuyAsync(
+                    _mapper.Map<Purchase>(request)));
             
-            return Ok(purechase);
+            return Ok(buy);
         }
     }
 }

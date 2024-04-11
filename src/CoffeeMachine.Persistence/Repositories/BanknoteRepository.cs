@@ -17,6 +17,12 @@ public class BanknoteRepository : IBaseRepository<Banknote>, IBanknoteRepository
     }
 
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    /// <exception cref="NotFoundException"></exception>
     public async Task<Banknote> GetByIdAsync(long id)
     {
         var banknote = await _dbContext.Banknotes.FirstOrDefaultAsync(x => x.Id == id);
@@ -26,12 +32,23 @@ public class BanknoteRepository : IBaseRepository<Banknote>, IBanknoteRepository
 
         return banknote;
     }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
 
     public async Task<IEnumerable<Banknote>> GetAllAsync()
     {
         return await _dbContext.Banknotes.ToListAsync();
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <returns></returns>
+    /// <exception cref="AlreadyExistsException"></exception>
     public async Task<Banknote> AddAsync(Banknote entity)
     {
         var identity = await _dbContext.Banknotes.AnyAsync(x => x.Par == entity.Par);
@@ -77,4 +94,10 @@ public class BanknoteRepository : IBaseRepository<Banknote>, IBanknoteRepository
 
         return banknote;
     }
+
+    // public async Task<List<Banknote>> GetByPurchase(Purchase entity)
+    // {
+    //      // var purchase = _dbContext.Purchases.F
+    //     // return await _dbContext.Banknotes.Where(b => b.).ToListAsync();
+    // }
 }

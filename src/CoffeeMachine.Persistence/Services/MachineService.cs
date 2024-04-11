@@ -4,7 +4,7 @@ using CoffeeMachine.Infrastructure.Interfaces.IServices;
 
 namespace CoffeeMachine.Persistence.Services;
 
-public class MachineService: IBaseService<Machine>, IMachineService
+public class MachineService: IBaseService<Machine>, IMachineService //Убрать IbaseService
 {
     private readonly IMachineRepository _machineRepository;
 
