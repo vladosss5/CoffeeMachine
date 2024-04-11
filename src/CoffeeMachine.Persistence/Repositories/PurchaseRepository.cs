@@ -47,7 +47,7 @@ public class PurchaseRepository : IBaseRepository<Purchase>, IPurchaseRepository
 
         Purchase newPurchase = new Purchase()
         {
-            Status = "entity.Status",
+            Status = entity.Status,
             Date = DateTime.UtcNow,
             IdCoffee = coffee.Id,
             IdMachine = machine.Id
@@ -59,23 +59,28 @@ public class PurchaseRepository : IBaseRepository<Purchase>, IPurchaseRepository
         return newPurchase;
     }
     
-    public async Task<Purchase> UpdateAsync(Purchase entity) // НЕ реализовано
+    public async Task<Purchase> UpdateAsync(Purchase entity)
     {
-        var purchase = await _dbContext.Purchases
-            .FirstOrDefaultAsync(x => x.Date == entity.Date && x.Machine.SerialNumber == entity.Machine.SerialNumber);
+        var purchase = await _dbContext.Purchases.FirstOrDefaultAsync(x => 
+            x.Date == entity.Date && 
+            x.Machine.SerialNumber == entity.Machine.SerialNumber);
         
         if (purchase == null)
             throw new NotFoundException(nameof(Purchase), entity);
         
         purchase.Status = entity.Status;
         
+        _dbContext.Purchases.Update(purchase);
+        await _dbContext.SaveChangesAsync();
+        
         return entity;
     }
 
-    public async Task<bool> DeleteAsync(Purchase entity) // ХЕРОВО реализовано
+    public async Task<bool> DeleteAsync(Purchase entity)
     {
-        var purchase = await _dbContext.Purchases
-            .FirstOrDefaultAsync(x => x.Date == entity.Date && x.Machine.SerialNumber == entity.Machine.SerialNumber);
+        var purchase = await _dbContext.Purchases.FirstOrDefaultAsync(x => 
+            x.Date == entity.Date && 
+            x.Machine.SerialNumber == entity.Machine.SerialNumber);
         
         if (purchase == null)
             throw new NotFoundException(nameof(Purchase), entity);
@@ -86,23 +91,45 @@ public class PurchaseRepository : IBaseRepository<Purchase>, IPurchaseRepository
         return true;
     }
 
-    public async Task<List<Purchase>> GetByCoffeeAsync(Coffee coffee)
+    public async Task<List<Purchase>> GetByCoffeeAsync(Coffee entity)
     {
-        throw new NotImplementedException();
+        var coffee = await _dbContext.Coffees.FirstOrDefaultAsync(x => 
+            x.Name == entity.Name && 
+            x.Size == entity.Size && 
+            x.Size == entity.Size);
+        
+        if (coffee == null)
+            throw new NotFoundException(nameof(Coffee), entity);
+        
+        return await _dbContext.Purchases
+            .Where(p => p.IdCoffee == coffee.Id)
+            .ToListAsync();
     }
 
-    public async Task<List<Purchase>> GetByMachineAsync(Machine machine)
+    public async Task<List<Purchase>> GetByMachineAsync(Machine entity)
     {
-        throw new NotImplementedException();
+        var machine = await _dbContext.Machines.FirstOrDefaultAsync(x => 
+            x.SerialNumber == entity.SerialNumber);
+
+        if (machine == null)
+            throw new NotFoundException(nameof(Machine), entity);
+        
+        return await _dbContext.Purchases
+            .Where(p => p.IdMachine == machine.Id)
+            .ToListAsync();
     }
 
     public async Task<List<Purchase>> GetByStatusAsync(string status)
     {
-        throw new NotImplementedException();
+        return await _dbContext.Purchases
+            .Where(p => p.Status == status)
+            .ToListAsync();
     }
 
     public async Task<List<Purchase>> GetByDateAsync(DateTime dateStart, DateTime dateEnd)
     {
-        throw new NotImplementedException();
+        return await _dbContext.Purchases
+            .Where(p => p.Date >= dateStart && p.Date <= dateEnd)
+            .ToListAsync();
     }
 }
