@@ -11,5 +11,4 @@ public class Transaction
     
     public long IdPurchase { get; set; }
     public Purchase Purchase { get; set; }
-
 }
