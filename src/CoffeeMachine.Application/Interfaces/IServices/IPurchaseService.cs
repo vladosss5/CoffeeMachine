@@ -1,8 +1,8 @@
 ﻿using CoffeeMachine.Domain.Models;
 
-namespace CoffeeMachine.Infrastructure.Interfaces.IRepositories;
+namespace CoffeeMachine.Infrastructure.Interfaces.IServices;
 
-public interface IPurechaseRepository : IBaseRepository<Purchase>
+public interface IPurchaseService : IBaseService<Purchase>
 {
     public Task<List<Purchase>> GetByCoffeeAsync(Coffee coffee);
     public Task<List<Purchase>> GetByMachineAsync(Machine machine);

@@ -68,7 +68,7 @@ public class BanknoteRepository : IBaseRepository<Banknote>, IBanknoteRepository
         return true;
     }
 
-    public async Task<Banknote> GetByParAsynk(int par)
+    public async Task<Banknote> GetByParAsync(int par)
     {
         var banknote = await _dbContext.Banknotes.FirstOrDefaultAsync(x => x.Par == par);
         

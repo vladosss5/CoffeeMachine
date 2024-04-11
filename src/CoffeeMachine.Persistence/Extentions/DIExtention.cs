@@ -22,13 +22,13 @@ public static class DIExtentions
         services.AddScoped<ICoffeeService, CoffeeService>();
         services.AddScoped<IMachineService, MachineService>();
         services.AddScoped<ITransactionService, TransactionService>();
-        services.AddScoped<IPurechaseService, PurechaseService>();
+        services.AddScoped<IPurchaseService, PurchaseService>();
         
         services.AddScoped<IMachineRepository, MachineRepository>();
         services.AddScoped<ICoffeeRepository, CoffeeRepository>();
         services.AddScoped<IBanknoteRepository, BanknoteRepository>();
         services.AddScoped<ITransactionRepository, TransactionRepository>();
-        services.AddScoped<IPurechaseRepository, PurechaseRepository>();
+        services.AddScoped<IPurchaseRepository, PurchaseRepository>();
         
         return services;
     }

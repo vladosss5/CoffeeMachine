@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeMachine.Persistence.Repositories;
 
-public class PurechaseRepository : IBaseRepository<Purchase>, IPurechaseRepository
+public class PurchaseRepository : IBaseRepository<Purchase>, IPurchaseRepository
 {
     private readonly MyDbContext _dbContext;
 
-    public PurechaseRepository(MyDbContext dbContext)
+    public PurchaseRepository(MyDbContext dbContext)
     {
         _dbContext = dbContext;
     }
@@ -30,20 +30,33 @@ public class PurechaseRepository : IBaseRepository<Purchase>, IPurechaseReposito
         return await _dbContext.Purchases.ToListAsync();
     }
 
-    public async Task<Purchase> AddAsynk(Purchase entity) // НЕ реализовано
+    public async Task<Purchase> AddAsynk(Purchase entity)
     {
+        var coffee = await _dbContext.Coffees.FirstOrDefaultAsync(x => 
+            x.Name == entity.Coffee.Name && 
+            x.Size == entity.Coffee.Size);
+        
+        var machine = await _dbContext.Machines.FirstOrDefaultAsync(x => 
+            x.SerialNumber == entity.Machine.SerialNumber);
+        
         var identity = await _dbContext.Purchases
-            .AnyAsync(x => x.Status == entity.Status && x.Date == entity.Date);
+            .AnyAsync(x => x.Date == entity.Date);
         
         if (identity != false)
             throw new AlreadyExistsException(nameof(Purchase), entity.Status);
+
+        Purchase newPurchase = new Purchase()
+        {
+            Status = "entity.Status",
+            Date = DateTime.UtcNow,
+            IdCoffee = coffee.Id,
+            IdMachine = machine.Id
+        };
+
+        await _dbContext.Purchases.AddAsync(newPurchase);
+        await _dbContext.SaveChangesAsync();
         
-        // Purchase newPurchase = new Purchase()
-        // {
-        //     Status = 
-        // }
-        
-        return entity;
+        return newPurchase;
     }
     
     public async Task<Purchase> UpdateAsync(Purchase entity) // НЕ реализовано

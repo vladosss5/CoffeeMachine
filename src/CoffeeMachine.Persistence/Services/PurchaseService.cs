@@ -4,13 +4,13 @@ using CoffeeMachine.Infrastructure.Interfaces.IServices;
 
 namespace CoffeeMachine.Persistence.Services;
 
-public class PurechaseService : IBaseService<Purchase>, IPurechaseService
+public class PurchaseService : IBaseService<Purchase>, IPurchaseService
 {
-    private readonly IPurechaseRepository _purechaseRepository;
+    private readonly IPurchaseRepository _purchaseRepository;
 
-    public PurechaseService(IPurechaseRepository purechaseRepository)
+    public PurchaseService(IPurchaseRepository purchaseRepository)
     {
-        _purechaseRepository = purechaseRepository;
+        _purchaseRepository = purchaseRepository;
     }
     
     public Task<Purchase> GetByIdAsync(long id)
@@ -25,7 +25,7 @@ public class PurechaseService : IBaseService<Purchase>, IPurechaseService
 
     public Task<Purchase> AddAsync(Purchase entity)
     {
-        throw new NotImplementedException();
+        return _purchaseRepository.AddAsynk(entity);
     }
 
     public Task<Purchase> UpdateAsync(Purchase entity)

@@ -2,6 +2,6 @@
 
 public class MachineDto
 {
-    public string? SerialNumber { get; set; }
+    public string SerialNumber { get; set; } = null!;
     public string? Description { get; set; }
 }

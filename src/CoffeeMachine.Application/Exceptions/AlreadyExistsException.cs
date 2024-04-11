@@ -1,4 +1,6 @@
-﻿namespace CoffeeMachine.Infrastructure.Exceptions;
+﻿using System;
+
+namespace CoffeeMachine.Infrastructure.Exceptions;
 
 public class AlreadyExistsException : Exception
 {

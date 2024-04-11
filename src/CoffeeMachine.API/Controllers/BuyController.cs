@@ -1,5 +1,6 @@
 using AutoMapper;
 using CoffeeMachine.API.DTO;
+using CoffeeMachine.Domain.Models;
 using CoffeeMachine.Infrastructure.Interfaces.IServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,13 +12,21 @@ namespace CoffeeMachine.API.Controllers
     
     public class BuyController : ControllerBase
     {
-        // private readonly IMapper _mapper;
-        private readonly IBanknoteService _banknoteService;
+        private readonly IMapper _mapper;
+        private readonly IPurchaseService _purchaseService;
 
-        public BuyController(IBanknoteService banknoteService)
+        public BuyController(IPurchaseService purchaseService, IMapper mapper)
         {
-            // _mapper = mapper;
-            _banknoteService = banknoteService;
+            _mapper = mapper;
+            _purchaseService = purchaseService;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Buy([FromBody] PurchaseRequest request)
+        {
+            var purechase = _purchaseService.AddAsync(_mapper.Map<Purchase>(request)).Result;
+            
+            return Ok(purechase);
         }
     }
 }
