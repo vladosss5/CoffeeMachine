@@ -15,7 +15,7 @@ public class PurchaseRepository : IBaseRepository<Purchase>, IPurchaseRepository
         _dbContext = dbContext;
     }
     
-    public async Task<Purchase> GetByIdAsynk(long id)
+    public async Task<Purchase> GetByIdAsync(long id)
     {
         var purchase = await _dbContext.Purchases.FirstOrDefaultAsync(x => x.Id == id);
         
@@ -25,12 +25,12 @@ public class PurchaseRepository : IBaseRepository<Purchase>, IPurchaseRepository
         return purchase;
     }
 
-    public async Task<IEnumerable<Purchase>> GetAllAsynk()
+    public async Task<IEnumerable<Purchase>> GetAllAsync()
     {
         return await _dbContext.Purchases.ToListAsync();
     }
 
-    public async Task<Purchase> AddAsynk(Purchase entity)
+    public async Task<Purchase> AddAsync(Purchase entity)
     {
         var coffee = await _dbContext.Coffees.FirstOrDefaultAsync(x => 
             x.Name == entity.Coffee.Name && 

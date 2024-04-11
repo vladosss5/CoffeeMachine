@@ -25,7 +25,7 @@ public class PurchaseService : IBaseService<Purchase>, IPurchaseService
 
     public Task<Purchase> AddAsync(Purchase entity)
     {
-        return _purchaseRepository.AddAsynk(entity);
+        return _purchaseRepository.AddAsync(entity);
     }
 
     public Task<Purchase> UpdateAsync(Purchase entity)

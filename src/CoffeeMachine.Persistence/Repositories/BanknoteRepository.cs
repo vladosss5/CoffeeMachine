@@ -17,7 +17,7 @@ public class BanknoteRepository : IBaseRepository<Banknote>, IBanknoteRepository
     }
 
 
-    public async Task<Banknote> GetByIdAsynk(long id)
+    public async Task<Banknote> GetByIdAsync(long id)
     {
         var banknote = await _dbContext.Banknotes.FirstOrDefaultAsync(x => x.Id == id);
 
@@ -27,12 +27,12 @@ public class BanknoteRepository : IBaseRepository<Banknote>, IBanknoteRepository
         return banknote;
     }
 
-    public async Task<IEnumerable<Banknote>> GetAllAsynk()
+    public async Task<IEnumerable<Banknote>> GetAllAsync()
     {
         return await _dbContext.Banknotes.ToListAsync();
     }
 
-    public async Task<Banknote> AddAsynk(Banknote entity)
+    public async Task<Banknote> AddAsync(Banknote entity)
     {
         var identity = await _dbContext.Banknotes.AnyAsync(x => x.Par == entity.Par);
 

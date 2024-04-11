@@ -15,7 +15,7 @@ public class MachineRepository : IBaseRepository<Machine>, IMachineRepository
         _dbContext = dbContext;
     }
     
-    public async Task<Machine> GetByIdAsynk(long id)
+    public async Task<Machine> GetByIdAsync(long id)
     {
         var machine = await _dbContext.Machines.FirstOrDefaultAsync(x => x.Id == id);
         
@@ -25,12 +25,12 @@ public class MachineRepository : IBaseRepository<Machine>, IMachineRepository
         return machine;
     }
 
-    public async Task<IEnumerable<Machine>> GetAllAsynk()
+    public async Task<IEnumerable<Machine>> GetAllAsync()
     {
         return await _dbContext.Machines.ToListAsync();
     }
 
-    public async Task<Machine> AddAsynk(Machine entity)
+    public async Task<Machine> AddAsync(Machine entity)
     {
         var identity = await _dbContext.Machines.AnyAsync(x => x.SerialNumber == entity.SerialNumber);
         

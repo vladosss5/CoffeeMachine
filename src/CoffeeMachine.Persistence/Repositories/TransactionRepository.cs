@@ -13,17 +13,17 @@ public class TransactionRepository : IBaseRepository<Transaction>, ITransactionR
         _dbContext = dbContext;
     }
     
-    public Task<Transaction> GetByIdAsynk(long id)
+    public Task<Transaction> GetByIdAsync(long id)
     {
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<Transaction>> GetAllAsynk()
+    public Task<IEnumerable<Transaction>> GetAllAsync()
     {
         throw new NotImplementedException();
     }
 
-    public Task<Transaction> AddAsynk(Transaction entity)
+    public Task<Transaction> AddAsync(Transaction entity)
     {
         throw new NotImplementedException();
     }
