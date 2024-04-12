@@ -9,9 +9,9 @@ namespace CoffeeMachine.Persistence.Repositories;
 
 public class CoffeeRepository : IBaseRepository<Coffee>, ICoffeeRepository
 {
-    private readonly MyDbContext _dbContext;
+    private readonly DataContext _dbContext;
 
-    public CoffeeRepository(MyDbContext dbContext)
+    public CoffeeRepository(DataContext dbContext)
     {
         _dbContext = dbContext;
     }
@@ -41,8 +41,7 @@ public class CoffeeRepository : IBaseRepository<Coffee>, ICoffeeRepository
         Coffee newCoffee = new Coffee()
         {
             Name = entity.Name,
-            Price = entity.Price,
-            Size = entity.Size
+            Price = entity.Price
         };
         
         await _dbContext.Coffees.AddAsync(newCoffee);
@@ -54,13 +53,12 @@ public class CoffeeRepository : IBaseRepository<Coffee>, ICoffeeRepository
     public async Task<Coffee> UpdateAsync(Coffee entity)
     {
         var coffee = await _dbContext.Coffees
-            .FirstOrDefaultAsync(x => x.Name == entity.Name && (x.Size == entity.Size || x.Price == entity.Price));
+            .FirstOrDefaultAsync(x => x.Name == entity.Name && (x.Price == entity.Price));
 
         if (coffee == null)
             throw new NotFoundException(nameof(Coffee), entity.Name);
         
         coffee.Price = entity.Price;
-        coffee.Size = entity.Size;
         
         _dbContext.Coffees.Update(coffee);
         await _dbContext.SaveChangesAsync();
@@ -71,7 +69,7 @@ public class CoffeeRepository : IBaseRepository<Coffee>, ICoffeeRepository
     public async Task<bool> DeleteAsync(Coffee entity)
     {
         var coffee = await _dbContext.Coffees
-            .FirstOrDefaultAsync(x => x.Name == entity.Name && x.Price == entity.Price && x.Size == entity.Size);
+            .FirstOrDefaultAsync(x => x.Name == entity.Name && x.Price == entity.Price);
         
         if (coffee == null)
             throw new NotFoundException(nameof(Coffee), entity.Name);

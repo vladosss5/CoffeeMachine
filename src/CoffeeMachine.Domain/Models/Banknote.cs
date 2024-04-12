@@ -1,10 +1,8 @@
 ﻿namespace CoffeeMachine.Domain.Models;
 
-public class Banknote
+public class Banknote : BaseEntity
 {
-    public long Id { get; set; }
-    public int Par { get; set; }
-
-    public List<Transaction> Transactions { get; set; } = new List<Transaction>();
-    public List<BanknotesMachine> BanknotesMachines { get; set; } = new List<BanknotesMachine>();
+    public int Nominal  { get; set; }
+    public IEnumerable<Transaction> Transactions { get; set; } = new List<Transaction>();
+    public IEnumerable<BanknoteMachine> BanknotesMachines { get; set; } = new List<BanknoteMachine>();
 }

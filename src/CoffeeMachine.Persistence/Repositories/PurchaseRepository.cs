@@ -8,9 +8,9 @@ namespace CoffeeMachine.Persistence.Repositories;
 
 public class PurchaseRepository : IBaseRepository<Purchase>, IPurchaseRepository
 {
-    private readonly MyDbContext _dbContext;
+    private readonly DataContext _dbContext;
 
-    public PurchaseRepository(MyDbContext dbContext)
+    public PurchaseRepository(DataContext dbContext)
     {
         _dbContext = dbContext;
     }
@@ -32,9 +32,7 @@ public class PurchaseRepository : IBaseRepository<Purchase>, IPurchaseRepository
 
     public async Task<Purchase> AddAsync(Purchase entity)
     {
-        var coffee = await _dbContext.Coffees.FirstOrDefaultAsync(x => 
-            x.Name == entity.Coffee.Name && 
-            x.Size == entity.Coffee.Size);
+        var coffee = await _dbContext.Coffees.FirstOrDefaultAsync(x => x.Name == entity.Coffee.Name);
         
         var machine = await _dbContext.Machines.FirstOrDefaultAsync(x => 
             x.SerialNumber == entity.Machine.SerialNumber);
@@ -49,8 +47,8 @@ public class PurchaseRepository : IBaseRepository<Purchase>, IPurchaseRepository
         {
             Status = entity.Status,
             Date = DateTime.UtcNow,
-            IdCoffee = coffee.Id,
-            IdMachine = machine.Id
+            Coffee = coffee,
+            Machine = machine
         };
 
         await _dbContext.Purchases.AddAsync(newPurchase);
@@ -93,16 +91,13 @@ public class PurchaseRepository : IBaseRepository<Purchase>, IPurchaseRepository
 
     public async Task<List<Purchase>> GetByCoffeeAsync(Coffee entity)
     {
-        var coffee = await _dbContext.Coffees.FirstOrDefaultAsync(x => 
-            x.Name == entity.Name && 
-            x.Size == entity.Size && 
-            x.Size == entity.Size);
+        var coffee = await _dbContext.Coffees.FirstOrDefaultAsync(x => x.Name == entity.Name);
         
         if (coffee == null)
             throw new NotFoundException(nameof(Coffee), entity);
         
         return await _dbContext.Purchases
-            .Where(p => p.IdCoffee == coffee.Id)
+            .Where(p => p.Coffee == coffee)
             .ToListAsync();
     }
 
@@ -115,7 +110,7 @@ public class PurchaseRepository : IBaseRepository<Purchase>, IPurchaseRepository
             throw new NotFoundException(nameof(Machine), entity);
         
         return await _dbContext.Purchases
-            .Where(p => p.IdMachine == machine.Id)
+            .Where(p => p.Machine == machine)
             .ToListAsync();
     }
 

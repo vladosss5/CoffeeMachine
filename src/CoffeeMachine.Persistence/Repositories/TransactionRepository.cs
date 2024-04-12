@@ -8,9 +8,9 @@ namespace CoffeeMachine.Persistence.Repositories;
 
 public class TransactionRepository : IBaseRepository<Transaction>, ITransactionRepository
 {
-    private readonly MyDbContext _dbContext;
+    private readonly DataContext _dbContext;
 
-    public TransactionRepository(MyDbContext dbContext)
+    public TransactionRepository(DataContext dbContext)
     {
         _dbContext = dbContext;
     }
@@ -27,7 +27,7 @@ public class TransactionRepository : IBaseRepository<Transaction>, ITransactionR
 
     public async Task<Transaction> AddAsync(Transaction entity)
     {
-        var banknote = await _dbContext.Banknotes.FirstOrDefaultAsync(x => x.Par == entity.Banknote.Par);
+        var banknote = await _dbContext.Banknotes.FirstOrDefaultAsync(x => x.Nominal == entity.Banknote.Nominal);
         var purchase = await _dbContext.Purchases.FirstOrDefaultAsync(x => 
             x.Date == entity.Purchase.Date && 
             x.Status == entity.Purchase.Status &&
@@ -37,8 +37,8 @@ public class TransactionRepository : IBaseRepository<Transaction>, ITransactionR
         {
             Type = entity.Type,
             CountBanknotes = entity.CountBanknotes,
-            IdBanknote = banknote.Id,
-            IdPurchase = purchase.Id
+            Banknote = banknote,
+            Purchase = purchase
         };
         
         await _dbContext.Transactions.AddAsync(newTransaction);
@@ -82,7 +82,7 @@ public class TransactionRepository : IBaseRepository<Transaction>, ITransactionR
             throw new NotFoundException(nameof(Purchase), entity);
         
         return await _dbContext.Transactions
-            .Where(t => t.IdPurchase == purchase.Id)
+            .Where(t => t.Purchase == purchase)
             .ToListAsync();
     }
 }

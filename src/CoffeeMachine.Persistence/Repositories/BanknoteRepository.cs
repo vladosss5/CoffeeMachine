@@ -8,10 +8,10 @@ namespace CoffeeMachine.Persistence.Repositories;
 
 public class BanknoteRepository : IBaseRepository<Banknote>, IBanknoteRepository
 {
-    private readonly MyDbContext _dbContext;
+    private readonly DataContext _dbContext;
 
     
-    public BanknoteRepository(MyDbContext dbContext)
+    public BanknoteRepository(DataContext dbContext)
     {
         _dbContext = dbContext;
     }
@@ -51,14 +51,14 @@ public class BanknoteRepository : IBaseRepository<Banknote>, IBanknoteRepository
     /// <exception cref="AlreadyExistsException"></exception>
     public async Task<Banknote> AddAsync(Banknote entity)
     {
-        var identity = await _dbContext.Banknotes.AnyAsync(x => x.Par == entity.Par);
+        var identity = await _dbContext.Banknotes.AnyAsync(x => x.Nominal == entity.Nominal);
 
         if (identity != false)
-            throw new AlreadyExistsException(nameof(Banknote), entity.Par);
+            throw new AlreadyExistsException(nameof(Banknote), entity.Nominal);
         
         Banknote newBanknote = new Banknote()
         {
-            Par = entity.Par
+            Nominal = entity.Nominal
         };
         
         await _dbContext.Banknotes.AddAsync(newBanknote);
@@ -87,12 +87,31 @@ public class BanknoteRepository : IBaseRepository<Banknote>, IBanknoteRepository
 
     public async Task<Banknote> GetByParAsync(int par)
     {
-        var banknote = await _dbContext.Banknotes.FirstOrDefaultAsync(x => x.Par == par);
+        var banknote = await _dbContext.Banknotes.FirstOrDefaultAsync(x => x.Nominal == par);
         
         if (banknote == null)
             throw new NotFoundException(nameof(Banknote), par);
 
         return banknote;
+    }
+
+    public async Task<IEnumerable<Banknote>> GetBanknotesByMachineAsync(Machine machine)
+    {
+        var banknoteMachine = _dbContext.BanknotesMachines.Where(bm => machine.SerialNumber == bm.Machine.SerialNumber).ToList();
+        var banknotes = new List<Banknote>();
+
+        foreach (var b in _dbContext.Banknotes)
+        {
+            foreach (var bm in banknoteMachine)
+            {
+                if (b == bm.Banknote)
+                {
+                    banknotes.Add(b);
+                }
+            }
+        }
+        
+        return banknotes;
     }
 
     // public async Task<List<Banknote>> GetByPurchase(Purchase entity)

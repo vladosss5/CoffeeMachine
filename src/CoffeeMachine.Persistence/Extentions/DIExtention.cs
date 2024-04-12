@@ -16,13 +16,8 @@ public static class DIExtentions
         var connectionString = configuration.GetConnectionString("DefaultConnection"); //Для локальной бд
         // var connectionString = configuration.GetConnectionString("ConnectionPostgresContainer"); //Для Docker-compose
 
-        services.AddDbContext<MyDbContext>(options => options.UseNpgsql(connectionString));
+        services.AddDbContext<DataContext>(options => options.UseNpgsql(connectionString));
 
-        services.AddScoped<IBanknoteService, BanknoteService>();
-        services.AddScoped<ICoffeeService, CoffeeService>();
-        services.AddScoped<IMachineService, MachineService>();
-        services.AddScoped<ITransactionService, TransactionService>();
-        services.AddScoped<IPurchaseService, PurchaseService>();
         services.AddScoped<IBuyService, BuyService>();
         
         services.AddScoped<IMachineRepository, MachineRepository>();

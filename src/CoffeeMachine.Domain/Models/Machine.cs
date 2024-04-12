@@ -1,11 +1,11 @@
 ﻿namespace CoffeeMachine.Domain.Models;
 
-public class Machine
+public class Machine: BaseEntity
 {
-    public long Id { get; set; }
     public string? SerialNumber { get; set; }
     public string? Description { get; set; }
+    public int? Balance { get; set; }
 
-    public List<Purchase> Purchases { get; set; } = new List<Purchase>();
-    public List<BanknotesMachine> BanknotesMachines { get; set; } = new List<BanknotesMachine>();
+    public IEnumerable<Purchase> Purchases { get; set; } = new List<Purchase>();
+    public IEnumerable<BanknoteMachine> BanknotesMachines { get; set; } = new List<BanknoteMachine>();
 }

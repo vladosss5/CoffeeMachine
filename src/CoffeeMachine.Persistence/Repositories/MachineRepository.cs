@@ -8,9 +8,9 @@ namespace CoffeeMachine.Persistence.Repositories;
 
 public class MachineRepository : IBaseRepository<Machine>, IMachineRepository
 {
-    private readonly MyDbContext _dbContext;
+    private readonly DataContext _dbContext;
 
-    public MachineRepository(MyDbContext dbContext)
+    public MachineRepository(DataContext dbContext)
     {
         _dbContext = dbContext;
     }
@@ -58,6 +58,7 @@ public class MachineRepository : IBaseRepository<Machine>, IMachineRepository
             throw new NotFoundException(nameof(Machine), entity.SerialNumber);
         
         machine.Description = entity.Description;
+        machine.Balance = entity.Balance;
         
         _dbContext.Machines.Update(machine);
         await _dbContext.SaveChangesAsync();

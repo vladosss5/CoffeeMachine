@@ -6,7 +6,6 @@ namespace CoffeeMachine.Persistence.Services;
 
 public class BuyService : IBuyService
 {
-    private readonly IPurchaseService _purchaseService;
     private readonly IBanknoteRepository _banknoteRepository;
     public BuyService(IBanknoteRepository banknoteRepository)
     {
@@ -15,33 +14,67 @@ public class BuyService : IBuyService
     
     public async Task<Purchase> BuyAsync(Purchase purchase)
     {
+        List<Banknote> banknotes = purchase.Transactions.Select(t => t.Banknote).ToList();
+        var priceCoffee = purchase.Coffee.Price;
+        List<Banknote> delivery = CalculationDeliveryBanknotes(banknotes, priceCoffee);
+
+        CheckingDelivery(delivery, purchase.Machine);
+        
         return purchase;
     }
 
-    public async Task<IEnumerable<Banknote>> CalculationDeliveryBanknotes(List<Banknote> banknotesPay, int price)
+    private bool CheckingDelivery(List<Banknote> delivery, Machine machine)
+    {
+        var banknotesInMachine = _banknoteRepository.GetBanknotesByMachineAsync(machine).Result.ToList();
+
+        int counter = 0;
+
+        
+        foreach (var bim in banknotesInMachine)
+        {
+            foreach (var deliv in delivery)
+            {
+                if (bim == deliv)
+                {
+                    counter++;
+                    break;
+                }
+            }
+        }
+
+        if (counter == delivery.Count)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public List<Banknote> CalculationDeliveryBanknotes(List<Banknote> banknotesPay, int price)
     {
         List<Banknote> banknotes = _banknoteRepository.GetAllAsync().Result.ToList();
         List<Banknote> deliveryBanknotes = new List<Banknote>();
 
-        int delivery = 0;
-        
+        int sumBanknotes = 0;
         foreach (var banknote in banknotesPay)
         {
-            delivery -= banknote.Par;
+            sumBanknotes += banknote.Nominal;
         }
 
-        List<int> priceDischarge = SplitPrice(delivery);
+        price = sumBanknotes - price;
+
+        List<int> priceDischarge = SplitPrice(price);
 
         foreach (var del in priceDischarge)
         {
             int temp = del;
             foreach (var banknote in banknotes)
             {
-                if (banknote.Par <= temp && 
-                    temp.ToString().Length == banknote.Par.ToString().Length)
+                if (banknote.Nominal <= temp && 
+                    temp.ToString().Length == banknote.Nominal.ToString().Length)
                 {
                     deliveryBanknotes.Add(banknote);
-                    temp -= banknote.Par;
+                    temp -= banknote.Nominal;
                 }
             }
         }
