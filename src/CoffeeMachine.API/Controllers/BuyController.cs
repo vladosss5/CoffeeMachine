@@ -13,18 +13,33 @@ namespace CoffeeMachine.API.Controllers
     public class BuyController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly IBuyService _buyService;
+        private readonly IOrderService _orderService;
 
-        public BuyController(IMapper mapper, IBuyService buyService)
+        public BuyController(IMapper mapper, IOrderService orderService)
         {
             _mapper = mapper;
-            _buyService = buyService;
+            _orderService = orderService;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Buy([FromBody] PurchaseRequest request)
+        public async Task<IActionResult> Buy([FromBody] OrderRequest request)
         {
-            Purchase purchase = new Purchase()
+            List<Transaction> transactions = new List<Transaction>();
+            
+            foreach (var banknote in request.Banknotes)
+            {
+                var transaction = new Transaction()
+                {
+                    Banknote = new Banknote()
+                    {
+                        Nominal = banknote.Nominal
+                    },
+                    Type = true,
+                };
+                transactions.Add(transaction);
+            }
+            
+            Order order = new Order()
             {
                 Coffee = new Coffee()
                 {
@@ -35,23 +50,11 @@ namespace CoffeeMachine.API.Controllers
                 {
                     SerialNumber = request.Machine.SerialNumber
                 },
+                Transactions = transactions
             };
-
-            foreach (var banknote in request.Banknotes)
-            {
-                var transaction = new Transaction()
-                {
-                    Banknote = new Banknote()
-                    {
-                        Par = banknote.Par
-                    },
-                    Type = true,
-                };
-                purchase.Transactions.Add(transaction);
-            }
             
             
-            var buy = _buyService.BuyAsync(purchase);
+            var buy = _orderService.CreateOrderAsync(order);
             
             return Ok(buy);
         }

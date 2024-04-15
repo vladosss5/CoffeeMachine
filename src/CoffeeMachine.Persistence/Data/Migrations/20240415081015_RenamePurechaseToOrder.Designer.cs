@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CoffeeMachine.Persistence.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240412070811_ReturnEntityBanknoteMachine")]
-    partial class ReturnEntityBanknoteMachine
+    [Migration("20240415081015_RenamePurechaseToOrder")]
+    partial class RenamePurechaseToOrder
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,7 +33,7 @@ namespace CoffeeMachine.Persistence.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
 
-                    b.Property<int>("Par")
+                    b.Property<int>("Nominal")
                         .HasColumnType("integer");
 
                     b.HasKey("Id")
@@ -52,6 +52,9 @@ namespace CoffeeMachine.Persistence.Data.Migrations
 
                     b.Property<long>("BanknoteId")
                         .HasColumnType("bigint");
+
+                    b.Property<int>("CountBanknote")
+                        .HasColumnType("integer");
 
                     b.Property<long>("MachineId")
                         .HasColumnType("bigint");
@@ -88,6 +91,30 @@ namespace CoffeeMachine.Persistence.Data.Migrations
                     b.ToTable("Coffees");
                 });
 
+            modelBuilder.Entity("CoffeeMachine.Domain.Models.CoffeeInMachine", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("CoffeeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("MachineId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id")
+                        .HasName("coffee_in_machine_pk");
+
+                    b.HasIndex("CoffeeId");
+
+                    b.HasIndex("MachineId");
+
+                    b.ToTable("CoffeesInMachines");
+                });
+
             modelBuilder.Entity("CoffeeMachine.Domain.Models.Machine", b =>
                 {
                     b.Property<long>("Id")
@@ -113,7 +140,7 @@ namespace CoffeeMachine.Persistence.Data.Migrations
                     b.ToTable("Machines");
                 });
 
-            modelBuilder.Entity("CoffeeMachine.Domain.Models.Purchase", b =>
+            modelBuilder.Entity("CoffeeMachine.Domain.Models.Order", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -142,7 +169,7 @@ namespace CoffeeMachine.Persistence.Data.Migrations
 
                     b.HasIndex("MachineId");
 
-                    b.ToTable("Purchases");
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("CoffeeMachine.Domain.Models.Transaction", b =>
@@ -159,7 +186,7 @@ namespace CoffeeMachine.Persistence.Data.Migrations
                     b.Property<int>("CountBanknotes")
                         .HasColumnType("integer");
 
-                    b.Property<long>("PurchaseId")
+                    b.Property<long>("OrderId")
                         .HasColumnType("bigint");
 
                     b.Property<bool>("Type")
@@ -170,7 +197,7 @@ namespace CoffeeMachine.Persistence.Data.Migrations
 
                     b.HasIndex("BanknoteId");
 
-                    b.HasIndex("PurchaseId");
+                    b.HasIndex("OrderId");
 
                     b.ToTable("Transactions");
                 });
@@ -196,7 +223,28 @@ namespace CoffeeMachine.Persistence.Data.Migrations
                     b.Navigation("Machine");
                 });
 
-            modelBuilder.Entity("CoffeeMachine.Domain.Models.Purchase", b =>
+            modelBuilder.Entity("CoffeeMachine.Domain.Models.CoffeeInMachine", b =>
+                {
+                    b.HasOne("CoffeeMachine.Domain.Models.Coffee", "Coffee")
+                        .WithMany("CoffeesInMachines")
+                        .HasForeignKey("CoffeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("coffee_in_machine_coffee_fk");
+
+                    b.HasOne("CoffeeMachine.Domain.Models.Machine", "Machine")
+                        .WithMany("CoffeesInMachines")
+                        .HasForeignKey("MachineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("coffee_in_machine_machine_fk");
+
+                    b.Navigation("Coffee");
+
+                    b.Navigation("Machine");
+                });
+
+            modelBuilder.Entity("CoffeeMachine.Domain.Models.Order", b =>
                 {
                     b.HasOne("CoffeeMachine.Domain.Models.Coffee", "Coffee")
                         .WithMany("Purchases")
@@ -226,16 +274,16 @@ namespace CoffeeMachine.Persistence.Data.Migrations
                         .IsRequired()
                         .HasConstraintName("transaction_banknote_fk");
 
-                    b.HasOne("CoffeeMachine.Domain.Models.Purchase", "Purchase")
+                    b.HasOne("CoffeeMachine.Domain.Models.Order", "Order")
                         .WithMany("Transactions")
-                        .HasForeignKey("PurchaseId")
+                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("transaction_purchase_fk");
 
                     b.Navigation("Banknote");
 
-                    b.Navigation("Purchase");
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("CoffeeMachine.Domain.Models.Banknote", b =>
@@ -247,6 +295,8 @@ namespace CoffeeMachine.Persistence.Data.Migrations
 
             modelBuilder.Entity("CoffeeMachine.Domain.Models.Coffee", b =>
                 {
+                    b.Navigation("CoffeesInMachines");
+
                     b.Navigation("Purchases");
                 });
 
@@ -254,10 +304,12 @@ namespace CoffeeMachine.Persistence.Data.Migrations
                 {
                     b.Navigation("BanknotesMachines");
 
+                    b.Navigation("CoffeesInMachines");
+
                     b.Navigation("Purchases");
                 });
 
-            modelBuilder.Entity("CoffeeMachine.Domain.Models.Purchase", b =>
+            modelBuilder.Entity("CoffeeMachine.Domain.Models.Order", b =>
                 {
                     b.Navigation("Transactions");
                 });

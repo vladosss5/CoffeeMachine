@@ -90,4 +90,23 @@ public class MachineRepository : IBaseRepository<Machine>, IMachineRepository
         
         return machine;
     }
+
+    public async Task<int> UpdateBalanceAsync(Machine entity)
+    {
+        var machine = GetBySerialNumberAsync(entity.SerialNumber).Result;
+        int balance = 0;
+        List<BanknoteMachine> banknoteMachines = await _dbContext.BanknotesMachines.Where(bm =>
+            bm.Machine.SerialNumber == machine.SerialNumber).ToListAsync();
+
+        foreach (var bm in banknoteMachines)
+        {
+            balance += bm.Banknote.Nominal * bm.CountBanknote;
+        }
+        
+        machine.Balance = balance;
+        _dbContext.Machines.Update(machine);
+        await _dbContext.SaveChangesAsync();
+        
+        return balance;
+    }
 }

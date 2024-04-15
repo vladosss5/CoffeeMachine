@@ -8,7 +8,7 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<PurchaseRequest, Purchase>();
+        CreateMap<OrderRequest, Order>();
         // CreateMap<Purchase, PurchaseDto>();
         CreateMap<BanknoteDto, Banknote>();
         CreateMap<CoffeeDto, Coffee>();

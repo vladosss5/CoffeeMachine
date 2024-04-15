@@ -2,12 +2,12 @@
 
 namespace CoffeeMachine.Infrastructure.Interfaces.IServices;
 
-public interface IBuyService
+public interface IOrderService
 {
     /// <summary>
     /// Покупка - хз пока
     /// </summary>
-    /// <param name="purchase"></param>
+    /// <param name="order"></param>
     /// <returns>Покупку</returns>
-    public Task<Purchase> BuyAsync(Purchase purchase);
+    public Task<Order> CreateOrderAsync(Order order);
 }

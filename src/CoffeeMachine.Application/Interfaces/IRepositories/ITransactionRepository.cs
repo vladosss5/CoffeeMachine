@@ -14,7 +14,7 @@ public interface ITransactionRepository : IBaseRepository<Transaction>
     /// <summary>
     /// Получить транзакции покупки
     /// </summary>
-    /// <param name="purchase"></param>
+    /// <param name="order"></param>
     /// <returns>Список транзакций</returns>
-    public Task<List<Transaction>> GetByPurchaseAsync(Purchase purchase);
+    public Task<List<Transaction>> GetByPurchaseAsync(Order order);
 }

@@ -28,17 +28,17 @@ public class TransactionRepository : IBaseRepository<Transaction>, ITransactionR
     public async Task<Transaction> AddAsync(Transaction entity)
     {
         var banknote = await _dbContext.Banknotes.FirstOrDefaultAsync(x => x.Nominal == entity.Banknote.Nominal);
-        var purchase = await _dbContext.Purchases.FirstOrDefaultAsync(x => 
-            x.Date == entity.Purchase.Date && 
-            x.Status == entity.Purchase.Status &&
-            x.Machine.SerialNumber == entity.Purchase.Machine.SerialNumber);
+        var purchase = await _dbContext.Orders.FirstOrDefaultAsync(x => 
+            x.Date == entity.Order.Date && 
+            x.Status == entity.Order.Status &&
+            x.Machine.SerialNumber == entity.Order.Machine.SerialNumber);
 
         var newTransaction = new Transaction()
         {
             Type = entity.Type,
-            CountBanknotes = entity.CountBanknotes,
+            // CountBanknotes = entity.CountBanknotes,
             Banknote = banknote,
-            Purchase = purchase
+            Order = purchase
         };
         
         await _dbContext.Transactions.AddAsync(newTransaction);
@@ -56,7 +56,7 @@ public class TransactionRepository : IBaseRepository<Transaction>, ITransactionR
     {
         var deletingTransaction = _dbContext.Transactions.FirstOrDefault(x => 
             x.Type == entity.Type &&
-            x.Purchase.Date == entity.Purchase.Date);
+            x.Order.Date == entity.Order.Date);
         
         if (deletingTransaction == null)
             throw new NotFoundException(nameof(Transaction), entity);
@@ -72,17 +72,17 @@ public class TransactionRepository : IBaseRepository<Transaction>, ITransactionR
         return await _dbContext.Transactions.Where(x => x.Type == type).ToListAsync();
     }
 
-    public async Task<List<Transaction>> GetByPurchaseAsync(Purchase entity)
+    public async Task<List<Transaction>> GetByPurchaseAsync(Order entity)
     {
-        var purchase = await _dbContext.Purchases.FirstOrDefaultAsync(x => 
+        var purchase = await _dbContext.Orders.FirstOrDefaultAsync(x => 
             x.Date == entity.Date && 
             x.Machine.SerialNumber == entity.Machine.SerialNumber);
         
         if (purchase == null)
-            throw new NotFoundException(nameof(Purchase), entity);
+            throw new NotFoundException(nameof(Order), entity);
         
         return await _dbContext.Transactions
-            .Where(t => t.Purchase == purchase)
+            .Where(t => t.Order == purchase)
             .ToListAsync();
     }
 }

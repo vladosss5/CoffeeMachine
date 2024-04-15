@@ -11,7 +11,7 @@ public class BanknoteRepository : IBaseRepository<Banknote>, IBanknoteRepository
     private readonly DataContext _dbContext;
 
     
-    public BanknoteRepository(DataContext dbContext)
+    public BanknoteRepository(DataContext dbContext, IMachineRepository machineRepository)
     {
         _dbContext = dbContext;
     }
@@ -85,7 +85,7 @@ public class BanknoteRepository : IBaseRepository<Banknote>, IBanknoteRepository
         return true;
     }
 
-    public async Task<Banknote> GetByParAsync(int par)
+    public async Task<Banknote> GetByNominalAsync(int par)
     {
         var banknote = await _dbContext.Banknotes.FirstOrDefaultAsync(x => x.Nominal == par);
         
@@ -114,9 +114,69 @@ public class BanknoteRepository : IBaseRepository<Banknote>, IBanknoteRepository
         return banknotes;
     }
 
-    // public async Task<List<Banknote>> GetByPurchase(Purchase entity)
-    // {
-    //      // var purchase = _dbContext.Purchases.F
-    //     // return await _dbContext.Banknotes.Where(b => b.).ToListAsync();
-    // }
+    public async Task<IEnumerable<BanknoteMachine>> SubtractBanknotesFromMachineAsync(IEnumerable<Banknote> banknotes, Machine machine)
+    {
+        var banknoteMachines = await _dbContext.BanknotesMachines.Include(bm => bm.Machine).ToListAsync();
+
+        foreach (var bm in banknoteMachines)
+        {
+            foreach (var banknote in banknotes)
+            {
+                if (bm.Machine.SerialNumber == machine.SerialNumber && bm.Banknote.Nominal == banknote.Nominal)
+                {
+                    if (bm.CountBanknote > 1)
+                    {
+                        bm.CountBanknote--;
+                        _dbContext.BanknotesMachines.Update(bm);
+                    }
+                    else
+                    {
+                        _dbContext.Remove(bm);
+                    }
+                }   
+            }
+        }
+        
+        await _dbContext.SaveChangesAsync();
+        
+        return banknoteMachines;
+    }
+
+    public async Task<IEnumerable<Banknote>> AddBanknotesToMachineAsync(IEnumerable<Transaction> transactions, Machine machine)
+    {
+        var banknoteMachines = await _dbContext.BanknotesMachines
+            .Include(bm => bm.Machine)
+            .Where(bm => bm.Machine.SerialNumber == machine.SerialNumber)
+            .ToListAsync();
+        
+        var banknotes = new List<Banknote>();
+        
+        foreach (var transaction in transactions)
+        {
+            bool found = false;
+        
+            foreach (var bm in banknoteMachines)
+            {
+                if (bm.Banknote == transaction.Banknote && bm.Machine == machine)
+                {
+                    bm.CountBanknote++;
+                    _dbContext.BanknotesMachines.Update(bm);
+                    found = true;
+                    break;
+                }
+            }
+        
+            if (!found)
+            {
+                BanknoteMachine newBM = new BanknoteMachine
+                {
+                    Banknote = transaction.Banknote,
+                    CountBanknote = 1,
+                    Machine = machine
+                };
+                await _dbContext.BanknotesMachines.AddAsync(newBM);
+            }
+        }
+        return banknotes;
+    }
 }

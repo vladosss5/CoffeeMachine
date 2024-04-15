@@ -1,6 +1,6 @@
 ﻿namespace CoffeeMachine.API.DTO;
 
-public class PurchaseResponce
+public class OrderResponce
 {
     public string Status { get; set; }
     public DateTime Date { get; set; }

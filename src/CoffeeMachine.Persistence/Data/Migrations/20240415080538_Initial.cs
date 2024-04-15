@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CoffeeMachine.Persistence.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialRemake : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,7 +18,7 @@ namespace CoffeeMachine.Persistence.Data.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
-                    Par = table.Column<int>(type: "integer", nullable: false)
+                    Nominal = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -55,24 +55,53 @@ namespace CoffeeMachine.Persistence.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "BanknoteMachine",
+                name: "BanknotesMachines",
                 columns: table => new
                 {
-                    BanknotesId = table.Column<long>(type: "bigint", nullable: false),
-                    MachinesId = table.Column<long>(type: "bigint", nullable: false)
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
+                    MachineId = table.Column<long>(type: "bigint", nullable: false),
+                    BanknoteId = table.Column<long>(type: "bigint", nullable: false),
+                    CountBanknote = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BanknoteMachine", x => new { x.BanknotesId, x.MachinesId });
+                    table.PrimaryKey("banknotes_machines_pk", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BanknoteMachine_Banknotes_BanknotesId",
-                        column: x => x.BanknotesId,
+                        name: "banknotes_machines_banknote_fk",
+                        column: x => x.BanknoteId,
                         principalTable: "Banknotes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_BanknoteMachine_Machines_MachinesId",
-                        column: x => x.MachinesId,
+                        name: "banknotes_machines_machine_fk",
+                        column: x => x.MachineId,
+                        principalTable: "Machines",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CoffeesInMachines",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
+                    MachineId = table.Column<long>(type: "bigint", nullable: false),
+                    CoffeeId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("coffee_in_machine_pk", x => x.Id);
+                    table.ForeignKey(
+                        name: "coffee_in_machine_coffee_fk",
+                        column: x => x.CoffeeId,
+                        principalTable: "Coffees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "coffee_in_machine_machine_fk",
+                        column: x => x.MachineId,
                         principalTable: "Machines",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -115,7 +144,7 @@ namespace CoffeeMachine.Persistence.Data.Migrations
                     Type = table.Column<bool>(type: "boolean", nullable: false),
                     CountBanknotes = table.Column<int>(type: "integer", nullable: false),
                     BanknoteId = table.Column<long>(type: "bigint", nullable: false),
-                    PurchaseId = table.Column<long>(type: "bigint", nullable: false)
+                    OrderId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -128,16 +157,31 @@ namespace CoffeeMachine.Persistence.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "transaction_purchase_fk",
-                        column: x => x.PurchaseId,
+                        column: x => x.OrderId,
                         principalTable: "Purchases",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_BanknoteMachine_MachinesId",
-                table: "BanknoteMachine",
-                column: "MachinesId");
+                name: "IX_BanknotesMachines_BanknoteId",
+                table: "BanknotesMachines",
+                column: "BanknoteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BanknotesMachines_MachineId",
+                table: "BanknotesMachines",
+                column: "MachineId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CoffeesInMachines_CoffeeId",
+                table: "CoffeesInMachines",
+                column: "CoffeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CoffeesInMachines_MachineId",
+                table: "CoffeesInMachines",
+                column: "MachineId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Purchases_CoffeeId",
@@ -155,16 +199,19 @@ namespace CoffeeMachine.Persistence.Data.Migrations
                 column: "BanknoteId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Transactions_PurchaseId",
+                name: "IX_Transactions_OrderId",
                 table: "Transactions",
-                column: "PurchaseId");
+                column: "OrderId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "BanknoteMachine");
+                name: "BanknotesMachines");
+
+            migrationBuilder.DropTable(
+                name: "CoffeesInMachines");
 
             migrationBuilder.DropTable(
                 name: "Transactions");

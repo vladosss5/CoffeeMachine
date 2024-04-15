@@ -18,9 +18,10 @@ public partial class DataContext : DbContext
     public virtual DbSet<Banknote> Banknotes { get; set; }
     public virtual DbSet<BanknoteMachine> BanknotesMachines { get; set; }
     public virtual DbSet<Machine> Machines { get; set; }
-    public virtual DbSet<Transaction> Transactions { get; set; }
+    public virtual DbSet<CoffeeInMachine> CoffeesInMachines { get; set; }
     public virtual DbSet<Coffee> Coffees { get; set; }
-    public virtual DbSet<Purchase> Purchases { get; set; }
+    public virtual DbSet<Transaction> Transactions { get; set; }
+    public virtual DbSet<Order> Orders { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -52,20 +53,19 @@ public partial class DataContext : DbContext
             entity.Property(e => e.Id).UseIdentityAlwaysColumn();
             entity.Property(e => e.SerialNumber).IsRequired().HasMaxLength(30);
         });
-        
-        modelBuilder.Entity<Transaction>(entity =>
+
+        modelBuilder.Entity<CoffeeInMachine>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("transaction_pk");
+            entity.HasKey(e => e.Id).HasName("coffee_in_machine_pk");
             entity.Property(e => e.Id).UseIdentityAlwaysColumn();
-            entity.Property(e => e.Type).IsRequired();
-            entity.HasOne(e => e.Banknote)
-                .WithMany(e => e.Transactions)
+            entity.HasOne(e => e.Machine)
+                .WithMany(e => e.CoffeesInMachines)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("transaction_banknote_fk");
-            entity.HasOne(e => e.Purchase)
-                .WithMany(e => e.Transactions)
+                .HasConstraintName("coffee_in_machine_machine_fk");
+            entity.HasOne(e => e.Coffee)
+                .WithMany(e => e.CoffeesInMachines)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("transaction_purchase_fk");
+                .HasConstraintName("coffee_in_machine_coffee_fk");
         });
         
         modelBuilder.Entity<Coffee>(entity =>
@@ -76,7 +76,22 @@ public partial class DataContext : DbContext
             entity.Property(e=> e.Price).IsRequired();
         });
         
-        modelBuilder.Entity<Purchase>(entity =>
+        modelBuilder.Entity<Transaction>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("transaction_pk");
+            entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+            entity.Property(e => e.Type).IsRequired();
+            entity.HasOne(e => e.Banknote)
+                .WithMany(e => e.Transactions)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("transaction_banknote_fk");
+            entity.HasOne(e => e.Order)
+                .WithMany(e => e.Transactions)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("transaction_purchase_fk");
+        });
+        
+        modelBuilder.Entity<Order>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("purchase_pk");
             entity.Property(e => e.Id).UseIdentityAlwaysColumn();

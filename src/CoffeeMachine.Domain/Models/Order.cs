@@ -1,6 +1,6 @@
 ﻿namespace CoffeeMachine.Domain.Models;
 
-public class Purchase : BaseEntity
+public class Order : BaseEntity
 {
     public string Status { get; set; }
     public DateTime Date { get; set; }

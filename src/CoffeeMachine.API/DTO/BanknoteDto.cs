@@ -4,5 +4,5 @@ namespace CoffeeMachine.API.DTO;
 
 public class BanknoteDto
 {
-    public int Par { get; set; }
+    public int Nominal { get; set; }
 }

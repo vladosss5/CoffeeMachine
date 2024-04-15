@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CoffeeMachine.Persistence.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240412062617_InitialRemake")]
-    partial class InitialRemake
+    [Migration("20240415080538_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,21 +25,6 @@ namespace CoffeeMachine.Persistence.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("BanknoteMachine", b =>
-                {
-                    b.Property<long>("BanknotesId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("MachinesId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("BanknotesId", "MachinesId");
-
-                    b.HasIndex("MachinesId");
-
-                    b.ToTable("BanknoteMachine");
-                });
-
             modelBuilder.Entity("CoffeeMachine.Domain.Models.Banknote", b =>
                 {
                     b.Property<long>("Id")
@@ -48,13 +33,40 @@ namespace CoffeeMachine.Persistence.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
 
-                    b.Property<int>("Par")
+                    b.Property<int>("Nominal")
                         .HasColumnType("integer");
 
                     b.HasKey("Id")
                         .HasName("money_pk");
 
                     b.ToTable("Banknotes");
+                });
+
+            modelBuilder.Entity("CoffeeMachine.Domain.Models.BanknoteMachine", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("BanknoteId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("CountBanknote")
+                        .HasColumnType("integer");
+
+                    b.Property<long>("MachineId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id")
+                        .HasName("banknotes_machines_pk");
+
+                    b.HasIndex("BanknoteId");
+
+                    b.HasIndex("MachineId");
+
+                    b.ToTable("BanknotesMachines");
                 });
 
             modelBuilder.Entity("CoffeeMachine.Domain.Models.Coffee", b =>
@@ -77,6 +89,30 @@ namespace CoffeeMachine.Persistence.Data.Migrations
                         .HasName("coffee_pk");
 
                     b.ToTable("Coffees");
+                });
+
+            modelBuilder.Entity("CoffeeMachine.Domain.Models.CoffeeInMachine", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("CoffeeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("MachineId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id")
+                        .HasName("coffee_in_machine_pk");
+
+                    b.HasIndex("CoffeeId");
+
+                    b.HasIndex("MachineId");
+
+                    b.ToTable("CoffeesInMachines");
                 });
 
             modelBuilder.Entity("CoffeeMachine.Domain.Models.Machine", b =>
@@ -104,7 +140,7 @@ namespace CoffeeMachine.Persistence.Data.Migrations
                     b.ToTable("Machines");
                 });
 
-            modelBuilder.Entity("CoffeeMachine.Domain.Models.Purchase", b =>
+            modelBuilder.Entity("CoffeeMachine.Domain.Models.Order", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -150,7 +186,7 @@ namespace CoffeeMachine.Persistence.Data.Migrations
                     b.Property<int>("CountBanknotes")
                         .HasColumnType("integer");
 
-                    b.Property<long>("PurchaseId")
+                    b.Property<long>("OrderId")
                         .HasColumnType("bigint");
 
                     b.Property<bool>("Type")
@@ -161,27 +197,54 @@ namespace CoffeeMachine.Persistence.Data.Migrations
 
                     b.HasIndex("BanknoteId");
 
-                    b.HasIndex("PurchaseId");
+                    b.HasIndex("OrderId");
 
                     b.ToTable("Transactions");
                 });
 
-            modelBuilder.Entity("BanknoteMachine", b =>
+            modelBuilder.Entity("CoffeeMachine.Domain.Models.BanknoteMachine", b =>
                 {
-                    b.HasOne("CoffeeMachine.Domain.Models.Banknote", null)
-                        .WithMany()
-                        .HasForeignKey("BanknotesId")
+                    b.HasOne("CoffeeMachine.Domain.Models.Banknote", "Banknote")
+                        .WithMany("BanknotesMachines")
+                        .HasForeignKey("BanknoteId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("banknotes_machines_banknote_fk");
 
-                    b.HasOne("CoffeeMachine.Domain.Models.Machine", null)
-                        .WithMany()
-                        .HasForeignKey("MachinesId")
+                    b.HasOne("CoffeeMachine.Domain.Models.Machine", "Machine")
+                        .WithMany("BanknotesMachines")
+                        .HasForeignKey("MachineId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("banknotes_machines_machine_fk");
+
+                    b.Navigation("Banknote");
+
+                    b.Navigation("Machine");
                 });
 
-            modelBuilder.Entity("CoffeeMachine.Domain.Models.Purchase", b =>
+            modelBuilder.Entity("CoffeeMachine.Domain.Models.CoffeeInMachine", b =>
+                {
+                    b.HasOne("CoffeeMachine.Domain.Models.Coffee", "Coffee")
+                        .WithMany("CoffeesInMachines")
+                        .HasForeignKey("CoffeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("coffee_in_machine_coffee_fk");
+
+                    b.HasOne("CoffeeMachine.Domain.Models.Machine", "Machine")
+                        .WithMany("CoffeesInMachines")
+                        .HasForeignKey("MachineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("coffee_in_machine_machine_fk");
+
+                    b.Navigation("Coffee");
+
+                    b.Navigation("Machine");
+                });
+
+            modelBuilder.Entity("CoffeeMachine.Domain.Models.Order", b =>
                 {
                     b.HasOne("CoffeeMachine.Domain.Models.Coffee", "Coffee")
                         .WithMany("Purchases")
@@ -211,34 +274,42 @@ namespace CoffeeMachine.Persistence.Data.Migrations
                         .IsRequired()
                         .HasConstraintName("transaction_banknote_fk");
 
-                    b.HasOne("CoffeeMachine.Domain.Models.Purchase", "Purchase")
+                    b.HasOne("CoffeeMachine.Domain.Models.Order", "Order")
                         .WithMany("Transactions")
-                        .HasForeignKey("PurchaseId")
+                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("transaction_purchase_fk");
 
                     b.Navigation("Banknote");
 
-                    b.Navigation("Purchase");
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("CoffeeMachine.Domain.Models.Banknote", b =>
                 {
+                    b.Navigation("BanknotesMachines");
+
                     b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("CoffeeMachine.Domain.Models.Coffee", b =>
                 {
+                    b.Navigation("CoffeesInMachines");
+
                     b.Navigation("Purchases");
                 });
 
             modelBuilder.Entity("CoffeeMachine.Domain.Models.Machine", b =>
                 {
+                    b.Navigation("BanknotesMachines");
+
+                    b.Navigation("CoffeesInMachines");
+
                     b.Navigation("Purchases");
                 });
 
-            modelBuilder.Entity("CoffeeMachine.Domain.Models.Purchase", b =>
+            modelBuilder.Entity("CoffeeMachine.Domain.Models.Order", b =>
                 {
                     b.Navigation("Transactions");
                 });

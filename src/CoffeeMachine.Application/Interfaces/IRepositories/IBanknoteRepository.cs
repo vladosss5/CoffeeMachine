@@ -9,7 +9,7 @@ public interface IBanknoteRepository : IBaseRepository<Banknote>
     /// </summary>
     /// <param name="par"></param>
     /// <returns>Банкноту</returns>
-    public Task<Banknote> GetByParAsync(int par);
+    public Task<Banknote> GetByNominalAsync(int par);
 
     /// <summary>
     /// Получение банкнот в автомате
@@ -17,4 +17,6 @@ public interface IBanknoteRepository : IBaseRepository<Banknote>
     /// <param name="machine"></param>
     /// <returns></returns>
     public Task<IEnumerable<Banknote>> GetBanknotesByMachineAsync(Machine machine);
+    public Task<IEnumerable<BanknoteMachine>> SubtractBanknotesFromMachineAsync(IEnumerable<Banknote> banknotes, Machine machine);
+    public Task<IEnumerable<Banknote>> AddBanknotesToMachineAsync(IEnumerable<Transaction> transactions, Machine machine);
 }

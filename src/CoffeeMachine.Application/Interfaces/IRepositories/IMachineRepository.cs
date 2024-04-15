@@ -10,4 +10,5 @@ public interface IMachineRepository : IBaseRepository<Machine>
     /// <param name="serialNumber"></param>
     /// <returns>Кофемашина</returns>
     public Task<Machine> GetBySerialNumberAsync(string serialNumber);
+    public Task<int> UpdateBalanceAsync(Machine machine);
 }
