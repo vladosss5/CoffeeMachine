@@ -1,6 +1,6 @@
-﻿using CoffeeMachine.Domain.Models;
+using CoffeeMachine.Core.Models;
 
-namespace CoffeeMachine.Infrastructure.Interfaces.IRepositories;
+namespace CoffeeMachine.Application.Interfaces.IRepositories;
 
 public interface IOrderRepository : IBaseRepository<Order>
 {

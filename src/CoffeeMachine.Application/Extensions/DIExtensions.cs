@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace CoffeeMachine.Infrastructure.Extensions;
+namespace CoffeeMachine.Application.Extensions;
 
 public static class DIExtensions
 {

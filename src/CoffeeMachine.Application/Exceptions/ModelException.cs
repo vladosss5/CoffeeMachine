@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace CoffeeMachine.Infrastructure.Exceptions;
+namespace CoffeeMachine.Application.Exceptions;
 
 public class ModelException : Exception
 {

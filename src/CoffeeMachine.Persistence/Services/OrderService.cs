@@ -1,6 +1,6 @@
-﻿using CoffeeMachine.Domain.Models;
-using CoffeeMachine.Infrastructure.Interfaces.IRepositories;
-using CoffeeMachine.Infrastructure.Interfaces.IServices;
+using CoffeeMachine.Application.Interfaces.IRepositories;
+using CoffeeMachine.Application.Interfaces.IServices;
+using CoffeeMachine.Core.Models;
 
 namespace CoffeeMachine.Persistence.Services;
 
@@ -10,48 +10,87 @@ public class OrderService : IOrderService
     private readonly IMachineRepository _machineRepository;
     private readonly IOrderRepository _orderRepository;
     private readonly ITransactionRepository _transactionRepository;
+    private readonly ICoffeeRepository _coffeeRepository;
+    
     public OrderService(IBanknoteRepository banknoteRepository, IMachineRepository machineRepository, 
-        IOrderRepository orderRepository, ITransactionRepository transactionRepository)
+        IOrderRepository orderRepository, ITransactionRepository transactionRepository, ICoffeeRepository coffeeRepository)
     {
         _banknoteRepository = banknoteRepository;
         _machineRepository = machineRepository;
         _orderRepository = orderRepository;
         _transactionRepository = transactionRepository;
+        _coffeeRepository = coffeeRepository;
     }
     
-    public async Task<Order> CreateOrderAsync(Order order)
+    /// <summary>
+    /// Метод для создания заказа
+    /// </summary>
+    /// <param name="orderRequest"></param>
+    /// <returns></returns>
+    public async Task<Order> CreateOrderAsync(Order orderRequest)
     {
-        // await _banknoteRepository.AddBanknotesToMachineAsync(order.Transactions, order.Machine); //Надо фиксить
-        
-        foreach (var transaction in order.Transactions) // Добавляем транзакции оплаты
+        var order = new Order()
         {
-            transaction.Type = true;
-            _transactionRepository.AddAsync(transaction);
-        }
+            Machine = await _machineRepository.GetBySerialNumberAsync(orderRequest.Machine.SerialNumber),
+            Coffee = await _coffeeRepository.GetByNameAsync(orderRequest.Coffee.Name),
+            Status = "Принято",
+        };
         
-        List<Banknote> deliveredBanknotes = CalculateChange(order.Coffee.Price, order.Transactions, order.Machine);
-        await _banknoteRepository.SubtractBanknotesFromMachineAsync(deliveredBanknotes, order.Machine);
+        order = await _orderRepository.AddAsync(order);
         
-        await _machineRepository.UpdateBalanceAsync(order.Machine);
-
-        foreach (var transaction in order.Transactions) //Добавляем транзакции сдачи
+        foreach (var transaction in orderRequest.Transactions)
         {
-            transaction.Type = false;
+            transaction.Order = order;
             await _transactionRepository.AddAsync(transaction);
         }
         
-        await _orderRepository.AddAsync(order);
+        var banknotesPay = order.Transactions.Select(t => t.Banknote).ToList();
+        await _banknoteRepository.AddBanknotesToMachineAsync(banknotesPay, order.Machine);
+        order.Status = "Оплачено";
+        await _orderRepository.UpdateAsync(order);
         
+        var delivery = await CalculateChange(order.Coffee.Price, order.Transactions, order.Machine);
+        
+        await _banknoteRepository.SubtractBanknotesFromMachineAsync(delivery, order.Machine);
+        
+        foreach (var banknote in delivery)
+        {
+            var newTransaction = new Transaction()
+            {
+                IsPayment = false,
+                Banknote = banknote,
+                Order = order
+            };
+            await _transactionRepository.AddAsync(newTransaction);
+        }
+        
+        order.Transactions = await _transactionRepository.GetByOrderAsync(order);
+        order.Status = "Сдача выдана";
+        order = await _orderRepository.UpdateAsync(order);
+        order.Transactions = order.Transactions.Where(t => t.IsPayment == false).ToList();
         return order;
     }
     
     
-    public List<Banknote> CalculateChange(int coffeePrice, IEnumerable<Transaction> transactions, Machine machine)
+    /// <summary>
+    /// Метод для расчета сдачи
+    /// </summary>
+    /// <param name="coffeePrice"></param>
+    /// <param name="transactions"></param>
+    /// <param name="machine"></param>
+    /// <returns></returns>
+    public async Task<List<Banknote>> CalculateChange(int coffeePrice, IEnumerable<Transaction> transactions, Machine machine)
     {
-        List<Banknote> banknotes = _banknoteRepository.GetBanknotesByMachineAsync(machine).Result.ToList();
-        List<Banknote> change = new List<Banknote>();
-        int moneyInserted = transactions.Where(t => t.Type == true).Sum(t => t.Banknote.Nominal);
+        var banknotes = await _banknoteRepository
+            .GetBanknotesByMachineAsync(machine);
+        
+        var change = new List<Banknote>();
+        
+        int moneyInserted = transactions.Sum(t => t.Banknote.Nominal);
         int remainingChange = moneyInserted - coffeePrice;
+
+        if (remainingChange <= 0)
+            return change;
 
         foreach (Banknote banknote in banknotes)
         {

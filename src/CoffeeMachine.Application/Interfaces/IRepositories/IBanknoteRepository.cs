@@ -1,6 +1,6 @@
-﻿using CoffeeMachine.Domain.Models;
+using CoffeeMachine.Core.Models;
 
-namespace CoffeeMachine.Infrastructure.Interfaces.IRepositories;
+namespace CoffeeMachine.Application.Interfaces.IRepositories;
 
 public interface IBanknoteRepository : IBaseRepository<Banknote>
 {
@@ -17,6 +17,21 @@ public interface IBanknoteRepository : IBaseRepository<Banknote>
     /// <param name="machine"></param>
     /// <returns></returns>
     public Task<IEnumerable<Banknote>> GetBanknotesByMachineAsync(Machine machine);
-    public Task<IEnumerable<BanknoteMachine>> SubtractBanknotesFromMachineAsync(IEnumerable<Banknote> banknotes, Machine machine);
-    public Task<IEnumerable<Banknote>> AddBanknotesToMachineAsync(IEnumerable<Transaction> transactions, Machine machine);
+    
+    /// <summary>
+    /// Добавить банкноты в автомат
+    /// </summary>
+    /// <param name="banknotes"></param>
+    /// <param name="machine"></param>
+    /// <returns></returns>
+    public Task<IEnumerable<BanknoteToMachine>> AddBanknotesToMachineAsync(IEnumerable<Banknote> banknotes, Machine machine);
+    
+    
+    /// <summary>
+    /// Выдать банкноты из автомата
+    /// </summary>
+    /// <param name="banknotes"></param>
+    /// <param name="machine"></param>
+    /// <returns></returns>
+    public Task<IEnumerable<BanknoteToMachine>> SubtractBanknotesFromMachineAsync(IEnumerable<Banknote> banknotes, Machine machine);
 }

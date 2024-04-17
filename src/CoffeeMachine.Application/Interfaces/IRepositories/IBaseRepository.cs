@@ -1,9 +1,5 @@
-﻿namespace CoffeeMachine.Infrastructure.Interfaces.IRepositories;
+namespace CoffeeMachine.Application.Interfaces.IRepositories;
 
-/// <summary>
-/// Базовый  репозиторий для CRUD операций
-/// </summary>
-/// <typeparam name="T"></typeparam>
 public interface IBaseRepository<T> where T : class
 {
     /// <summary>
@@ -14,27 +10,27 @@ public interface IBaseRepository<T> where T : class
     public Task<T> GetByIdAsync(long id);
     
     /// <summary>
-    /// Получение всех объектов
+    /// Получение списка всех объектов
     /// </summary>
     /// <returns>Коллекция запрошенных объектов</returns>
     public Task<IEnumerable<T>> GetAllAsync();
     
     /// <summary>
-    /// Добавление объектов
+    /// Добавление объекта
     /// </summary>
     /// <param name="entity"></param>
     /// <returns>Добавленный объект</returns>
     public Task<T> AddAsync(T entity);
     
     /// <summary>
-    /// Обновление объектов
+    /// Обновление объекта
     /// </summary>
     /// <param name="entity"></param>
     /// <returns>Обновлённый объект</returns>
     public Task<T> UpdateAsync(T entity);
     
     /// <summary>
-    /// Удаление объектов
+    /// Удаление объекта
     /// </summary>
     /// <param name="entity"></param>
     /// <returns>true или ошибку</returns>

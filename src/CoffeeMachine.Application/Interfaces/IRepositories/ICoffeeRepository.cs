@@ -1,11 +1,11 @@
-﻿using CoffeeMachine.Domain.Models;
+using CoffeeMachine.Core.Models;
 
-namespace CoffeeMachine.Infrastructure.Interfaces.IRepositories;
+namespace CoffeeMachine.Application.Interfaces.IRepositories;
 
 public interface ICoffeeRepository : IBaseRepository<Coffee>
 {
     /// <summary>
-    /// Получение кофе по названию
+    /// Получить кофе по названию
     /// </summary>
     /// <param name="nameCoffe"></param>
     /// <returns>Кофе</returns>

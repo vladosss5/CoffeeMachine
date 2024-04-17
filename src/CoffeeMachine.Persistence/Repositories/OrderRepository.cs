@@ -1,12 +1,12 @@
-﻿using CoffeeMachine.Domain.Models;
-using CoffeeMachine.Infrastructure.Exceptions;
-using CoffeeMachine.Infrastructure.Interfaces.IRepositories;
+using CoffeeMachine.Application.Exceptions;
+using CoffeeMachine.Application.Interfaces.IRepositories;
+using CoffeeMachine.Core.Models;
 using CoffeeMachine.Persistence.Data.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeMachine.Persistence.Repositories;
 
-public class OrderRepository : IBaseRepository<Order>, IOrderRepository
+public class OrderRepository : IOrderRepository
 {
     private readonly DataContext _dbContext;
 
@@ -15,6 +15,12 @@ public class OrderRepository : IBaseRepository<Order>, IOrderRepository
         _dbContext = dbContext;
     }
     
+    /// <summary>
+    /// Получить заказ по Id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    /// <exception cref="NotFoundException"></exception>
     public async Task<Order> GetByIdAsync(long id)
     {
         var purchase = await _dbContext.Orders.FirstOrDefaultAsync(x => x.Id == id);
@@ -25,106 +31,124 @@ public class OrderRepository : IBaseRepository<Order>, IOrderRepository
         return purchase;
     }
 
+    /// <summary>
+    /// Получить список заказ
+    /// </summary>
+    /// <returns></returns>
     public async Task<IEnumerable<Order>> GetAllAsync()
     {
         return await _dbContext.Orders.ToListAsync();
     }
 
+    /// <summary>
+    /// Создать заказ
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <returns></returns>
     public async Task<Order> AddAsync(Order entity)
     {
-        var coffee = await _dbContext.Coffees.FirstOrDefaultAsync(x => x.Name == entity.Coffee.Name);
-        
-        var machine = await _dbContext.Machines.FirstOrDefaultAsync(x => 
-            x.SerialNumber == entity.Machine.SerialNumber);
-        
-        var identity = await _dbContext.Orders
-            .AnyAsync(x => x.Date == entity.Date);
-        
-        if (identity != false)
-            throw new AlreadyExistsException(nameof(Order), entity.Status);
-
         Order newOrder = new Order()
         {
             Status = entity.Status,
-            Date = DateTime.UtcNow,
-            Coffee = coffee,
-            Machine = machine
+            DateTimeCreate = DateTime.UtcNow,
+            Coffee = entity.Coffee,
+            Machine = entity.Machine
         };
 
         await _dbContext.Orders.AddAsync(newOrder);
         await _dbContext.SaveChangesAsync();
         
+        newOrder.Transactions = entity.Transactions;
+        
         return newOrder;
     }
-    
+
+    /// <summary>
+    /// Обновить статус заказа
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
     public async Task<Order> UpdateAsync(Order entity)
     {
-        var purchase = await _dbContext.Orders.FirstOrDefaultAsync(x => 
-            x.Date == entity.Date && 
-            x.Machine.SerialNumber == entity.Machine.SerialNumber);
+        var order = await _dbContext.Orders.FirstOrDefaultAsync(x => 
+            x.DateTimeCreate == entity.DateTimeCreate && 
+            x.Machine == entity.Machine);
         
-        if (purchase == null)
+        if (order == null)
             throw new NotFoundException(nameof(Order), entity);
         
-        purchase.Status = entity.Status;
+        order.Status = entity.Status;
         
-        _dbContext.Orders.Update(purchase);
+        _dbContext.Orders.Update(order);
         await _dbContext.SaveChangesAsync();
         
         return entity;
     }
-
+    
+    /// <summary>
+    /// Удалить заказ
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <returns></returns>
+    /// <exception cref="NotFoundException"></exception>
     public async Task<bool> DeleteAsync(Order entity)
     {
-        var purchase = await _dbContext.Orders.FirstOrDefaultAsync(x => 
-            x.Date == entity.Date && 
-            x.Machine.SerialNumber == entity.Machine.SerialNumber);
+        var order = await _dbContext.Orders.FirstOrDefaultAsync(x => 
+            x.DateTimeCreate == entity.DateTimeCreate && 
+            x.Machine == entity.Machine &&
+            x.Status == entity.Status);
         
-        if (purchase == null)
+        if (order == null)
             throw new NotFoundException(nameof(Order), entity);
         
-        _dbContext.Orders.Remove(purchase);
+        _dbContext.Orders.Remove(order);
         await _dbContext.SaveChangesAsync();
         
         return true;
     }
 
-    public async Task<List<Order>> GetByCoffeeAsync(Coffee entity)
+    /// <summary>
+    /// Получить список заказов по кофе
+    /// </summary>
+    /// <param name="coffee"></param>
+    /// <returns></returns>
+    public async Task<List<Order>> GetByCoffeeAsync(Coffee coffee)
     {
-        var coffee = await _dbContext.Coffees.FirstOrDefaultAsync(x => x.Name == entity.Name);
-        
-        if (coffee == null)
-            throw new NotFoundException(nameof(Coffee), entity);
-        
-        return await _dbContext.Orders
-            .Where(p => p.Coffee == coffee)
-            .ToListAsync();
+        return await _dbContext.Orders.Where(o => o.Coffee == coffee).ToListAsync();
     }
 
-    public async Task<List<Order>> GetByMachineAsync(Machine entity)
+    /// <summary>
+    /// Получить список заказов по кофемашине
+    /// </summary>
+    /// <param name="machine"></param>
+    /// <returns></returns>
+    public async Task<List<Order>> GetByMachineAsync(Machine machine)
     {
-        var machine = await _dbContext.Machines.FirstOrDefaultAsync(x => 
-            x.SerialNumber == entity.SerialNumber);
-
-        if (machine == null)
-            throw new NotFoundException(nameof(Machine), entity);
-        
-        return await _dbContext.Orders
-            .Where(p => p.Machine == machine)
-            .ToListAsync();
+        return await _dbContext.Orders.Where(o => o.Machine == machine).ToListAsync();
     }
 
+    /// <summary>
+    /// Получить список заказов по статусу
+    /// </summary>
+    /// <param name="status"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
     public async Task<List<Order>> GetByStatusAsync(string status)
     {
-        return await _dbContext.Orders
-            .Where(p => p.Status == status)
-            .ToListAsync();
+        return await _dbContext.Orders.Where(o => o.Status == status).ToListAsync();
     }
 
+    /// <summary>
+    /// Получить список заказов за период
+    /// </summary>
+    /// <param name="dateStart"></param>
+    /// <param name="dateEnd"></param>
+    /// <returns></returns>
     public async Task<List<Order>> GetByDateAsync(DateTime dateStart, DateTime dateEnd)
     {
         return await _dbContext.Orders
-            .Where(p => p.Date >= dateStart && p.Date <= dateEnd)
+            .Where(p => p.DateTimeCreate >= dateStart && p.DateTimeCreate <= dateEnd)
             .ToListAsync();
     }
 }

@@ -1,5 +1,5 @@
-﻿using CoffeeMachine.Infrastructure.Interfaces.IRepositories;
-using CoffeeMachine.Infrastructure.Interfaces.IServices;
+using CoffeeMachine.Application.Interfaces.IRepositories;
+using CoffeeMachine.Application.Interfaces.IServices;
 using CoffeeMachine.Persistence.Data.Context;
 using CoffeeMachine.Persistence.Repositories;
 using CoffeeMachine.Persistence.Services;
@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CoffeeMachine.Persistence.DIExtentions;
+namespace CoffeeMachine.Persistence.Extentions;
 
 public static class DIExtentions
 {

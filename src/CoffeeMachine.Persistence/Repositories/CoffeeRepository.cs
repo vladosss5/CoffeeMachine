@@ -1,13 +1,12 @@
-﻿using CoffeeMachine.Domain.Models;
-using CoffeeMachine.Infrastructure.Exceptions;
-using CoffeeMachine.Infrastructure.Interfaces.IRepositories;
-using CoffeeMachine.Infrastructure.Interfaces.IServices;
+using CoffeeMachine.Application.Exceptions;
+using CoffeeMachine.Application.Interfaces.IRepositories;
+using CoffeeMachine.Core.Models;
 using CoffeeMachine.Persistence.Data.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeMachine.Persistence.Repositories;
 
-public class CoffeeRepository : IBaseRepository<Coffee>, ICoffeeRepository
+public class CoffeeRepository : ICoffeeRepository
 {
     private readonly DataContext _dbContext;
 
@@ -16,6 +15,12 @@ public class CoffeeRepository : IBaseRepository<Coffee>, ICoffeeRepository
         _dbContext = dbContext;
     }
     
+    /// <summary>
+    /// Получить кофе по Id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    /// <exception cref="NotFoundException"></exception>
     public async Task<Coffee> GetByIdAsync(long id)
     {
         var coffee = await _dbContext.Coffees.FirstOrDefaultAsync(x => x.Id == id);
@@ -26,12 +31,22 @@ public class CoffeeRepository : IBaseRepository<Coffee>, ICoffeeRepository
         return coffee;
     }
 
+    /// <summary>
+    /// Получить список кофе
+    /// </summary>
+    /// <returns></returns>
     public async Task<IEnumerable<Coffee>> GetAllAsync()
     {
         return await _dbContext.Coffees.ToListAsync();
     }
 
-    public async Task<Coffee> AddAsync(Coffee entity)
+    /// <summary>
+    /// Добавить кофе
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+     public async Task<Coffee> AddAsync(Coffee entity)
     {
         var identity = await _dbContext.Coffees.AnyAsync(x => x.Name == entity.Name);
         
@@ -50,15 +65,21 @@ public class CoffeeRepository : IBaseRepository<Coffee>, ICoffeeRepository
         return newCoffee;
     }
 
+    /// <summary>
+    /// Изменить кофе
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
     public async Task<Coffee> UpdateAsync(Coffee entity)
     {
-        var coffee = await _dbContext.Coffees
-            .FirstOrDefaultAsync(x => x.Name == entity.Name && (x.Price == entity.Price));
+        var coffee = await _dbContext.Coffees.FirstOrDefaultAsync(x => x.Id == entity.Id);
 
         if (coffee == null)
-            throw new NotFoundException(nameof(Coffee), entity.Name);
+            throw new NotFoundException(nameof(Coffee), entity.Id);
         
         coffee.Price = entity.Price;
+        coffee.Name = entity.Name;
         
         _dbContext.Coffees.Update(coffee);
         await _dbContext.SaveChangesAsync();
@@ -66,10 +87,15 @@ public class CoffeeRepository : IBaseRepository<Coffee>, ICoffeeRepository
         return coffee;
     }
 
+    /// <summary>
+    /// Удалить кофе
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
     public async Task<bool> DeleteAsync(Coffee entity)
     {
-        var coffee = await _dbContext.Coffees
-            .FirstOrDefaultAsync(x => x.Name == entity.Name && x.Price == entity.Price);
+        var coffee = await _dbContext.Coffees.FirstOrDefaultAsync(x => x.Id == entity.Id);
         
         if (coffee == null)
             throw new NotFoundException(nameof(Coffee), entity.Name);
@@ -80,6 +106,12 @@ public class CoffeeRepository : IBaseRepository<Coffee>, ICoffeeRepository
         return true;
     }
 
+    /// <summary>
+    /// Получить кофе по названию
+    /// </summary>
+    /// <param name="nameCoffe"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
     public async Task<Coffee> GetByNameAsync(string nameCoffe)
     {
         var coffee = await _dbContext.Coffees.FirstOrDefaultAsync(x => x.Name == nameCoffe);

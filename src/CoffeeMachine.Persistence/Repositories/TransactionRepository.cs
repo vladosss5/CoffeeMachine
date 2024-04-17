@@ -1,12 +1,11 @@
-﻿using CoffeeMachine.Domain.Models;
-using CoffeeMachine.Infrastructure.Exceptions;
-using CoffeeMachine.Infrastructure.Interfaces.IRepositories;
+using CoffeeMachine.Application.Interfaces.IRepositories;
+using CoffeeMachine.Core.Models;
 using CoffeeMachine.Persistence.Data.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeMachine.Persistence.Repositories;
 
-public class TransactionRepository : IBaseRepository<Transaction>, ITransactionRepository
+public class TransactionRepository : ITransactionRepository
 {
     private readonly DataContext _dbContext;
 
@@ -15,30 +14,40 @@ public class TransactionRepository : IBaseRepository<Transaction>, ITransactionR
         _dbContext = dbContext;
     }
     
+    /// <summary>
+    /// Получить транзакцию по Id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public async Task<Transaction> GetByIdAsync(long id)
     {
         return await _dbContext.Transactions.FirstOrDefaultAsync(t => t.Id == id);
     }
 
+    /// <summary>
+    /// Получить список транзакций
+    /// </summary>
+    /// <returns></returns>
     public async Task<IEnumerable<Transaction>> GetAllAsync()
     {
         return await _dbContext.Transactions.ToListAsync();
     }
 
+
+    /// <summary>
+    /// Добавить транзакцию
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <returns></returns>
     public async Task<Transaction> AddAsync(Transaction entity)
     {
-        var banknote = await _dbContext.Banknotes.FirstOrDefaultAsync(x => x.Nominal == entity.Banknote.Nominal);
-        var purchase = await _dbContext.Orders.FirstOrDefaultAsync(x => 
-            x.Date == entity.Order.Date && 
-            x.Status == entity.Order.Status &&
-            x.Machine.SerialNumber == entity.Order.Machine.SerialNumber);
-
+        var banknote = await _dbContext.Banknotes.FirstOrDefaultAsync(b => b.Nominal == entity.Banknote.Nominal);
+        
         var newTransaction = new Transaction()
         {
-            Type = entity.Type,
-            // CountBanknotes = entity.CountBanknotes,
+            IsPayment = entity.IsPayment,
             Banknote = banknote,
-            Order = purchase
+            Order = entity.Order
         };
         
         await _dbContext.Transactions.AddAsync(newTransaction);
@@ -47,42 +56,34 @@ public class TransactionRepository : IBaseRepository<Transaction>, ITransactionR
         return newTransaction;
     }
 
-    public async Task<Transaction> UpdateAsync(Transaction entity) // ЗАЧЕМ?
+    
+    public async Task<Transaction> UpdateAsync(Transaction entity) // НЕЗАЧЕМ
     {
         throw new NotImplementedException();
     }
 
-    public async Task<bool> DeleteAsync(Transaction entity)
+    public async Task<bool> DeleteAsync(Transaction entity) // НЕЗАЧЕМ
     {
-        var deletingTransaction = _dbContext.Transactions.FirstOrDefault(x => 
-            x.Type == entity.Type &&
-            x.Order.Date == entity.Order.Date);
-        
-        if (deletingTransaction == null)
-            throw new NotFoundException(nameof(Transaction), entity);
-        
-        _dbContext.Transactions.Remove(deletingTransaction);
-        await _dbContext.SaveChangesAsync();
-        
-        return true;
+        throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Получить список транзакций по типу
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
     public async Task<List<Transaction>> GetByTypeAsync(bool type)
     {
-        return await _dbContext.Transactions.Where(x => x.Type == type).ToListAsync();
+        return await _dbContext.Transactions.Where(t => t.IsPayment == type).ToListAsync();
     }
 
-    public async Task<List<Transaction>> GetByPurchaseAsync(Order entity)
+    /// <summary>
+    /// Получить список странзакций по заказу
+    /// </summary>
+    /// <param name="order"></param>
+    /// <returns></returns>
+    public async Task<List<Transaction>> GetByOrderAsync(Order order)
     {
-        var purchase = await _dbContext.Orders.FirstOrDefaultAsync(x => 
-            x.Date == entity.Date && 
-            x.Machine.SerialNumber == entity.Machine.SerialNumber);
-        
-        if (purchase == null)
-            throw new NotFoundException(nameof(Order), entity);
-        
-        return await _dbContext.Transactions
-            .Where(t => t.Order == purchase)
-            .ToListAsync();
+        return await _dbContext.Transactions.Where(t => t.Order == order).ToListAsync();
     }
 }

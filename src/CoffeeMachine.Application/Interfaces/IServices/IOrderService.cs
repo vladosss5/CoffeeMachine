@@ -1,6 +1,6 @@
-﻿using CoffeeMachine.Domain.Models;
+using CoffeeMachine.Core.Models;
 
-namespace CoffeeMachine.Infrastructure.Interfaces.IServices;
+namespace CoffeeMachine.Application.Interfaces.IServices;
 
 public interface IOrderService
 {

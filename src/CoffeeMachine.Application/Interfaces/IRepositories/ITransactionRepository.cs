@@ -1,6 +1,6 @@
-﻿using CoffeeMachine.Domain.Models;
+using CoffeeMachine.Core.Models;
 
-namespace CoffeeMachine.Infrastructure.Interfaces.IRepositories;
+namespace CoffeeMachine.Application.Interfaces.IRepositories;
 
 public interface ITransactionRepository : IBaseRepository<Transaction>
 {
@@ -16,5 +16,5 @@ public interface ITransactionRepository : IBaseRepository<Transaction>
     /// </summary>
     /// <param name="order"></param>
     /// <returns>Список транзакций</returns>
-    public Task<List<Transaction>> GetByPurchaseAsync(Order order);
+    public Task<List<Transaction>> GetByOrderAsync(Order order);
 }

@@ -1,12 +1,12 @@
-﻿using CoffeeMachine.Domain.Models;
-using CoffeeMachine.Infrastructure.Exceptions;
-using CoffeeMachine.Infrastructure.Interfaces.IRepositories;
+using CoffeeMachine.Application.Exceptions;
+using CoffeeMachine.Application.Interfaces.IRepositories;
+using CoffeeMachine.Core.Models;
 using CoffeeMachine.Persistence.Data.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeMachine.Persistence.Repositories;
 
-public class MachineRepository : IBaseRepository<Machine>, IMachineRepository
+public class MachineRepository : IMachineRepository
 {
     private readonly DataContext _dbContext;
 
@@ -15,6 +15,12 @@ public class MachineRepository : IBaseRepository<Machine>, IMachineRepository
         _dbContext = dbContext;
     }
     
+    /// <summary>
+    /// Получить машину по Id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
     public async Task<Machine> GetByIdAsync(long id)
     {
         var machine = await _dbContext.Machines.FirstOrDefaultAsync(x => x.Id == id);
@@ -25,11 +31,21 @@ public class MachineRepository : IBaseRepository<Machine>, IMachineRepository
         return machine;
     }
 
+    /// <summary>
+    /// Получить список машин
+    /// </summary>
+    /// <returns></returns>
     public async Task<IEnumerable<Machine>> GetAllAsync()
     {
         return await _dbContext.Machines.ToListAsync();
     }
 
+    /// <summary>
+    /// Добавить кофемашину
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
     public async Task<Machine> AddAsync(Machine entity)
     {
         var identity = await _dbContext.Machines.AnyAsync(x => x.SerialNumber == entity.SerialNumber);
@@ -48,15 +64,21 @@ public class MachineRepository : IBaseRepository<Machine>, IMachineRepository
         
         return newMachine;
     }
-
+    
+    /// <summary>
+    /// Изменить кофемашину
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <returns></returns>
+    /// <exception cref="NotFoundException"></exception>
     public async Task<Machine> UpdateAsync(Machine entity)
     {
-        var machine = await _dbContext.Machines
-            .FirstOrDefaultAsync(x => x.SerialNumber == entity.SerialNumber);
+        var machine = await _dbContext.Machines.FirstOrDefaultAsync(x => x.Id == entity.Id);
         
         if (machine == null)
-            throw new NotFoundException(nameof(Machine), entity.SerialNumber);
+            throw new NotFoundException(nameof(Machine), entity.Id);
         
+        machine.SerialNumber = entity.SerialNumber;
         machine.Description = entity.Description;
         machine.Balance = entity.Balance;
         
@@ -66,10 +88,17 @@ public class MachineRepository : IBaseRepository<Machine>, IMachineRepository
         return machine;
     }
 
+    /// <summary>
+    /// Удалить кофемашину
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
     public async Task<bool> DeleteAsync(Machine entity)
     {
-        var machine = await _dbContext.Machines
-            .FirstOrDefaultAsync(x => x.SerialNumber == entity.SerialNumber);
+        var machine = await _dbContext.Machines.FirstOrDefaultAsync(x => 
+            x.Id == entity.Id && 
+            x.SerialNumber == entity.SerialNumber);
         
         if (machine == null)
             throw new NotFoundException(nameof(Machine), entity.SerialNumber);
@@ -80,10 +109,15 @@ public class MachineRepository : IBaseRepository<Machine>, IMachineRepository
         return true;
     }
 
+    /// <summary>
+    /// Получить кофкмашину по серийному номеру
+    /// </summary>
+    /// <param name="serialNumber"></param>
+    /// <returns></returns>
+    /// <exception cref="NotFoundException"></exception>
     public async Task<Machine> GetBySerialNumberAsync(string serialNumber)
     {
-        var machine = await _dbContext.Machines
-            .FirstOrDefaultAsync(x => x.SerialNumber == serialNumber);
+        var machine = await _dbContext.Machines.FirstOrDefaultAsync(x => x.SerialNumber == serialNumber);
         
         if (machine == null)
             throw new NotFoundException(nameof(Machine), serialNumber);
@@ -91,12 +125,19 @@ public class MachineRepository : IBaseRepository<Machine>, IMachineRepository
         return machine;
     }
 
+    /// <summary>
+    /// Пересчитать баланс машины
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <returns></returns>
     public async Task<int> UpdateBalanceAsync(Machine entity)
     {
         var machine = GetBySerialNumberAsync(entity.SerialNumber).Result;
+        
+        var banknoteMachines = await _dbContext.BanknotesToMachines.Where(bm =>
+            bm.Machine.SerialNumber == machine.SerialNumber).Include(bm => bm.Banknote).ToListAsync();
+        
         int balance = 0;
-        List<BanknoteMachine> banknoteMachines = await _dbContext.BanknotesMachines.Where(bm =>
-            bm.Machine.SerialNumber == machine.SerialNumber).ToListAsync();
 
         foreach (var bm in banknoteMachines)
         {
@@ -104,6 +145,7 @@ public class MachineRepository : IBaseRepository<Machine>, IMachineRepository
         }
         
         machine.Balance = balance;
+        
         _dbContext.Machines.Update(machine);
         await _dbContext.SaveChangesAsync();
         
