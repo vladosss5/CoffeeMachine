@@ -97,7 +97,7 @@ public class MachineRepository : IMachineRepository
     public async Task<bool> DeleteAsync(Machine entity)
     {
         var machine = await _dbContext.Machines.FirstOrDefaultAsync(x => 
-            x.Id == entity.Id && 
+            x.Id == entity.Id || 
             x.SerialNumber == entity.SerialNumber);
         
         if (machine == null)

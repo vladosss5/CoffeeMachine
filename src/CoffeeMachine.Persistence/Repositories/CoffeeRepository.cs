@@ -121,4 +121,44 @@ public class CoffeeRepository : ICoffeeRepository
         
         return coffee;
     }
+
+    /// <summary>
+    /// Добавить кофе в кофемашину
+    /// </summary>
+    /// <param name="coffee"></param>
+    /// <param name="machine"></param>
+    /// <returns></returns>
+    public async Task<Coffee> AddCoffeeByMachineAsync(Coffee coffee, Machine machine)
+    {
+        var coffeeInMachine = new CoffeeToMachine()
+        {
+            Coffee = coffee,
+            Machine = machine
+        };
+        
+        await _dbContext.CoffeesToMachines.AddAsync(coffeeInMachine);
+        await _dbContext.SaveChangesAsync();
+        
+        return coffeeInMachine.Coffee;
+    }
+
+    /// <summary>
+    /// Удалить кофе из кофемашины
+    /// </summary>
+    /// <param name="coffee"></param>
+    /// <param name="machine"></param>
+    /// <returns></returns>
+    public async Task<Coffee> DeleteCoffeeFromMachineAsync(Coffee coffee, Machine machine)
+    {
+        var delitingCoffee = await _dbContext.CoffeesToMachines.FirstOrDefaultAsync(x =>
+            x.Coffee == coffee && x.Machine == machine);
+
+        if (delitingCoffee == null)
+            throw new NotFoundException(nameof(Coffee), coffee.Name);
+        
+        _dbContext.CoffeesToMachines.Remove(delitingCoffee);
+        await _dbContext.SaveChangesAsync();
+        
+        return delitingCoffee.Coffee;
+    }
 }

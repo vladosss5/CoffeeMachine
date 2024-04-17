@@ -5,7 +5,7 @@ namespace CoffeeMachine.Application.Interfaces.IServices;
 public interface IOrderService
 {
     /// <summary>
-    /// Покупка - хз пока
+    /// Логика покупки
     /// </summary>
     /// <param name="order"></param>
     /// <returns>Покупку</returns>
