@@ -1,4 +1,4 @@
-﻿namespace CoffeeMachine.API.DTOs;
+﻿namespace CoffeeMachine.API.DTOs.Banknote;
 
 public class BanknoteDto
 {

@@ -1,4 +1,5 @@
-﻿using CoffeeMachine.Application.Interfaces.IRepositories;
+﻿using CoffeeMachine.Application.Exceptions;
+using CoffeeMachine.Application.Interfaces.IRepositories;
 using CoffeeMachine.Application.Interfaces.IServices;
 using CoffeeMachine.Core.Models;
 
@@ -100,32 +101,61 @@ public class AdminService : IAdminService
     /// <exception cref="NotImplementedException"></exception>
     public async Task<Machine> AddCoffeeToMachineAsync(Coffee coffee, Machine machine)
     {
-        // await _machineRepository.AddCoffeeToMachineAsync(coffee, machine);
-        throw new NotImplementedException();
+        var nCoffee = await _coffeeRepository.GetByNameAsync(coffee.Name);
+        var nMachine = await _machineRepository.GetBySerialNumberAsync(machine.SerialNumber);
+        
+        return await _machineRepository.AddCoffeeInMachineAsync(nCoffee, nMachine);
     }
 
-    public async Task<Machine> SubtractCoffeeFromMachineAsync(Coffee coffee, Machine machine)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="coffee"></param>
+    /// <param name="machine"></param>
+    /// <returns></returns>
+    public async Task<Machine> DeleteCoffeeFromMachineAsync(Coffee coffee, Machine machine)
     {
-        throw new NotImplementedException();
+        var nCoffee = await _coffeeRepository.GetByNameAsync(coffee.Name);
+        var nMachine = await _machineRepository.GetBySerialNumberAsync(machine.SerialNumber);
+        
+        return await _machineRepository.DeleteCoffeeFromMachineAsync(nCoffee, nMachine);
     }
 
+    /// <summary>
+    /// Получить список кофе
+    /// </summary>
+    /// <returns></returns>
     public async Task<IEnumerable<Coffee>> GetAllCoffeesAsync()
     {
-        throw new NotImplementedException();
+        return await _coffeeRepository.GetAllAsync();
     }
 
+    /// <summary>
+    /// Создать новый кофе
+    /// </summary>
+    /// <param name="coffee"></param>
+    /// <returns></returns>
     public async Task<Coffee> CreateNewCoffeeAsync(Coffee coffee)
     {
-        throw new NotImplementedException();
+        return await _coffeeRepository.AddAsync(coffee);
     }
 
+    /// <summary>
+    /// Удалить кофе
+    /// </summary>
+    /// <param name="coffee"></param>
+    /// <returns></returns>
     public async Task<bool> DeleteCoffeeAsync(Coffee coffee)
     {
-        throw new NotImplementedException();
+        return await _coffeeRepository.DeleteAsync(coffee);
     }
 
+    /// <summary>
+    /// Получить список всех заказов
+    /// </summary>
+    /// <returns></returns>
     public async Task<IEnumerable<Order>> GetAllOrdersAsync()
     {
-        throw new NotImplementedException();
+        return await _orderRepository.GetAllAsync();
     }
 }

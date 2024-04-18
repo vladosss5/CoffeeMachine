@@ -1,5 +1,6 @@
 using AutoMapper;
 using CoffeeMachine.API.DTOs;
+using CoffeeMachine.API.DTOs.Order;
 using CoffeeMachine.Application.Interfaces.IServices;
 using CoffeeMachine.Core.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -20,9 +21,9 @@ namespace CoffeeMachine.API.Controllers
         }
         
         [HttpPost]
-        public async Task<IActionResult> CreateOrder([FromBody] OrderRequest orderRequest)
+        public async Task<IActionResult> CreateOrder([FromBody] OrderAddReq orderRequest)
         {
-            var order = _mapper.Map<OrderResponse>(await _orderService.CreateOrderAsync(_mapper.Map<Order>(orderRequest)));
+            var order = _mapper.Map<OrderAddResp>(await _orderService.CreateOrderAsync(_mapper.Map<Order>(orderRequest)));
             return Ok(order);
         }
     }

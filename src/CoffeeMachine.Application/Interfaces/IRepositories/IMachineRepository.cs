@@ -19,6 +19,22 @@ public interface IMachineRepository : IBaseRepository<Machine>
     public Task<int> UpdateBalanceAsync(Machine machine);
     
     /// <summary>
+    /// Добавить кофе в кофемашину
+    /// </summary>
+    /// <param name="coffee"></param>
+    /// <param name="machine"></param>
+    /// <returns></returns>
+    public Task<Machine> AddCoffeeInMachineAsync(Coffee coffee, Machine machine);
+    
+    /// <summary>
+    /// Удалить кофе из кофемашины
+    /// </summary>
+    /// <param name="coffee"></param>
+    /// <param name="machine"></param>
+    /// <returns></returns>
+    public Task<Machine> DeleteCoffeeFromMachineAsync(Coffee coffee, Machine machine);
+    
+    /// <summary>
     /// Получить список доступных для машины кофе
     /// </summary>
     /// <param name="machine"></param>

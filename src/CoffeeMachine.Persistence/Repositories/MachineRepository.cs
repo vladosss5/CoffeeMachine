@@ -152,13 +152,60 @@ public class MachineRepository : IMachineRepository
         return balance;
     }
 
+    /// <summary>
+    /// Добавить кофе в кофемашину
+    /// </summary>
+    /// <param name="coffee"></param>
+    /// <param name="machine"></param>
+    /// <returns></returns>
+    public async Task<Machine> AddCoffeeInMachineAsync(Coffee coffee, Machine machine)
+    {
+        var coffeeMachine = new CoffeeToMachine()
+        {
+            Coffee = coffee,
+            Machine = machine
+        };
+        
+        await _dbContext.CoffeesToMachines.AddAsync(coffeeMachine);
+        await _dbContext.SaveChangesAsync();
+        
+        return machine;
+    }
+
+    /// <summary>
+    /// Удалить кофе из кофемашины
+    /// </summary>
+    /// <param name="coffee"></param>
+    /// <param name="machine"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public async Task<Machine> DeleteCoffeeFromMachineAsync(Coffee coffee, Machine machine)
+    {
+        var coffeeMachine = _dbContext.CoffeesToMachines.Where(cm => cm.Coffee == coffee && cm.Machine == machine);
+        
+        _dbContext.CoffeesToMachines.RemoveRange(coffeeMachine);
+        _dbContext.SaveChanges();
+
+        return machine;
+    }
+
+    /// <summary>
+    /// Получить список кофе из кофемашины
+    /// </summary>
+    /// <param name="machine"></param>
+    /// <returns></returns>
     public async Task<List<Coffee>> GetCoffeesFromMachineAsync(Machine machine)
     {
         var coffeesToMachines = _dbContext.CoffeesToMachines.Where(cm => cm.Machine == machine);
         return await coffeesToMachines.Select(cm => cm.Coffee).ToListAsync();
     }
     
-    
+    /// <summary>
+    /// Проверить есть ли кофе в кофемашине
+    /// </summary>
+    /// <param name="machine"></param>
+    /// <param name="coffee"></param>
+    /// <returns></returns>
     public async Task<bool> CheckCoffeeInMachineAsync(Machine machine, Coffee coffee)
     {
         return await _dbContext.CoffeesToMachines.AnyAsync(cm => cm.Coffee == coffee && cm.Machine == machine);
