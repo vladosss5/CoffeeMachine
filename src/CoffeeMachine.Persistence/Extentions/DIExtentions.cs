@@ -19,6 +19,7 @@ public static class DIExtentions
         services.AddDbContext<DataContext>(options => options.UseNpgsql(connectionString));
 
         services.AddScoped<IOrderService, OrderService>();
+        services.AddScoped<IAdminService, AdminService>();
         
         services.AddScoped<IMachineRepository, MachineRepository>();
         services.AddScoped<ICoffeeRepository, CoffeeRepository>();

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CoffeeMachine.API.DTOs;
 using CoffeeMachine.API.DTOs.Banknote;
 using CoffeeMachine.API.DTOs.Coffee;
 using CoffeeMachine.API.DTOs.Machine;
@@ -20,5 +19,9 @@ public class MappingProfile : Profile
         CreateMap<CoffeeForOrderReq, Coffee>().ReverseMap();
         CreateMap<CoffeeForOrderResp, Coffee>().ReverseMap();
         CreateMap<Banknote, BanknoteDto>().ReverseMap();
+
+        CreateMap<CoffeeRespForAdmin, Coffee>().ReverseMap();
+        CreateMap<MachineRespForAdmin, Machine>().ReverseMap();
+        CreateMap<OrderRespForAdmin, Order>().ReverseMap();
     }
 }
