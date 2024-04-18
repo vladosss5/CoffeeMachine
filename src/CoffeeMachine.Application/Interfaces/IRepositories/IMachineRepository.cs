@@ -17,4 +17,19 @@ public interface IMachineRepository : IBaseRepository<Machine>
     /// <param name="machine"></param>
     /// <returns></returns>
     public Task<int> UpdateBalanceAsync(Machine machine);
+    
+    /// <summary>
+    /// Получить список доступных для машины кофе
+    /// </summary>
+    /// <param name="machine"></param>
+    /// <returns></returns>
+    public Task<List<Coffee>> GetCoffeesFromMachineAsync(Machine machine);
+    
+    /// <summary>
+    /// Проверить наличие кофе в машине
+    /// </summary>
+    /// <param name="machine"></param>
+    /// <param name="coffee"></param>
+    /// <returns></returns>
+    public Task<bool> CheckCoffeeInMachineAsync(Machine machine, Coffee coffee);
 }

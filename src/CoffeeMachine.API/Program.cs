@@ -1,3 +1,4 @@
+using CoffeeMachine.API.Middlewares;
 using CoffeeMachine.Application.Extensions;
 using CoffeeMachine.Persistence.Extentions;
 using Serilog;
@@ -27,7 +28,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCustomExceptionHandler();
+app.UseDeveloperExceptionPage();
 app.UseHttpsRedirection();
 app.MapControllers();
+
 
 app.Run();

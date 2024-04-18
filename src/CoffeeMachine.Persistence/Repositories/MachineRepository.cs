@@ -151,4 +151,16 @@ public class MachineRepository : IMachineRepository
         
         return balance;
     }
+
+    public async Task<List<Coffee>> GetCoffeesFromMachineAsync(Machine machine)
+    {
+        var coffeesToMachines = _dbContext.CoffeesToMachines.Where(cm => cm.Machine == machine);
+        return await coffeesToMachines.Select(cm => cm.Coffee).ToListAsync();
+    }
+    
+    
+    public async Task<bool> CheckCoffeeInMachineAsync(Machine machine, Coffee coffee)
+    {
+        return await _dbContext.CoffeesToMachines.AnyAsync(cm => cm.Coffee == coffee && cm.Machine == machine);
+    }
 }

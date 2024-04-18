@@ -1,3 +1,4 @@
+using CoffeeMachine.Application.Exceptions;
 using CoffeeMachine.Application.Interfaces.IRepositories;
 using CoffeeMachine.Application.Interfaces.IServices;
 using CoffeeMachine.Core.Models;
@@ -35,6 +36,10 @@ public class OrderService : IOrderService
             Coffee = await _coffeeRepository.GetByNameAsync(orderRequest.Coffee.Name),
             Status = "Принято",
         };
+
+        if (!await _machineRepository.CheckCoffeeInMachineAsync(order.Machine, order.Coffee))
+            throw new Exception("Данная машина не умеет готовить выбранный кофе");
+        
         
         order = await _orderRepository.AddAsync(order);
         
@@ -46,10 +51,20 @@ public class OrderService : IOrderService
         
         var banknotesPay = order.Transactions.Select(t => t.Banknote).ToList();
         await _banknoteRepository.AddBanknotesToMachineAsync(banknotesPay, order.Machine);
-        order.Status = "Оплачено";
+        
+        order.Status = "Внесены деньги";
         await _orderRepository.UpdateAsync(order);
         
-        var delivery = await CalculateChange(order.Coffee.Price, order.Transactions, order.Machine);
+        var delivery = new List<Banknote>();
+        
+        try
+        {
+            delivery = await CalculateChange(order.Coffee.Price, order.Transactions, order.Machine);
+        }
+        catch (Exception e)
+        {
+            return await ErrorChange(order, banknotesPay);
+        }
         
         await _banknoteRepository.SubtractBanknotesFromMachineAsync(delivery, order.Machine);
         
@@ -65,7 +80,7 @@ public class OrderService : IOrderService
         }
         
         order.Transactions = await _transactionRepository.GetByOrderAsync(order);
-        order.Status = "Сдача выдана";
+        order.Status = "Готово";
         order = await _orderRepository.UpdateAsync(order);
         order.Transactions = order.Transactions.Where(t => t.IsPayment == false).ToList();
         return order;
@@ -79,15 +94,15 @@ public class OrderService : IOrderService
     /// <param name="transactions"></param>
     /// <param name="machine"></param>
     /// <returns></returns>
-    public async Task<List<Banknote>> CalculateChange(int coffeePrice, IEnumerable<Transaction> transactions, Machine machine)
+    private async Task<List<Banknote>> CalculateChange(int coffeePrice, IEnumerable<Transaction> transactions, Machine machine)
     {
         var banknotes = await _banknoteRepository
             .GetBanknotesByMachineAsync(machine);
         
         var change = new List<Banknote>();
         
-        int moneyInserted = transactions.Sum(t => t.Banknote.Nominal);
-        int remainingChange = moneyInserted - coffeePrice;
+        var moneyInserted = transactions.Sum(t => t.Banknote.Nominal);
+        var remainingChange = moneyInserted - coffeePrice;
 
         if (remainingChange <= 0)
             return change;
@@ -100,8 +115,41 @@ public class OrderService : IOrderService
                 change.Add(banknote);
                 remainingChange -= banknote.Nominal;
             }
+            
+            if (remainingChange == 0)
+                break;
         }
 
+        if (remainingChange > 0)
+            throw new Exception();
+
         return change;
+    }
+
+    /// <summary>
+    /// Метод возвращающий ошибку при сдаче
+    /// </summary>
+    /// <param name="order"></param>
+    /// <param name="banknotes"></param>
+    /// <returns></returns>
+    private async Task<Order> ErrorChange(Order order, List<Banknote> banknotes)
+    {
+        await _banknoteRepository.SubtractBanknotesFromMachineAsync(banknotes, order.Machine);
+        order.Status = "Нет сдачи";
+        await _orderRepository.UpdateAsync(order);
+        order.Transactions = order.Transactions.Where(t => t.IsPayment == false).ToList();
+        
+        foreach (var banknote in banknotes)
+        {
+            var newTransaction = new Transaction()
+            {
+                IsPayment = false,
+                Banknote = banknote,
+                Order = order
+            };
+            await _transactionRepository.AddAsync(newTransaction);
+        }
+        
+        return order;
     }
 }

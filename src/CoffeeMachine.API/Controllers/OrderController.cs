@@ -20,9 +20,9 @@ namespace CoffeeMachine.API.Controllers
         }
         
         [HttpPost]
-        public async Task<IActionResult> CreateOrder([FromBody] OrderDto orderRequest)
+        public async Task<IActionResult> CreateOrder([FromBody] OrderRequest orderRequest)
         {
-            var order = _mapper.Map<OrderDto>(await _orderService.CreateOrderAsync(_mapper.Map<Order>(orderRequest)));
+            var order = _mapper.Map<OrderResponse>(await _orderService.CreateOrderAsync(_mapper.Map<Order>(orderRequest)));
             return Ok(order);
         }
     }

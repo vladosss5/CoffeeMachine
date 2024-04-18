@@ -1,6 +1,6 @@
 ﻿namespace CoffeeMachine.API.DTOs;
 
-public class OrderDto
+public class OrderRequest
 {
     public MachineDto Machine { get; set; }
     public CoffeeDto Coffee { get; set; }

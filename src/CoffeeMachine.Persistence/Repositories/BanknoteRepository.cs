@@ -119,7 +119,7 @@ public class BanknoteRepository : IBanknoteRepository
     public async Task<IEnumerable<Banknote>> GetBanknotesByMachineAsync(Machine machine) // Надо оттестировать
     {
         var banknotes = await _dbContext.BanknotesToMachines
-            .Where(bm => bm.Machine.SerialNumber == machine.SerialNumber)
+            .Where(bm => bm.Machine.SerialNumber == machine.SerialNumber && bm.CountBanknote != 0)
             .Select(bm => bm.Banknote)
             .OrderByDescending(b => b.Nominal)
             .ToListAsync();
@@ -186,17 +186,11 @@ public class BanknoteRepository : IBanknoteRepository
         {
             foreach (var banknote in banknotes)
             {
-                if (bm.Machine.SerialNumber == machine.SerialNumber && bm.Banknote.Nominal == banknote.Nominal)
+                if (bm.Machine.SerialNumber == machine.SerialNumber && 
+                    bm.Banknote.Nominal == banknote.Nominal && bm.CountBanknote >= 1)
                 {
-                    if (bm.CountBanknote > 1)
-                    {
-                        bm.CountBanknote--;
-                        _dbContext.BanknotesToMachines.Update(bm);
-                    }
-                    else
-                    {
-                        _dbContext.Remove(bm);
-                    }
+                    bm.CountBanknote--;
+                    _dbContext.BanknotesToMachines.Update(bm);
                 }   
             }
         }
