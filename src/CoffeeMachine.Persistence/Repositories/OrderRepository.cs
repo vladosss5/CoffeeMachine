@@ -37,8 +37,12 @@ public class OrderRepository : IOrderRepository
     /// <returns></returns>
     public async Task<IEnumerable<Order>> GetAllAsync()
     {
-        return await _dbContext.Orders.Include(o => o.Machine).Include(o => o.Coffee)
-            .Include(o => o.Transactions).ThenInclude(t => t.Banknote).ToListAsync();
+        return await _dbContext.Orders
+            .Include(o => o.Machine)
+            .Include(o => o.Coffee)
+            .Include(o => o.Transactions)
+            .ThenInclude(t => t.Banknote)
+            .ToListAsync();
     }
 
     /// <summary>
