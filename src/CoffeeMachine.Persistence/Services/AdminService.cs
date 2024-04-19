@@ -172,6 +172,16 @@ public class AdminService : IAdminService
     }
 
     /// <summary>
+    /// Обновить кофе
+    /// </summary>
+    /// <param name="coffee"></param>
+    /// <returns></returns>
+    public async Task<Coffee> UpdateCoffeeAsync(Coffee coffee)
+    {
+        return await _coffeeRepository.UpdateAsync(coffee);
+    }
+
+    /// <summary>
     /// Получить список всех заказов
     /// </summary>
     /// <returns></returns>

@@ -84,6 +84,13 @@ public interface IAdminService
     public Task<bool> DeleteCoffeeAsync(Coffee coffee);
     
     /// <summary>
+    /// Изменить кофе
+    /// </summary>
+    /// <param name="coffee"></param>
+    /// <returns></returns>
+    public Task<Coffee> UpdateCoffeeAsync(Coffee coffee);
+    
+    /// <summary>
     /// Получить список всех заказов
     /// </summary>
     /// <returns></returns>

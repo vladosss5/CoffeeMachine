@@ -96,7 +96,7 @@ namespace CoffeeMachine.API.Controllers
             return Ok(coffeesResp);
         }
         
-        [HttpPost("Coffees/Add")]
+        [HttpPost("Coffees")]
         public async Task<IActionResult> AddCoffee([FromBody] CoffeeAddReq coffeeAddReq)
         {
             var coffee = _mapper.Map<Coffee>(coffeeAddReq);
@@ -104,7 +104,7 @@ namespace CoffeeMachine.API.Controllers
             var coffeeResp = _mapper.Map<CoffeeRespForAdmin>(resp);
             return Ok(coffeeResp);
         }
-        [HttpPost("Coffees/Delete")]
+        [HttpDelete("Coffees")]
         public async Task<IActionResult> DeleteCoffee([FromBody] CoffeeReq coffeeReq)
         {
             var coffee = _mapper.Map<Coffee>(coffeeReq);
@@ -112,6 +112,16 @@ namespace CoffeeMachine.API.Controllers
             
             return Ok(resp);
         }
+
+        [HttpPut("Coffees")]
+        public async Task<IActionResult> UpdateCoffee([FromBody] CoffeeUpdateDto coffeeUpdateReq)
+        {
+            var coffee = _mapper.Map<Coffee>(coffeeUpdateReq);
+            var coffeeResp = await _adminService.UpdateCoffeeAsync(coffee);
+            var resp = _mapper.Map<CoffeeRespForAdmin>(coffeeResp);
+            return Ok(resp);
+        }
+        
 
         [HttpPost("Machines/Coffee/Add")]
         public async Task<IActionResult> AddCoffeeToMachine([FromBody] AddDelCoffeeToMachine req)
