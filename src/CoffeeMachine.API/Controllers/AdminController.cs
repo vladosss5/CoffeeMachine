@@ -5,9 +5,7 @@ using CoffeeMachine.API.DTOs.Machine;
 using CoffeeMachine.API.DTOs.Order;
 using CoffeeMachine.Application.Interfaces.IServices;
 using CoffeeMachine.Core.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using NuGet.Protocol;
 
 namespace CoffeeMachine.API.Controllers
 {
@@ -69,11 +67,21 @@ namespace CoffeeMachine.API.Controllers
         }
 
         [HttpPost("Machines/Banknotes/Add")]
-        public async Task<IActionResult> AddBanknotesToMachine([FromBody] AddBanknoteToMachineReq banknoteToMachineReq)
+        public async Task<IActionResult> AddBanknotesToMachine([FromBody] AddSubstrBanknoteToMachineReq substrBanknoteToMachineReq)
         {
-            var banknotesReq = banknoteToMachineReq.Banknotes.Select(b => _mapper.Map<Banknote>(b)).ToList();
-            var machineReq = _mapper.Map<Machine>(banknoteToMachineReq.Machine);
+            var banknotesReq = substrBanknoteToMachineReq.Banknotes.Select(b => _mapper.Map<Banknote>(b)).ToList();
+            var machineReq = _mapper.Map<Machine>(substrBanknoteToMachineReq.Machine);
             var resp = await _adminService.AddBanknotesToMachineAsync(banknotesReq, machineReq);
+            var machineResp = _mapper.Map<MachineResp>(resp);
+            return Ok(machineResp);
+        }
+        
+        [HttpPost("Machines/Banknotes/Substract")]
+        public async Task<IActionResult> SubtractBanknotesToMachine([FromBody] AddSubstrBanknoteToMachineReq substrBanknoteToMachineReq)
+        {
+            var banknotesReq = substrBanknoteToMachineReq.Banknotes.Select(b => _mapper.Map<Banknote>(b)).ToList();
+            var machineReq = _mapper.Map<Machine>(substrBanknoteToMachineReq.Machine);
+            var resp = await _adminService.SubtractBanknotesFromMachineAsync(banknotesReq, machineReq);
             var machineResp = _mapper.Map<MachineResp>(resp);
             return Ok(machineResp);
         }

@@ -179,6 +179,7 @@ public class BanknoteRepository : IBanknoteRepository
     {
         var banknoteMachines = await _dbContext.BanknotesToMachines
             .Include(bm => bm.Machine)
+            .Include(bm => bm.Banknote)
             .Where(bm => bm.Machine == machine)
             .ToListAsync();
 

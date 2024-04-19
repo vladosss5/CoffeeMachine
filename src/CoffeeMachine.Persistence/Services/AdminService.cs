@@ -72,7 +72,12 @@ public class AdminService : IAdminService
     /// <returns></returns>
     public async Task<Machine> AddBanknotesToMachineAsync(List<Banknote> banknotesReq, Machine machineReq)
     {
-        var banknotes = banknotesReq.Select(b => _banknoteRepository.GetByNominalAsync(b.Nominal).Result);
+        var banknotes = new List<Banknote>();
+
+        foreach (var banknote in banknotesReq)
+        {
+            banknotes.Add(await _banknoteRepository.GetByNominalAsync(banknote.Nominal));
+        }
         
         var machine = await _machineRepository.GetByIdAsync(machineReq.Id);
         
@@ -90,12 +95,23 @@ public class AdminService : IAdminService
     /// <param name="banknotes"></param>
     /// <param name="machine"></param>
     /// <returns></returns>
-    public async Task<Machine> SubtractBanknotesFromMachineAsync(List<Banknote> banknotes, Machine machine)
+    public async Task<Machine> SubtractBanknotesFromMachineAsync(List<Banknote> banknotesReq, Machine machineReq)
     {
+        var banknotes = new List<Banknote>();
+        
+        foreach (var banknote in banknotesReq)
+        {
+            banknotes.Add(await _banknoteRepository.GetByNominalAsync(banknote.Nominal));
+        }
+        
+        var machine = await _machineRepository.GetByIdAsync(machineReq.Id);
+        
         await _banknoteRepository.SubtractBanknotesFromMachineAsync(banknotes, machine);
         await _machineRepository.UpdateBalanceAsync(machine);
         
-        return await _machineRepository.GetByIdAsync(machine.Id);
+        var machineResp = await _machineRepository.GetByIdAsync(machine.Id);
+        
+        return machineResp;
     }
 
     /// <summary>
@@ -104,7 +120,6 @@ public class AdminService : IAdminService
     /// <param name="coffee"></param>
     /// <param name="machine"></param>
     /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
     public async Task<Machine> AddCoffeeToMachineAsync(Coffee coffee, Machine machine)
     {
         var nCoffee = await _coffeeRepository.GetByNameAsync(coffee.Name);
