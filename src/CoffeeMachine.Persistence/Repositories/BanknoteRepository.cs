@@ -116,7 +116,7 @@ public class BanknoteRepository : IBanknoteRepository
     /// <param name="machine"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public async Task<IEnumerable<Banknote>> GetBanknotesByMachineAsync(Machine machine) // Надо оттестировать
+    public async Task<IEnumerable<Banknote>> GetBanknotesByMachineAsync(Machine machine) 
     {
         var banknotes = await _dbContext.BanknotesToMachines
             .Where(bm => bm.Machine.SerialNumber == machine.SerialNumber && bm.CountBanknote != 0)

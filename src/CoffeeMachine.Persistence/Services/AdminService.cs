@@ -70,12 +70,18 @@ public class AdminService : IAdminService
     /// <param name="banknotes"></param>
     /// <param name="machine"></param>
     /// <returns></returns>
-    public async Task<Machine> AddBanknotesToMachineAsync(List<Banknote> banknotes, Machine machine)
+    public async Task<Machine> AddBanknotesToMachineAsync(List<Banknote> banknotesReq, Machine machineReq)
     {
+        var banknotes = banknotesReq.Select(b => _banknoteRepository.GetByNominalAsync(b.Nominal).Result);
+        
+        var machine = await _machineRepository.GetByIdAsync(machineReq.Id);
+        
         await _banknoteRepository.AddBanknotesToMachineAsync(banknotes, machine);
         await _machineRepository.UpdateBalanceAsync(machine);
+
+        var machineResp = await _machineRepository.GetByIdAsync(machine.Id);
         
-        return await _machineRepository.GetByIdAsync(machine.Id);
+        return machineResp;
     }
 
     /// <summary>

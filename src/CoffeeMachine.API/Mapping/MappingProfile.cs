@@ -22,6 +22,10 @@ public class MappingProfile : Profile
 
         CreateMap<CoffeeRespForAdmin, Coffee>().ReverseMap();
         CreateMap<MachineRespForAdmin, Machine>().ReverseMap();
+        CreateMap<MachineAddReq, Machine>().ReverseMap();
+        CreateMap<MachineAddResp, Machine>().ReverseMap();
+        CreateMap<MachineReq, Machine>().ReverseMap();
+        CreateMap<MachineResp, Machine>().ReverseMap();
         CreateMap<OrderRespForAdmin, Order>().ReverseMap();
     }
 }
