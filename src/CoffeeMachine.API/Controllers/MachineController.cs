@@ -1,38 +1,29 @@
 using AutoMapper;
 using CoffeeMachine.API.DTOs.Banknote;
 using CoffeeMachine.API.DTOs.BanknoteToMachine;
-using CoffeeMachine.API.DTOs.Coffee;
 using CoffeeMachine.API.DTOs.CoffeesInMachine;
 using CoffeeMachine.API.DTOs.Machine;
-using CoffeeMachine.API.DTOs.Order;
 using CoffeeMachine.Application.Interfaces.IServices;
 using CoffeeMachine.Core.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoffeeMachine.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AdminController : ControllerBase
+    public class MachineController : ControllerBase
     {
-        private readonly IAdminService _adminService;
+         private readonly IAdminService _adminService;
         private readonly IMapper _mapper;
         
-        public AdminController(IAdminService adminService, IMapper mapper)
+        public MachineController(IAdminService adminService, IMapper mapper)
         {
             _adminService = adminService;   
             _mapper = mapper;
         }
 
-        [HttpGet("Orders")]
-        public async Task<IActionResult> GetAllOrdersAsync()
-        {
-            var orders = await _adminService.GetAllOrdersAsync();
-            var ordersResp = orders.Select(o => _mapper.Map<OrderRespForAdmin>(o));
-            return Ok(ordersResp);
-        }
-
-        [HttpGet("Machines")]
+        [HttpGet]
         public async Task<IActionResult> GetAllMachines()
         {
             var machines = await _adminService.GetAllMachinesAsync();
@@ -40,7 +31,7 @@ namespace CoffeeMachine.API.Controllers
             return Ok(machineResp);
         }
 
-        [HttpPost("Machines/Banknotes")]
+        [HttpPost("Banknotes")]
         public async Task<IActionResult> GetBanknotesFromMachine([FromBody] MachineReq machineReq)
         {
             var machine = _mapper.Map<Machine>(machineReq);
@@ -50,7 +41,7 @@ namespace CoffeeMachine.API.Controllers
             return Ok(banknotesResp);
         }
 
-        [HttpPost("Machines")]
+        [HttpPost]
         public async Task<IActionResult> CreateMachine([FromBody] MachineAddReq machineReq)
         {
             var machine = _mapper.Map<Machine>(machineReq);
@@ -60,7 +51,7 @@ namespace CoffeeMachine.API.Controllers
             return Ok(machineResp);
         }
 
-        [HttpDelete("Machines")]
+        [HttpDelete]
         public async Task<IActionResult> DeleteMachine([FromBody] MachineReq machineReq)
         {
             var machine = _mapper.Map<Machine>(machineReq);
@@ -68,7 +59,7 @@ namespace CoffeeMachine.API.Controllers
             return Ok(resp);
         }
 
-        [HttpPost("Machines/Banknotes/Add")]
+        [HttpPost("Banknotes/Add")]
         public async Task<IActionResult> AddBanknotesToMachine([FromBody] AddSubstrBanknoteToMachineReq substrBanknoteToMachineReq)
         {
             var banknotesReq = substrBanknoteToMachineReq.Banknotes.Select(b => _mapper.Map<Banknote>(b)).ToList();
@@ -78,7 +69,7 @@ namespace CoffeeMachine.API.Controllers
             return Ok(machineResp);
         }
         
-        [HttpPost("Machines/Banknotes/Substract")]
+        [HttpPost("Banknotes/Substract")]
         public async Task<IActionResult> SubtractBanknotesToMachine([FromBody] AddSubstrBanknoteToMachineReq substrBanknoteToMachineReq)
         {
             var banknotesReq = substrBanknoteToMachineReq.Banknotes.Select(b => _mapper.Map<Banknote>(b)).ToList();
@@ -88,42 +79,7 @@ namespace CoffeeMachine.API.Controllers
             return Ok(machineResp);
         }
         
-        [HttpGet("Coffees")]
-        public async Task<IActionResult> GetAllCoffees()
-        {
-            var coffees = await _adminService.GetAllCoffeesAsync();
-            var coffeesResp = coffees.Select(c => _mapper.Map<CoffeeRespForAdmin>(c));
-            return Ok(coffeesResp);
-        }
-        
-        [HttpPost("Coffees")]
-        public async Task<IActionResult> AddCoffee([FromBody] CoffeeAddReq coffeeAddReq)
-        {
-            var coffee = _mapper.Map<Coffee>(coffeeAddReq);
-            var resp = await _adminService.CreateNewCoffeeAsync(coffee);
-            var coffeeResp = _mapper.Map<CoffeeRespForAdmin>(resp);
-            return Ok(coffeeResp);
-        }
-        [HttpDelete("Coffees")]
-        public async Task<IActionResult> DeleteCoffee([FromBody] CoffeeReq coffeeReq)
-        {
-            var coffee = _mapper.Map<Coffee>(coffeeReq);
-            var resp = await _adminService.DeleteCoffeeAsync(coffee);
-            
-            return Ok(resp);
-        }
-
-        [HttpPut("Coffees")]
-        public async Task<IActionResult> UpdateCoffee([FromBody] CoffeeUpdateDto coffeeUpdateReq)
-        {
-            var coffee = _mapper.Map<Coffee>(coffeeUpdateReq);
-            var coffeeResp = await _adminService.UpdateCoffeeAsync(coffee);
-            var resp = _mapper.Map<CoffeeRespForAdmin>(coffeeResp);
-            return Ok(resp);
-        }
-        
-
-        [HttpPost("Machines/Coffee/Add")]
+        [HttpPost("Coffee/Add")]
         public async Task<IActionResult> AddCoffeeToMachine([FromBody] AddDelCoffeeToMachine req)
         {
             var coffee = _mapper.Map<Coffee>(req.Coffee);
@@ -133,7 +89,7 @@ namespace CoffeeMachine.API.Controllers
             return Ok(machineResp);
         }
         
-        [HttpPost("Machines/Coffee/Substract")]
+        [HttpPost("Coffee/Substract")]
         public async Task<IActionResult> SubstractCoffeeToMachine([FromBody] AddDelCoffeeToMachine req)
         {
             var coffee = _mapper.Map<Coffee>(req.Coffee);

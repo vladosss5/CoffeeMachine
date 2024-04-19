@@ -13,11 +13,21 @@ namespace CoffeeMachine.API.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IOrderService _orderService;
+        private readonly IAdminService _adminService;
 
-        public OrderController(IMapper mapper, IOrderService orderService)
+        public OrderController(IMapper mapper, IOrderService orderService, IAdminService adminService)
         {
             _mapper = mapper;
             _orderService = orderService;
+            _adminService = adminService;
+        }
+        
+        [HttpGet]
+        public async Task<IActionResult> GetAllOrdersAsync()
+        {
+            var orders = await _adminService.GetAllOrdersAsync();
+            var ordersResp = orders.Select(o => _mapper.Map<OrderRespForAdmin>(o));
+            return Ok(ordersResp);
         }
         
         [HttpPost]

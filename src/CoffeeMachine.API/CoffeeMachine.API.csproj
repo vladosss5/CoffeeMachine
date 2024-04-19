@@ -22,6 +22,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Areas\MachineAdminController\Controllers\" />
+      <Folder Include="Areas\MachineAdminController\Data\" />
+      <Folder Include="Areas\MachineAdminController\Models\" />
+      <Folder Include="Areas\MachineAdminController\Views\" />
       <Folder Include="Controllers\" />
     </ItemGroup>
 
