@@ -1,6 +1,7 @@
 using AutoMapper;
 using CoffeeMachine.API.DTOs.Banknote;
 using CoffeeMachine.API.DTOs.BanknoteToMachine;
+using CoffeeMachine.API.DTOs.Coffee;
 using CoffeeMachine.API.DTOs.CoffeesInMachine;
 using CoffeeMachine.API.DTOs.Machine;
 using CoffeeMachine.API.DTOs.Order;
@@ -85,6 +86,31 @@ namespace CoffeeMachine.API.Controllers
             var resp = await _adminService.SubtractBanknotesFromMachineAsync(banknotesReq, machineReq);
             var machineResp = _mapper.Map<MachineResp>(resp);
             return Ok(machineResp);
+        }
+        
+        [HttpGet("Coffees")]
+        public async Task<IActionResult> GetAllCoffees()
+        {
+            var coffees = await _adminService.GetAllCoffeesAsync();
+            var coffeesResp = coffees.Select(c => _mapper.Map<CoffeeRespForAdmin>(c));
+            return Ok(coffeesResp);
+        }
+        
+        [HttpPost("Coffees/Add")]
+        public async Task<IActionResult> AddCoffee([FromBody] CoffeeAddReq coffeeAddReq)
+        {
+            var coffee = _mapper.Map<Coffee>(coffeeAddReq);
+            var resp = await _adminService.CreateNewCoffeeAsync(coffee);
+            var coffeeResp = _mapper.Map<CoffeeRespForAdmin>(resp);
+            return Ok(coffeeResp);
+        }
+        [HttpPost("Coffees/Delete")]
+        public async Task<IActionResult> DeleteCoffee([FromBody] CoffeeReq coffeeReq)
+        {
+            var coffee = _mapper.Map<Coffee>(coffeeReq);
+            var resp = await _adminService.DeleteCoffeeAsync(coffee);
+            
+            return Ok(resp);
         }
 
         [HttpPost("Machines/Coffee/Add")]
