@@ -21,6 +21,7 @@ public class MappingProfile : Profile
         CreateMap<Banknote, BanknoteDto>().ReverseMap();
 
         CreateMap<CoffeeRespForAdmin, Coffee>().ReverseMap();
+        CreateMap<CoffeeReq, Coffee>().ReverseMap();
         CreateMap<MachineRespForAdmin, Machine>().ReverseMap();
         CreateMap<MachineAddReq, Machine>().ReverseMap();
         CreateMap<MachineAddResp, Machine>().ReverseMap();

@@ -1,6 +1,7 @@
 using AutoMapper;
 using CoffeeMachine.API.DTOs.Banknote;
 using CoffeeMachine.API.DTOs.BanknoteToMachine;
+using CoffeeMachine.API.DTOs.CoffeesInMachine;
 using CoffeeMachine.API.DTOs.Machine;
 using CoffeeMachine.API.DTOs.Order;
 using CoffeeMachine.Application.Interfaces.IServices;
@@ -82,6 +83,26 @@ namespace CoffeeMachine.API.Controllers
             var banknotesReq = substrBanknoteToMachineReq.Banknotes.Select(b => _mapper.Map<Banknote>(b)).ToList();
             var machineReq = _mapper.Map<Machine>(substrBanknoteToMachineReq.Machine);
             var resp = await _adminService.SubtractBanknotesFromMachineAsync(banknotesReq, machineReq);
+            var machineResp = _mapper.Map<MachineResp>(resp);
+            return Ok(machineResp);
+        }
+
+        [HttpPost("Machines/Coffee/Add")]
+        public async Task<IActionResult> AddCoffeeToMachine([FromBody] AddDelCoffeeToMachine req)
+        {
+            var coffee = _mapper.Map<Coffee>(req.Coffee);
+            var machine = _mapper.Map<Machine>(req.Machine);
+            var resp = await _adminService.AddCoffeeToMachineAsync(coffee, machine);
+            var machineResp = _mapper.Map<MachineResp>(resp);
+            return Ok(machineResp);
+        }
+        
+        [HttpPost("Machines/Coffee/Substract")]
+        public async Task<IActionResult> SubstractCoffeeToMachine([FromBody] AddDelCoffeeToMachine req)
+        {
+            var coffee = _mapper.Map<Coffee>(req.Coffee);
+            var machine = _mapper.Map<Machine>(req.Machine);
+            var resp = await _adminService.DeleteCoffeeFromMachineAsync(coffee, machine);
             var machineResp = _mapper.Map<MachineResp>(resp);
             return Ok(machineResp);
         }
