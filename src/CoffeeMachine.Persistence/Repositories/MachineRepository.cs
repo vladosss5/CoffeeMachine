@@ -48,9 +48,7 @@ public class MachineRepository : IMachineRepository
     /// <exception cref="NotImplementedException"></exception>
     public async Task<Machine> AddAsync(Machine entity)
     {
-        var identity = await _dbContext.Machines.AnyAsync(x => x.SerialNumber == entity.SerialNumber);
-        
-        if (identity != false)
+        if (!await _dbContext.Machines.AnyAsync(x => x.SerialNumber == entity.SerialNumber))
             throw new AlreadyExistsException(nameof(Machine), entity.SerialNumber);
 
         Machine newMachine = new Machine()
@@ -97,7 +95,7 @@ public class MachineRepository : IMachineRepository
     public async Task<bool> DeleteAsync(Machine entity)
     {
         var machine = await _dbContext.Machines.FirstOrDefaultAsync(x => 
-            x.Id == entity.Id || 
+            x.Id == entity.Id && 
             x.SerialNumber == entity.SerialNumber);
         
         if (machine == null)
@@ -132,7 +130,7 @@ public class MachineRepository : IMachineRepository
     /// <returns></returns>
     public async Task<int> UpdateBalanceAsync(Machine entity)
     {
-        var machine = GetBySerialNumberAsync(entity.SerialNumber).Result;
+        var machine = await GetBySerialNumberAsync(entity.SerialNumber);
         
         var banknoteMachines = await _dbContext.BanknotesToMachines.Where(bm =>
             bm.Machine.SerialNumber == machine.SerialNumber).Include(bm => bm.Banknote).ToListAsync();
@@ -160,6 +158,15 @@ public class MachineRepository : IMachineRepository
     /// <returns></returns>
     public async Task<Machine> AddCoffeeInMachineAsync(Coffee coffee, Machine machine)
     {
+        if (!await _dbContext.Coffees.AnyAsync(c => coffee.Id == c.Id))
+            throw new NotFoundException(nameof(Coffee), coffee.Id);
+
+        if (!await _dbContext.Machines.AnyAsync(m => machine.Id == m.Id))
+            throw new NotFoundException(nameof(Machine), machine.Id);
+
+        if (!await _dbContext.CoffeesToMachines.AnyAsync(ctm => ctm.Coffee == coffee && ctm.Machine == machine))
+            throw new AlreadyExistsException(nameof(Coffee), coffee.Name);
+        
         var coffeeMachine = new CoffeeToMachine()
         {
             Coffee = coffee,
@@ -181,10 +188,16 @@ public class MachineRepository : IMachineRepository
     /// <exception cref="NotImplementedException"></exception>
     public async Task<Machine> DeleteCoffeeFromMachineAsync(Coffee coffee, Machine machine)
     {
+        if (!await _dbContext.Coffees.AnyAsync(c => coffee.Id == c.Id))
+            throw new NotFoundException(nameof(Coffee), coffee.Id);
+
+        if (!await _dbContext.Machines.AnyAsync(m => machine.Id == m.Id))
+            throw new NotFoundException(nameof(Machine), machine.Id);
+        
         var coffeeMachine = _dbContext.CoffeesToMachines.Where(cm => cm.Coffee == coffee && cm.Machine == machine);
         
         _dbContext.CoffeesToMachines.RemoveRange(coffeeMachine);
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync();
 
         return machine;
     }

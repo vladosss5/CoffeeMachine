@@ -13,9 +13,8 @@ public static class DIExtentions
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("DefaultConnection"); //Для локальной бд
-        // var connectionString = configuration.GetConnectionString("ConnectionPostgresContainer"); //Для Docker-compose
-
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+        
         services.AddDbContext<DataContext>(options => options.UseNpgsql(connectionString));
 
         services.AddScoped<IOrderService, OrderService>();

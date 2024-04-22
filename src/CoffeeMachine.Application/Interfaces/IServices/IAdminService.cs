@@ -18,6 +18,13 @@ public interface IAdminService
     public Task<Machine> CreateNewMachineAsync(Machine machine);
     
     /// <summary>
+    /// Изменить кофемашину
+    /// </summary>
+    /// <param name="machine"></param>
+    /// <returns></returns>
+    public Task<Machine> UpdateMachineAsync(Machine machine);
+    
+    /// <summary>
     /// Удалить кофемашину
     /// </summary>
     /// <param name="machine"></param>

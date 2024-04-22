@@ -32,7 +32,7 @@ public class OrderRepository : IOrderRepository
     }
 
     /// <summary>
-    /// Получить список заказ
+    /// Получить список всех заказов
     /// </summary>
     /// <returns></returns>
     public async Task<IEnumerable<Order>> GetAllAsync()
@@ -76,9 +76,7 @@ public class OrderRepository : IOrderRepository
     /// <exception cref="NotImplementedException"></exception>
     public async Task<Order> UpdateAsync(Order entity)
     {
-        var order = await _dbContext.Orders.FirstOrDefaultAsync(x => 
-            x.DateTimeCreate == entity.DateTimeCreate && 
-            x.Machine == entity.Machine);
+        var order = await _dbContext.Orders.FirstOrDefaultAsync(x => entity.Id == x.Id);
         
         if (order == null)
             throw new NotFoundException(nameof(Order), entity);

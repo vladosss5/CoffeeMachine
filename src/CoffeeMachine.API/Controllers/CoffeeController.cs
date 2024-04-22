@@ -20,6 +20,10 @@ namespace CoffeeMachine.API.Controllers
             _mapper = mapper;
         }
         
+        /// <summary>
+        /// Получить список всех кофе
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetAllCoffees()
         {
@@ -28,6 +32,11 @@ namespace CoffeeMachine.API.Controllers
             return Ok(coffeesResp);
         }
         
+        /// <summary>
+        /// Добавить кофе
+        /// </summary>
+        /// <param name="coffeeAddReq"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> AddCoffee([FromBody] CoffeeAddReq coffeeAddReq)
         {
@@ -36,6 +45,11 @@ namespace CoffeeMachine.API.Controllers
             var coffeeResp = _mapper.Map<CoffeeRespForAdmin>(resp);
             return Ok(coffeeResp);
         }
+        /// <summary>
+        /// Удалить кофе
+        /// </summary>
+        /// <param name="coffeeReq"></param>
+        /// <returns></returns>
         [HttpDelete]
         public async Task<IActionResult> DeleteCoffee([FromBody] CoffeeReq coffeeReq)
         {
@@ -45,6 +59,11 @@ namespace CoffeeMachine.API.Controllers
             return Ok(resp);
         }
 
+        /// <summary>
+        /// Изменить кофе
+        /// </summary>
+        /// <param name="coffeeUpdateReq"></param>
+        /// <returns></returns>
         [HttpPut]
         public async Task<IActionResult> UpdateCoffee([FromBody] CoffeeUpdateDto coffeeUpdateReq)
         {

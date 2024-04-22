@@ -28,6 +28,7 @@ public class MappingProfile : Profile
         CreateMap<MachineReq, Machine>().ReverseMap();
         CreateMap<MachineResp, Machine>().ReverseMap();
         CreateMap<MachineForOrderDto, Machine>().ReverseMap();
+        CreateMap<MachineUpdateDto, Machine>().ReverseMap();
         
         CreateMap<OrderAddReq, Order>().ReverseMap();
         CreateMap<OrderAddResp, Order>().ReverseMap();

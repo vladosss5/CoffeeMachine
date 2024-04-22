@@ -27,6 +27,7 @@
       <Folder Include="Areas\MachineAdminController\Models\" />
       <Folder Include="Areas\MachineAdminController\Views\" />
       <Folder Include="Controllers\" />
+      <Folder Include="Logs\" />
     </ItemGroup>
 
 </Project>

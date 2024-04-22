@@ -23,6 +23,10 @@ namespace CoffeeMachine.API.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Получить список всех кофемашин
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetAllMachines()
         {
@@ -31,6 +35,11 @@ namespace CoffeeMachine.API.Controllers
             return Ok(machineResp);
         }
 
+        /// <summary>
+        /// Получить банкноты из кофемашины
+        /// </summary>
+        /// <param name="machineReq"></param>
+        /// <returns></returns>
         [HttpPost("Banknotes")]
         public async Task<IActionResult> GetBanknotesFromMachine([FromBody] MachineReq machineReq)
         {
@@ -41,6 +50,11 @@ namespace CoffeeMachine.API.Controllers
             return Ok(banknotesResp);
         }
 
+        /// <summary>
+        /// Добавить кофемашину
+        /// </summary>
+        /// <param name="machineReq"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> CreateMachine([FromBody] MachineAddReq machineReq)
         {
@@ -50,7 +64,26 @@ namespace CoffeeMachine.API.Controllers
 
             return Ok(machineResp);
         }
+        
+        /// <summary>
+        /// Изменить кофемашину
+        /// </summary>
+        /// <param name="machineReq"></param>
+        /// <returns></returns>
+        [HttpPut]
+        public async Task<IActionResult> UpdateMachine([FromBody] MachineUpdateDto machineReq)
+        {
+            var machine = _mapper.Map<Machine>(machineReq);
+            var resp = await _adminService.UpdateMachineAsync(machine);
+            var machineResp = _mapper.Map<MachineRespForAdmin>(resp);
+            return Ok(machineResp);
+        }
 
+        /// <summary>
+        /// Удалить кофемашину
+        /// </summary>
+        /// <param name="machineReq"></param>
+        /// <returns></returns>
         [HttpDelete]
         public async Task<IActionResult> DeleteMachine([FromBody] MachineReq machineReq)
         {
@@ -59,6 +92,11 @@ namespace CoffeeMachine.API.Controllers
             return Ok(resp);
         }
 
+        /// <summary>
+        /// Добавить банкноты в кофемашину
+        /// </summary>
+        /// <param name="substrBanknoteToMachineReq"></param>
+        /// <returns></returns>
         [HttpPost("Banknotes/Add")]
         public async Task<IActionResult> AddBanknotesToMachine([FromBody] AddSubstrBanknoteToMachineReq substrBanknoteToMachineReq)
         {
@@ -69,6 +107,11 @@ namespace CoffeeMachine.API.Controllers
             return Ok(machineResp);
         }
         
+        /// <summary>
+        /// Взять банкноты из кофемашины
+        /// </summary>
+        /// <param name="substrBanknoteToMachineReq"></param>
+        /// <returns></returns>
         [HttpPost("Banknotes/Substract")]
         public async Task<IActionResult> SubtractBanknotesToMachine([FromBody] AddSubstrBanknoteToMachineReq substrBanknoteToMachineReq)
         {
@@ -79,6 +122,11 @@ namespace CoffeeMachine.API.Controllers
             return Ok(machineResp);
         }
         
+        /// <summary>
+        /// Добавить кофе в кофемашину
+        /// </summary>
+        /// <param name="req"></param>
+        /// <returns></returns>
         [HttpPost("Coffee/Add")]
         public async Task<IActionResult> AddCoffeeToMachine([FromBody] AddDelCoffeeToMachine req)
         {
@@ -89,6 +137,11 @@ namespace CoffeeMachine.API.Controllers
             return Ok(machineResp);
         }
         
+        /// <summary>
+        /// Удалить кофе из кофемашины
+        /// </summary>
+        /// <param name="req"></param>
+        /// <returns></returns>
         [HttpPost("Coffee/Substract")]
         public async Task<IActionResult> SubstractCoffeeToMachine([FromBody] AddDelCoffeeToMachine req)
         {

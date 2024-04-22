@@ -22,6 +22,10 @@ namespace CoffeeMachine.API.Controllers
             _adminService = adminService;
         }
         
+        /// <summary>
+        /// Получить список всех заказов
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetAllOrdersAsync()
         {
@@ -30,6 +34,11 @@ namespace CoffeeMachine.API.Controllers
             return Ok(ordersResp);
         }
         
+        /// <summary>
+        /// Создать новый заказ
+        /// </summary>
+        /// <param name="orderRequest"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> CreateOrder([FromBody] OrderAddReq orderRequest)
         {

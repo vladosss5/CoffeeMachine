@@ -45,6 +45,17 @@ public class AdminService : IAdminService
     }
 
     /// <summary>
+    /// Изменить кофемашину
+    /// </summary>
+    /// <param name="machine"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public async Task<Machine> UpdateMachineAsync(Machine machine)
+    {
+        return await _machineRepository.UpdateAsync(machine);
+    }
+
+    /// <summary>
     /// Удалить кофемашину
     /// </summary>
     /// <param name="machine"></param>

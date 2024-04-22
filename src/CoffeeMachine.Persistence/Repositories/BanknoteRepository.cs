@@ -48,9 +48,7 @@ public class BanknoteRepository : IBanknoteRepository
     /// <exception cref="AlreadyExistsException"></exception>
     public async Task<Banknote> AddAsync(Banknote entity)
     {
-        var identity = await _dbContext.Banknotes.AnyAsync(x => x.Nominal == entity.Nominal);
-
-        if (identity != false)
+        if (!await _dbContext.Banknotes.AnyAsync(x => x.Nominal == entity.Nominal))
             throw new AlreadyExistsException(nameof(Banknote), entity.Nominal);
         
         Banknote newBanknote = new Banknote()

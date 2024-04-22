@@ -18,9 +18,9 @@ builder.Services.AddApplicationCore();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Host.UseSerilog();
 
 var app = builder.Build();
-
 
 if (app.Environment.IsDevelopment())
 {
@@ -29,9 +29,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCustomExceptionHandler();
-app.UseDeveloperExceptionPage();
-app.UseHttpsRedirection();
 app.MapControllers();
-
 
 app.Run();
