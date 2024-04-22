@@ -1,9 +1,11 @@
-﻿using CoffeeMachine.Application.Interfaces.IRepositories;
+﻿using System.Transactions;
+using CoffeeMachine.Application.Interfaces;
+using CoffeeMachine.Application.Interfaces.IRepositories;
 using CoffeeMachine.Persistence.Data.Context;
 
 namespace CoffeeMachine.Persistence;
 
-public class UnitOfWork
+public class UnitOfWork : IUnitOfWork
 {
     private readonly DataContext _dbContext;
     private readonly IBanknoteRepository _banknoteRepository;

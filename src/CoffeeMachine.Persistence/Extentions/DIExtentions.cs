@@ -1,3 +1,4 @@
+using CoffeeMachine.Application.Interfaces;
 using CoffeeMachine.Application.Interfaces.IRepositories;
 using CoffeeMachine.Application.Interfaces.IServices;
 using CoffeeMachine.Persistence.Data.Context;
@@ -17,6 +18,8 @@ public static class DIExtentions
         
         services.AddDbContext<DataContext>(options => options.UseNpgsql(connectionString));
 
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IAdminService, AdminService>();
         

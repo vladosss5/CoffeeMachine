@@ -1,4 +1,5 @@
 using CoffeeMachine.Application.Exceptions;
+using CoffeeMachine.Application.Interfaces;
 using CoffeeMachine.Application.Interfaces.IRepositories;
 using CoffeeMachine.Application.Interfaces.IServices;
 using CoffeeMachine.Core.Models;
@@ -7,9 +8,9 @@ namespace CoffeeMachine.Persistence.Services;
 
 public class OrderService : IOrderService
 {
-    private readonly UnitOfWork _unitOfWork;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public OrderService(UnitOfWork unitOfWork)
+    public OrderService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }
