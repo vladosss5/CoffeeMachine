@@ -7,20 +7,11 @@ namespace CoffeeMachine.Persistence.Services;
 
 public class OrderService : IOrderService
 {
-    private readonly IBanknoteRepository _banknoteRepository;
-    private readonly IMachineRepository _machineRepository;
-    private readonly IOrderRepository _orderRepository;
-    private readonly ITransactionRepository _transactionRepository;
-    private readonly ICoffeeRepository _coffeeRepository;
-    
-    public OrderService(IBanknoteRepository banknoteRepository, IMachineRepository machineRepository, 
-        IOrderRepository orderRepository, ITransactionRepository transactionRepository, ICoffeeRepository coffeeRepository)
+    private readonly UnitOfWork _unitOfWork;
+
+    public OrderService(UnitOfWork unitOfWork)
     {
-        _banknoteRepository = banknoteRepository;
-        _machineRepository = machineRepository;
-        _orderRepository = orderRepository;
-        _transactionRepository = transactionRepository;
-        _coffeeRepository = coffeeRepository;
+        _unitOfWork = unitOfWork;
     }
     
     /// <summary>
@@ -32,28 +23,28 @@ public class OrderService : IOrderService
     {
         var order = new Order()
         {
-            Machine = await _machineRepository.GetBySerialNumberAsync(orderRequest.Machine.SerialNumber),
-            Coffee = await _coffeeRepository.GetByNameAsync(orderRequest.Coffee.Name),
+            Machine = await _unitOfWork.Machine.GetBySerialNumberAsync(orderRequest.Machine.SerialNumber),
+            Coffee = await _unitOfWork.Coffee.GetByNameAsync(orderRequest.Coffee.Name),
             Status = "Принято",
         };
 
-        if (!await _machineRepository.CheckCoffeeInMachineAsync(order.Machine, order.Coffee))
+        if (!await _unitOfWork.Machine.CheckCoffeeInMachineAsync(order.Machine, order.Coffee))
             throw new Exception("Данная машина не умеет готовить выбранный кофе");
         
         
-        order = await _orderRepository.AddAsync(order);
+        order = await _unitOfWork.Order.AddAsync(order);
         
         foreach (var transaction in orderRequest.Transactions)
         {
             transaction.Order = order;
-            await _transactionRepository.AddAsync(transaction);
+            await _unitOfWork.Transaction.AddAsync(transaction);
         }
         
         var banknotesPay = order.Transactions.Select(t => t.Banknote).ToList();
-        await _banknoteRepository.AddBanknotesToMachineAsync(banknotesPay, order.Machine);
+        await _unitOfWork.Banknote.AddBanknotesToMachineAsync(banknotesPay, order.Machine);
         
         order.Status = "Внесены деньги";
-        await _orderRepository.UpdateAsync(order);
+        await _unitOfWork.Order.UpdateAsync(order);
         
         var delivery = new List<Banknote>();
         
@@ -66,7 +57,7 @@ public class OrderService : IOrderService
             return await ErrorChange(order, banknotesPay);
         }
         
-        await _banknoteRepository.SubtractBanknotesFromMachineAsync(delivery, order.Machine);
+        await _unitOfWork.Banknote.SubtractBanknotesFromMachineAsync(delivery, order.Machine);
         
         foreach (var banknote in delivery)
         {
@@ -76,12 +67,12 @@ public class OrderService : IOrderService
                 Banknote = banknote,
                 Order = order
             };
-            await _transactionRepository.AddAsync(newTransaction);
+            await _unitOfWork.Transaction.AddAsync(newTransaction);
         }
         
-        order.Transactions = await _transactionRepository.GetByOrderAsync(order);
+        order.Transactions = await _unitOfWork.Transaction.GetByOrderAsync(order);
         order.Status = "Готово";
-        order = await _orderRepository.UpdateAsync(order);
+        order = await _unitOfWork.Order.UpdateAsync(order);
         order.Transactions = order.Transactions.Where(t => t.IsPayment == false).ToList();
         return order;
     }
@@ -96,7 +87,7 @@ public class OrderService : IOrderService
     /// <returns></returns>
     private async Task<List<Banknote>> CalculateChange(int coffeePrice, IEnumerable<Transaction> transactions, Machine machine)
     {
-        var banknotes = await _banknoteRepository
+        var banknotes = await _unitOfWork.Banknote
             .GetBanknotesByMachineAsync(machine);
         
         var change = new List<Banknote>();
@@ -134,9 +125,9 @@ public class OrderService : IOrderService
     /// <returns></returns>
     private async Task<Order> ErrorChange(Order order, List<Banknote> banknotes)
     {
-        await _banknoteRepository.SubtractBanknotesFromMachineAsync(banknotes, order.Machine);
+        await _unitOfWork.Banknote.SubtractBanknotesFromMachineAsync(banknotes, order.Machine);
         order.Status = "Нет сдачи";
-        await _orderRepository.UpdateAsync(order);
+        await _unitOfWork.Order.UpdateAsync(order);
         order.Transactions = order.Transactions.Where(t => t.IsPayment == false).ToList();
         
         foreach (var banknote in banknotes)
@@ -147,7 +138,7 @@ public class OrderService : IOrderService
                 Banknote = banknote,
                 Order = order
             };
-            await _transactionRepository.AddAsync(newTransaction);
+            await _unitOfWork.Transaction.AddAsync(newTransaction);
         }
         
         return order;

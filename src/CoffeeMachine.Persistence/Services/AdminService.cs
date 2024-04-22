@@ -7,21 +7,11 @@ namespace CoffeeMachine.Persistence.Services;
 
 public class AdminService : IAdminService
 {
-    private readonly IBanknoteRepository _banknoteRepository;
-    private readonly IMachineRepository _machineRepository;
-    private readonly IOrderRepository _orderRepository;
-    private readonly ITransactionRepository _transactionRepository;
-    private readonly ICoffeeRepository _coffeeRepository;
-    
-    public AdminService(IBanknoteRepository banknoteRepository, IMachineRepository machineRepository, 
-        IOrderRepository orderRepository, ITransactionRepository transactionRepository, 
-        ICoffeeRepository coffeeRepository)
+    private readonly UnitOfWork _unitOfWork;
+
+    public AdminService(UnitOfWork unitOfWork)
     {
-        _banknoteRepository = banknoteRepository;
-        _machineRepository = machineRepository;
-        _orderRepository = orderRepository;
-        _transactionRepository = transactionRepository;
-        _coffeeRepository = coffeeRepository;
+        _unitOfWork = unitOfWork;
     }
 
 
@@ -31,7 +21,7 @@ public class AdminService : IAdminService
     /// <returns></returns>
     public async Task<IEnumerable<Machine>> GetAllMachinesAsync()
     {
-        return await _machineRepository.GetAllAsync();
+        return await _unitOfWork.Machine.GetAllAsync();
     }
 
     /// <summary>
@@ -41,7 +31,7 @@ public class AdminService : IAdminService
     /// <returns></returns>
     public async Task<Machine> CreateNewMachineAsync(Machine machine)
     {
-        return await _machineRepository.AddAsync(machine);
+        return await _unitOfWork.Machine.AddAsync(machine);
     }
 
     /// <summary>
@@ -52,7 +42,7 @@ public class AdminService : IAdminService
     /// <exception cref="NotImplementedException"></exception>
     public async Task<Machine> UpdateMachineAsync(Machine machine)
     {
-        return await _machineRepository.UpdateAsync(machine);
+        return await _unitOfWork.Machine.UpdateAsync(machine);
     }
 
     /// <summary>
@@ -62,7 +52,7 @@ public class AdminService : IAdminService
     /// <returns></returns>
     public async Task<bool> DeleteMachineAsync(Machine machine)
     {
-        return await _machineRepository.DeleteAsync(machine);
+        return await _unitOfWork.Machine.DeleteAsync(machine);
     }
 
     /// <summary>
@@ -72,7 +62,7 @@ public class AdminService : IAdminService
     /// <returns></returns>
     public async Task<IEnumerable<Banknote>> GetBanknotesByMachineAsync(Machine machine)
     {
-        return await _banknoteRepository.GetBanknotesByMachineAsync(machine);
+        return await _unitOfWork.Banknote.GetBanknotesByMachineAsync(machine);
     }
 
     /// <summary>
@@ -87,15 +77,15 @@ public class AdminService : IAdminService
 
         foreach (var banknote in banknotesReq)
         {
-            banknotes.Add(await _banknoteRepository.GetByNominalAsync(banknote.Nominal));
+            banknotes.Add(await _unitOfWork.Banknote.GetByNominalAsync(banknote.Nominal));
         }
         
-        var machine = await _machineRepository.GetByIdAsync(machineReq.Id);
+        var machine = await _unitOfWork.Machine.GetByIdAsync(machineReq.Id);
         
-        await _banknoteRepository.AddBanknotesToMachineAsync(banknotes, machine);
-        await _machineRepository.UpdateBalanceAsync(machine);
+        await _unitOfWork.Banknote.AddBanknotesToMachineAsync(banknotes, machine);
+        await _unitOfWork.Machine.UpdateBalanceAsync(machine);
 
-        var machineResp = await _machineRepository.GetByIdAsync(machine.Id);
+        var machineResp = await _unitOfWork.Machine.GetByIdAsync(machine.Id);
         
         return machineResp;
     }
@@ -112,15 +102,15 @@ public class AdminService : IAdminService
         
         foreach (var banknote in banknotesReq)
         {
-            banknotes.Add(await _banknoteRepository.GetByNominalAsync(banknote.Nominal));
+            banknotes.Add(await _unitOfWork.Banknote.GetByNominalAsync(banknote.Nominal));
         }
         
-        var machine = await _machineRepository.GetByIdAsync(machineReq.Id);
+        var machine = await _unitOfWork.Machine.GetByIdAsync(machineReq.Id);
         
-        await _banknoteRepository.SubtractBanknotesFromMachineAsync(banknotes, machine);
-        await _machineRepository.UpdateBalanceAsync(machine);
+        await _unitOfWork.Banknote.SubtractBanknotesFromMachineAsync(banknotes, machine);
+        await _unitOfWork.Machine.UpdateBalanceAsync(machine);
         
-        var machineResp = await _machineRepository.GetByIdAsync(machine.Id);
+        var machineResp = await _unitOfWork.Machine.GetByIdAsync(machine.Id);
         
         return machineResp;
     }
@@ -133,10 +123,10 @@ public class AdminService : IAdminService
     /// <returns></returns>
     public async Task<Machine> AddCoffeeToMachineAsync(Coffee coffee, Machine machine)
     {
-        var nCoffee = await _coffeeRepository.GetByNameAsync(coffee.Name);
-        var nMachine = await _machineRepository.GetBySerialNumberAsync(machine.SerialNumber);
+        var nCoffee = await _unitOfWork.Coffee.GetByNameAsync(coffee.Name);
+        var nMachine = await _unitOfWork.Machine.GetBySerialNumberAsync(machine.SerialNumber);
         
-        return await _machineRepository.AddCoffeeInMachineAsync(nCoffee, nMachine);
+        return await _unitOfWork.Machine.AddCoffeeInMachineAsync(nCoffee, nMachine);
     }
 
     /// <summary>
@@ -147,10 +137,10 @@ public class AdminService : IAdminService
     /// <returns></returns>
     public async Task<Machine> DeleteCoffeeFromMachineAsync(Coffee coffee, Machine machine)
     {
-        var nCoffee = await _coffeeRepository.GetByNameAsync(coffee.Name);
-        var nMachine = await _machineRepository.GetBySerialNumberAsync(machine.SerialNumber);
+        var nCoffee = await _unitOfWork.Coffee.GetByNameAsync(coffee.Name);
+        var nMachine = await _unitOfWork.Machine.GetBySerialNumberAsync(machine.SerialNumber);
         
-        return await _machineRepository.DeleteCoffeeFromMachineAsync(nCoffee, nMachine);
+        return await _unitOfWork.Machine.DeleteCoffeeFromMachineAsync(nCoffee, nMachine);
     }
 
     /// <summary>
@@ -159,7 +149,7 @@ public class AdminService : IAdminService
     /// <returns></returns>
     public async Task<IEnumerable<Coffee>> GetAllCoffeesAsync()
     {
-        return await _coffeeRepository.GetAllAsync();
+        return await _unitOfWork.Coffee.GetAllAsync();
     }
 
     /// <summary>
@@ -169,7 +159,7 @@ public class AdminService : IAdminService
     /// <returns></returns>
     public async Task<Coffee> CreateNewCoffeeAsync(Coffee coffee)
     {
-        return await _coffeeRepository.AddAsync(coffee);
+        return await _unitOfWork.Coffee.AddAsync(coffee);
     }
 
     /// <summary>
@@ -179,7 +169,7 @@ public class AdminService : IAdminService
     /// <returns></returns>
     public async Task<bool> DeleteCoffeeAsync(Coffee coffee)
     {
-        return await _coffeeRepository.DeleteAsync(coffee);
+        return await _unitOfWork.Coffee.DeleteAsync(coffee);
     }
 
     /// <summary>
@@ -189,7 +179,7 @@ public class AdminService : IAdminService
     /// <returns></returns>
     public async Task<Coffee> UpdateCoffeeAsync(Coffee coffee)
     {
-        return await _coffeeRepository.UpdateAsync(coffee);
+        return await _unitOfWork.Coffee.UpdateAsync(coffee);
     }
 
     /// <summary>
@@ -198,6 +188,6 @@ public class AdminService : IAdminService
     /// <returns></returns>
     public async Task<IEnumerable<Order>> GetAllOrdersAsync()
     {
-        return await _orderRepository.GetAllAsync();
+        return await _unitOfWork.Order.GetAllAsync();
     }
 }
