@@ -105,6 +105,18 @@ public partial class DataContext : DbContext
                 .HasConstraintName("transaction_order_fk");
         });
     }
-    
+
+    public async Task TrySaveChangesToDbAsync()
+    {
+        try
+        {
+            await SaveChangesAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

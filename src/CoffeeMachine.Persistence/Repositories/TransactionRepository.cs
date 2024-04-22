@@ -51,7 +51,7 @@ public class TransactionRepository : ITransactionRepository
         };
         
         await _dbContext.Transactions.AddAsync(newTransaction);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.TrySaveChangesToDbAsync();
         
         return newTransaction;
     }

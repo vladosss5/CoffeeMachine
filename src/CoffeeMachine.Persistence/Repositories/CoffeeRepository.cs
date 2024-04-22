@@ -60,7 +60,7 @@ public class CoffeeRepository : ICoffeeRepository
         };
         
         await _dbContext.Coffees.AddAsync(newCoffee);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.TrySaveChangesToDbAsync();
         
         return newCoffee;
     }
@@ -82,7 +82,7 @@ public class CoffeeRepository : ICoffeeRepository
         coffee.Name = entity.Name;
         
         _dbContext.Coffees.Update(coffee);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.TrySaveChangesToDbAsync();
 
         return coffee;
     }
@@ -101,7 +101,7 @@ public class CoffeeRepository : ICoffeeRepository
             throw new NotFoundException(nameof(Coffee), entity.Name);
         
         _dbContext.Coffees.Remove(coffee);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.TrySaveChangesToDbAsync();
         
         return true;
     }
@@ -137,7 +137,7 @@ public class CoffeeRepository : ICoffeeRepository
         };
         
         await _dbContext.CoffeesToMachines.AddAsync(coffeeInMachine);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.TrySaveChangesToDbAsync();
         
         return coffeeInMachine.Coffee;
     }
@@ -157,7 +157,7 @@ public class CoffeeRepository : ICoffeeRepository
             throw new NotFoundException(nameof(Coffee), coffee.Name);
         
         _dbContext.CoffeesToMachines.Remove(delitingCoffee);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.TrySaveChangesToDbAsync();
         
         return delitingCoffee.Coffee;
     }

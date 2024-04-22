@@ -57,7 +57,7 @@ public class BanknoteRepository : IBanknoteRepository
         };
         
         await _dbContext.Banknotes.AddAsync(newBanknote);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.TrySaveChangesToDbAsync();
         
         return newBanknote;
     }
@@ -87,7 +87,7 @@ public class BanknoteRepository : IBanknoteRepository
             throw new NotFoundException(nameof(Banknote), entity.Nominal);
         
         _dbContext.Banknotes.Remove(deletingBanknote);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.TrySaveChangesToDbAsync();
         
         return true;
     }
@@ -162,13 +162,13 @@ public class BanknoteRepository : IBanknoteRepository
             }
         }
         
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.TrySaveChangesToDbAsync();
         
         return banknoteMachines;
     }
 
     /// <summary>
-    /// Вычесть банкноты из машины
+    /// Вычесть банкноты из машины.
     /// </summary>
     /// <param name="banknotes"></param>
     /// <param name="machine"></param>
@@ -194,7 +194,7 @@ public class BanknoteRepository : IBanknoteRepository
             }
         }
         
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.TrySaveChangesToDbAsync();
         
         return await _dbContext.BanknotesToMachines.Include(bm => bm.Machine)
             .Where(bm => bm.Machine == machine).ToListAsync();

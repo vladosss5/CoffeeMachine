@@ -61,7 +61,7 @@ public class OrderRepository : IOrderRepository
         };
 
         await _dbContext.Orders.AddAsync(newOrder);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.TrySaveChangesToDbAsync();
         
         newOrder.Transactions = entity.Transactions;
         
@@ -84,7 +84,7 @@ public class OrderRepository : IOrderRepository
         order.Status = entity.Status;
         
         _dbContext.Orders.Update(order);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.TrySaveChangesToDbAsync();
         
         return entity;
     }
@@ -106,7 +106,7 @@ public class OrderRepository : IOrderRepository
             throw new NotFoundException(nameof(Order), entity);
         
         _dbContext.Orders.Remove(order);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.TrySaveChangesToDbAsync();
         
         return true;
     }

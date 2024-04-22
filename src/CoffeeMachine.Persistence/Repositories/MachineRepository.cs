@@ -58,7 +58,7 @@ public class MachineRepository : IMachineRepository
         };
         
         await _dbContext.Machines.AddAsync(newMachine);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.TrySaveChangesToDbAsync();
         
         return newMachine;
     }
@@ -81,7 +81,7 @@ public class MachineRepository : IMachineRepository
         machine.Balance = entity.Balance;
         
         _dbContext.Machines.Update(machine);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.TrySaveChangesToDbAsync();
         
         return machine;
     }
@@ -102,7 +102,7 @@ public class MachineRepository : IMachineRepository
             throw new NotFoundException(nameof(Machine), entity.SerialNumber);
         
         _dbContext.Machines.Remove(machine);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.TrySaveChangesToDbAsync();
         
         return true;
     }
@@ -145,7 +145,7 @@ public class MachineRepository : IMachineRepository
         machine.Balance = balance;
         
         _dbContext.Machines.Update(machine);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.TrySaveChangesToDbAsync();
         
         return balance;
     }
@@ -174,7 +174,7 @@ public class MachineRepository : IMachineRepository
         };
         
         await _dbContext.CoffeesToMachines.AddAsync(coffeeMachine);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.TrySaveChangesToDbAsync();
         
         return machine;
     }
@@ -197,7 +197,7 @@ public class MachineRepository : IMachineRepository
         var coffeeMachine = _dbContext.CoffeesToMachines.Where(cm => cm.Coffee == coffee && cm.Machine == machine);
         
         _dbContext.CoffeesToMachines.RemoveRange(coffeeMachine);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.TrySaveChangesToDbAsync();
 
         return machine;
     }
