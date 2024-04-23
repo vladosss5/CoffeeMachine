@@ -26,13 +26,13 @@ namespace CoffeeMachine.API.Controllers
         /// Получить список всех заказов
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
-        public async Task<IActionResult> GetAllOrdersAsync()
-        {
-            var orders = await _adminService.GetAllOrdersAsync();
-            var ordersResp = orders.Select(o => _mapper.Map<OrderRespForAdmin>(o));
-            return Ok(ordersResp);
-        }
+        // [HttpGet]
+        // public async Task<IActionResult> GetAllOrdersAsync()
+        // {
+        //     var orders = await _adminService.GetAllOrdersAsync();
+        //     var ordersResp = orders.Select(o => _mapper.Map<OrderRespForAdmin>(o));
+        //     return Ok(ordersResp);
+        // }
         
         /// <summary>
         /// Создать новый заказ
@@ -40,9 +40,9 @@ namespace CoffeeMachine.API.Controllers
         /// <param name="orderRequest"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> CreateOrder([FromBody] OrderAddReq orderRequest)
+        public async Task<IActionResult> CreateOrder([FromBody] OrderAddRequestDto orderRequest)
         {
-            var order = _mapper.Map<OrderAddResp>(await _orderService.CreateOrderAsync(_mapper.Map<Order>(orderRequest)));
+            var order = _mapper.Map<OrderAddResponseDto>(await _orderService.CreateOrderAsync(_mapper.Map<Order>(orderRequest)));
             return Ok(order);
         }
     }

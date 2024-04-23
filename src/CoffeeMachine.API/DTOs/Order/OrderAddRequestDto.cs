@@ -4,10 +4,9 @@ using CoffeeMachine.API.DTOs.Transaction;
 
 namespace CoffeeMachine.API.DTOs.Order;
 
-public class OrderAddResp
+public class OrderAddRequestDto
 {
     public MachineForOrderDto Machine { get; set; }
-    public CoffeeForOrderResp Coffee { get; set; }
-    public string Status { get; set; }
+    public CoffeeForOrderRequestDto Coffee { get; set; }
     public IEnumerable<TransactionForOrderDto> Transactions { get; set; } = new List<TransactionForOrderDto>();
 }

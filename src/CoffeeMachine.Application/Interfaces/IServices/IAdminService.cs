@@ -71,23 +71,23 @@ public interface IAdminService
     /// <summary>
     /// Добавить банкноты в автомат.
     /// </summary>
-    /// <param name="banknotes"></param>
+    /// <param name="banknotesRequest"></param>
     /// <param name="machineId"></param>
     /// <returns></returns>
-    public Task<Machine> AddBanknotesToMachineAsync(IEnumerable<Banknote> banknotes, long machineId);
+    public Task<Machine> AddBanknotesToMachineAsync(IEnumerable<Banknote> banknotesRequest, long machineId);
     
     /// <summary>
     /// Выдать банкноты из автомата.
     /// </summary>
-    /// <param name="banknotes"></param>
+    /// <param name="banknotesRequest"></param>
     /// <param name="machineId"></param>
     /// <returns></returns>
-    public Task<Machine> SubtractBanknotesFromMachineAsync(IEnumerable<Banknote> banknotes, long machineId);
+    public Task<Machine> SubtractBanknotesFromMachineAsync(IEnumerable<Banknote> banknotesRequest, long machineId);
     
     /// <summary>
     /// Получить список банкнот в кофемашине.
     /// </summary>
-    /// <param name="machine"></param>
+    /// <param name="machineId"></param>
     /// <returns></returns>
     public Task<IEnumerable<Banknote>> GetBanknotesByMachineAsync(long machineId);
 

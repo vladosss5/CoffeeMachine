@@ -14,25 +14,15 @@ public class MappingProfile : Profile
     {
         CreateMap<Banknote, BanknoteDto>().ReverseMap();
         
-        CreateMap<CoffeeForOrderReq, Coffee>().ReverseMap();
-        CreateMap<CoffeeForOrderResp, Coffee>().ReverseMap();
-        CreateMap<CoffeeReq, Coffee>().ReverseMap();
-        CreateMap<CoffeeResponseForAdminDto, Coffee>().ReverseMap();
-        // CreateMap<CoffeeAddReq, Coffee>().ReverseMap();
-        CreateMap<CoffeeAddResp, Coffee>().ReverseMap();
-        CreateMap<CoffeeUpdateDto, Coffee>().ReverseMap();
+        CreateMap<CoffeeForOrderRequestDto, Coffee>().ReverseMap();
+        CreateMap<CoffeeForOrderResponseDto, Coffee>().ReverseMap();
         
-        CreateMap<MachineRespForAdmin, Machine>().ReverseMap();
-        CreateMap<MachineAddReq, Machine>().ReverseMap();
-        CreateMap<MachineAddResp, Machine>().ReverseMap();
-        CreateMap<MachineReq, Machine>().ReverseMap();
-        CreateMap<MachineResp, Machine>().ReverseMap();
         CreateMap<MachineForOrderDto, Machine>().ReverseMap();
-        CreateMap<MachineUpdateDto, Machine>().ReverseMap();
+        CreateMap<MachineEditBalanseDto, Machine>().ReverseMap();
+        CreateMap<MachineCreateDto, Machine>().ReverseMap();
         
-        CreateMap<OrderAddReq, Order>().ReverseMap();
-        CreateMap<OrderAddResp, Order>().ReverseMap();
-        CreateMap<OrderRespForAdmin, Order>().ReverseMap();
+        CreateMap<OrderAddRequestDto, Order>().ReverseMap();
+        CreateMap<OrderAddResponseDto, Order>().ReverseMap();
         
         CreateMap<TransactionForOrderDto, Transaction>().ReverseMap();
     }

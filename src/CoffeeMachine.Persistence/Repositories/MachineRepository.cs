@@ -23,12 +23,7 @@ public class MachineRepository : GenericRepository<Machine>, IMachineRepository
     /// <exception cref="NotFoundException"></exception>
     public async Task<Machine> GetBySerialNumberAsync(string serialNumber)
     {
-        var machine = await _dbContext.Machines.FirstOrDefaultAsync(x => x.SerialNumber == serialNumber);
-        
-        if (machine == null)
-            throw new NotFoundException(nameof(Machine), serialNumber);
-        
-        return machine;
+        return await _dbContext.Machines.FirstOrDefaultAsync(x => x.SerialNumber == serialNumber);
     }
 
     /// <summary>

@@ -1,7 +1,7 @@
 ﻿namespace CoffeeMachine.API.DTOs.Machine;
 
-public class MachineReq
+public class MachineEditBalanseDto
 {
     public long Id { get; set; }
-    public string SerialNumber { get; set; }
+    public int Balance { get; set; }  
 }

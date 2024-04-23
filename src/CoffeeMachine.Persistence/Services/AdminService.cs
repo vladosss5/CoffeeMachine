@@ -42,7 +42,7 @@ public class AdminService : IAdminService
     /// <exception cref="AlreadyExistsException"></exception>
     public async Task<Machine> CreateNewMachineAsync(Machine machine)
     {
-        var identity = await GetMachineBySerialNumberAsync(machine.SerialNumber);
+        var identity = await _unitOfWork.Machine.GetBySerialNumberAsync(machine.SerialNumber);
         if (identity != null)
             throw new AlreadyExistsException(nameof(Machine), machine.SerialNumber);
         
@@ -152,33 +152,51 @@ public class AdminService : IAdminService
     /// <summary>
     /// Добавить банкноты в автомат.
     /// </summary>
-    /// <param name="banknotes"></param>
+    /// <param name="banknotesRequest"></param>
     /// <param name="machineId"></param>
     /// <returns></returns>
     /// <exception cref="NotFoundException"></exception>
-    public async Task<Machine> AddBanknotesToMachineAsync(IEnumerable<Banknote> banknotes, long machineId)
+    public async Task<Machine> AddBanknotesToMachineAsync(IEnumerable<Banknote> banknotesRequest, long machineId)
     {
+        var banknotes = new List<Banknote>();
         var machine = await _unitOfWork.Machine.GetByIdAsync(machineId);
         if (machine == null)
             throw new NotFoundException(nameof(Machine), machineId);
+
+        foreach (var banknote in banknotesRequest)
+        {
+            banknotes.Add(await _unitOfWork.Banknote.GetByNominalAsync(banknote.Nominal));
+        }
         
-        return await _unitOfWork.Machine.AddBanknotesToMachineAsync(banknotes, machine);
+        machine = await _unitOfWork.Machine.AddBanknotesToMachineAsync(banknotes, machine);
+        machine.Balance = await _unitOfWork.Machine.UpdateBalanceAsync(machine);
+
+        return machine;
     }
 
     /// <summary>
     /// Выдать банкноты из автомата.
     /// </summary>
-    /// <param name="banknotes"></param>
+    /// <param name="banknotesRequest"></param>
     /// <param name="machineId"></param>
     /// <returns></returns>
     /// <exception cref="NotFoundException"></exception>
-    public async Task<Machine> SubtractBanknotesFromMachineAsync(IEnumerable<Banknote> banknotes, long machineId)
+    public async Task<Machine> SubtractBanknotesFromMachineAsync(IEnumerable<Banknote> banknotesRequest, long machineId)
     {
+        var banknotes = new List<Banknote>();
         var machine = await _unitOfWork.Machine.GetByIdAsync(machineId);
         if (machine == null)
             throw new NotFoundException(nameof(Machine), machineId);
         
-        return await _unitOfWork.Machine.SubtractBanknotesFromMachineAsync(banknotes, machine);
+        foreach (var banknote in banknotesRequest)
+        {
+            banknotes.Add(await _unitOfWork.Banknote.GetByNominalAsync(banknote.Nominal));
+        }
+        
+        machine = await _unitOfWork.Machine.SubtractBanknotesFromMachineAsync(banknotes, machine);
+        machine.Balance = await _unitOfWork.Machine.UpdateBalanceAsync(machine);
+
+        return machine;
     }
 
     /// <summary>
