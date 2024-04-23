@@ -6,109 +6,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeMachine.Persistence.Repositories;
 
-public class OrderRepository : IOrderRepository
+public class OrderRepository : GenericRepository<Order>, IOrderRepository
 {
     private readonly DataContext _dbContext;
 
-    public OrderRepository(DataContext dbContext)
+    public OrderRepository(DataContext dbContext) : base(dbContext)
     {
         _dbContext = dbContext;
-    }
-    
-    /// <summary>
-    /// Получить заказ по Id
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    /// <exception cref="NotFoundException"></exception>
-    public async Task<Order> GetByIdAsync(long id)
-    {
-        var purchase = await _dbContext.Orders.FirstOrDefaultAsync(x => x.Id == id);
-        
-        if (purchase == null)
-            throw new NotFoundException(nameof(Order), id);
-        
-        return purchase;
-    }
-
-    /// <summary>
-    /// Получить список всех заказов
-    /// </summary>
-    /// <returns></returns>
-    public async Task<IEnumerable<Order>> GetAllAsync()
-    {
-        return await _dbContext.Orders
-            .Include(o => o.Machine)
-            .Include(o => o.Coffee)
-            .Include(o => o.Transactions)
-            .ThenInclude(t => t.Banknote)
-            .ToListAsync();
-    }
-
-    /// <summary>
-    /// Создать заказ
-    /// </summary>
-    /// <param name="entity"></param>
-    /// <returns></returns>
-    public async Task<Order> AddAsync(Order entity)
-    {
-        Order newOrder = new Order()
-        {
-            Status = entity.Status,
-            DateTimeCreate = DateTime.UtcNow,
-            Coffee = entity.Coffee,
-            Machine = entity.Machine
-        };
-
-        await _dbContext.Orders.AddAsync(newOrder);
-        await _dbContext.TrySaveChangesToDbAsync();
-        
-        newOrder.Transactions = entity.Transactions;
-        
-        return newOrder;
-    }
-
-    /// <summary>
-    /// Обновить статус заказа
-    /// </summary>
-    /// <param name="entity"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public async Task<Order> UpdateAsync(Order entity)
-    {
-        var order = await _dbContext.Orders.FirstOrDefaultAsync(x => entity.Id == x.Id);
-        
-        if (order == null)
-            throw new NotFoundException(nameof(Order), entity);
-        
-        order.Status = entity.Status;
-        
-        _dbContext.Orders.Update(order);
-        await _dbContext.TrySaveChangesToDbAsync();
-        
-        return entity;
-    }
-    
-    /// <summary>
-    /// Удалить заказ
-    /// </summary>
-    /// <param name="entity"></param>
-    /// <returns></returns>
-    /// <exception cref="NotFoundException"></exception>
-    public async Task<bool> DeleteAsync(Order entity)
-    {
-        var order = await _dbContext.Orders.FirstOrDefaultAsync(x => 
-            x.DateTimeCreate == entity.DateTimeCreate && 
-            x.Machine == entity.Machine &&
-            x.Status == entity.Status);
-        
-        if (order == null)
-            throw new NotFoundException(nameof(Order), entity);
-        
-        _dbContext.Orders.Remove(order);
-        await _dbContext.TrySaveChangesToDbAsync();
-        
-        return true;
     }
 
     /// <summary>
@@ -116,7 +20,7 @@ public class OrderRepository : IOrderRepository
     /// </summary>
     /// <param name="coffee"></param>
     /// <returns></returns>
-    public async Task<List<Order>> GetByCoffeeAsync(Coffee coffee)
+    public async Task<IEnumerable<Order>> GetByCoffeeAsync(Coffee coffee)
     {
         return await _dbContext.Orders.Where(o => o.Coffee == coffee).ToListAsync();
     }
@@ -126,7 +30,7 @@ public class OrderRepository : IOrderRepository
     /// </summary>
     /// <param name="machine"></param>
     /// <returns></returns>
-    public async Task<List<Order>> GetByMachineAsync(Machine machine)
+    public async Task<IEnumerable<Order>> GetByMachineAsync(Machine machine)
     {
         return await _dbContext.Orders.Where(o => o.Machine == machine).ToListAsync();
     }
@@ -137,7 +41,7 @@ public class OrderRepository : IOrderRepository
     /// <param name="status"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public async Task<List<Order>> GetByStatusAsync(string status)
+    public async Task<IEnumerable<Order>> GetByStatusAsync(string status)
     {
         return await _dbContext.Orders.Where(o => o.Status == status).ToListAsync();
     }
@@ -148,7 +52,7 @@ public class OrderRepository : IOrderRepository
     /// <param name="dateStart"></param>
     /// <param name="dateEnd"></param>
     /// <returns></returns>
-    public async Task<List<Order>> GetByDateAsync(DateTime dateStart, DateTime dateEnd)
+    public async Task<IEnumerable<Order>> GetByDateAsync(DateTime dateStart, DateTime dateEnd)
     {
         return await _dbContext.Orders
             .Where(p => p.DateTimeCreate >= dateStart && p.DateTimeCreate <= dateEnd)

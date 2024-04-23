@@ -5,66 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeMachine.Persistence.Repositories;
 
-public class TransactionRepository : ITransactionRepository
+public class TransactionRepository : GenericRepository<Transaction>, ITransactionRepository
 {
     private readonly DataContext _dbContext;
 
-    public TransactionRepository(DataContext dbContext)
+    public TransactionRepository(DataContext dbContext) : base(dbContext)
     {
         _dbContext = dbContext;
-    }
-    
-    /// <summary>
-    /// Получить транзакцию по Id
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    public async Task<Transaction> GetByIdAsync(long id)
-    {
-        return await _dbContext.Transactions.FirstOrDefaultAsync(t => t.Id == id);
-    }
-
-    /// <summary>
-    /// Получить список транзакций
-    /// </summary>
-    /// <returns></returns>
-    public async Task<IEnumerable<Transaction>> GetAllAsync()
-    {
-        return await _dbContext.Transactions.ToListAsync();
-    }
-
-
-    /// <summary>
-    /// Добавить транзакцию
-    /// </summary>
-    /// <param name="entity"></param>
-    /// <returns></returns>
-    public async Task<Transaction> AddAsync(Transaction entity)
-    {
-        var banknote = await _dbContext.Banknotes.FirstOrDefaultAsync(b => b.Nominal == entity.Banknote.Nominal);
-        
-        var newTransaction = new Transaction()
-        {
-            IsPayment = entity.IsPayment,
-            Banknote = banknote,
-            Order = entity.Order
-        };
-        
-        await _dbContext.Transactions.AddAsync(newTransaction);
-        await _dbContext.TrySaveChangesToDbAsync();
-        
-        return newTransaction;
-    }
-
-    
-    public async Task<Transaction> UpdateAsync(Transaction entity) // НЕЗАЧЕМ
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<bool> DeleteAsync(Transaction entity) // НЕЗАЧЕМ
-    {
-        throw new NotImplementedException();
     }
 
     /// <summary>
@@ -72,7 +19,7 @@ public class TransactionRepository : ITransactionRepository
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    public async Task<List<Transaction>> GetByTypeAsync(bool type)
+    public async Task<IEnumerable<Transaction>> GetByTypeAsync(bool type)
     {
         return await _dbContext.Transactions.Where(t => t.IsPayment == type).ToListAsync();
     }
@@ -82,7 +29,7 @@ public class TransactionRepository : ITransactionRepository
     /// </summary>
     /// <param name="order"></param>
     /// <returns></returns>
-    public async Task<List<Transaction>> GetByOrderAsync(Order order)
+    public async Task<IEnumerable<Transaction>> GetByOrderAsync(Order order)
     {
         return await _dbContext.Transactions.Where(t => t.Order == order).ToListAsync();
     }

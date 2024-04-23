@@ -5,21 +5,29 @@ namespace CoffeeMachine.Application.Interfaces.IRepositories;
 public interface IMachineRepository : IBaseRepository<Machine>
 {
     /// <summary>
-    /// Получить кофемашину по серийному номеру
+    /// Получить кофемашину по серийному номеру.
     /// </summary>
     /// <param name="serialNumber"></param>
     /// <returns>Кофемашина</returns>
     public Task<Machine> GetBySerialNumberAsync(string serialNumber);
     
     /// <summary>
-    /// Обновить баланс кофемашины
+    /// Обновить баланс кофемашины.
     /// </summary>
     /// <param name="machine"></param>
     /// <returns></returns>
     public Task<int> UpdateBalanceAsync(Machine machine);
     
     /// <summary>
-    /// Добавить кофе в кофемашину
+    /// Проверить наличие кофе в машине.
+    /// </summary>
+    /// <param name="machine"></param>
+    /// <param name="coffee"></param>
+    /// <returns></returns>
+    public Task<bool> CheckCoffeeInMachineAsync(Machine machine, Coffee coffee);
+    
+    /// <summary>
+    /// Добавить кофе в кофемашину.
     /// </summary>
     /// <param name="coffee"></param>
     /// <param name="machine"></param>
@@ -27,7 +35,7 @@ public interface IMachineRepository : IBaseRepository<Machine>
     public Task<Machine> AddCoffeeInMachineAsync(Coffee coffee, Machine machine);
     
     /// <summary>
-    /// Удалить кофе из кофемашины
+    /// Удалить кофе из кофемашины.
     /// </summary>
     /// <param name="coffee"></param>
     /// <param name="machine"></param>
@@ -35,17 +43,18 @@ public interface IMachineRepository : IBaseRepository<Machine>
     public Task<Machine> DeleteCoffeeFromMachineAsync(Coffee coffee, Machine machine);
     
     /// <summary>
-    /// Получить список доступных для машины кофе
+    /// Добавить банкноты в автомат.
     /// </summary>
+    /// <param name="banknotes"></param>
     /// <param name="machine"></param>
     /// <returns></returns>
-    public Task<List<Coffee>> GetCoffeesFromMachineAsync(Machine machine);
+    public Task<Machine> AddBanknotesToMachineAsync(IEnumerable<Banknote> banknotes, Machine machine);
     
     /// <summary>
-    /// Проверить наличие кофе в машине
+    /// Выдать банкноты из автомата.
     /// </summary>
+    /// <param name="banknotes"></param>
     /// <param name="machine"></param>
-    /// <param name="coffee"></param>
     /// <returns></returns>
-    public Task<bool> CheckCoffeeInMachineAsync(Machine machine, Coffee coffee);
+    public Task<Machine> SubtractBanknotesFromMachineAsync(IEnumerable<Banknote> banknotes, Machine machine);
 }

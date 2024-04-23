@@ -1,6 +1,6 @@
 ﻿namespace CoffeeMachine.API.DTOs.Coffee;
 
-public class CoffeeRespForAdmin
+public class CoffeeRespForAdminDto
 {
     public long Id { get; set; }
     public string Name { get; set; }

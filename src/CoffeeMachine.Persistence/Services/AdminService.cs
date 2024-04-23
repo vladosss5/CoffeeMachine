@@ -83,7 +83,7 @@ public class AdminService : IAdminService
         
         var machine = await _unitOfWork.Machine.GetByIdAsync(machineReq.Id);
         
-        await _unitOfWork.Banknote.AddBanknotesToMachineAsync(banknotes, machine);
+        await _unitOfWork.Machine.AddBanknotesToMachineAsync(banknotes, machine);
         await _unitOfWork.Machine.UpdateBalanceAsync(machine);
 
         var machineResp = await _unitOfWork.Machine.GetByIdAsync(machine.Id);
@@ -108,7 +108,7 @@ public class AdminService : IAdminService
         
         var machine = await _unitOfWork.Machine.GetByIdAsync(machineReq.Id);
         
-        await _unitOfWork.Banknote.SubtractBanknotesFromMachineAsync(banknotes, machine);
+        await _unitOfWork.Machine.SubtractBanknotesFromMachineAsync(banknotes, machine);
         await _unitOfWork.Machine.UpdateBalanceAsync(machine);
         
         var machineResp = await _unitOfWork.Machine.GetByIdAsync(machine.Id);

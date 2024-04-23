@@ -6,105 +6,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeMachine.Persistence.Repositories;
 
-public class MachineRepository : IMachineRepository
+public class MachineRepository : GenericRepository<Machine>, IMachineRepository
 {
     private readonly DataContext _dbContext;
 
-    public MachineRepository(DataContext dbContext)
+    public MachineRepository(DataContext dbContext) : base(dbContext)
     {
         _dbContext = dbContext;
-    }
-    
-    /// <summary>
-    /// Получить машину по Id
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public async Task<Machine> GetByIdAsync(long id)
-    {
-        var machine = await _dbContext.Machines.FirstOrDefaultAsync(x => x.Id == id);
-        
-        if (machine == null)
-            throw new NotFoundException(nameof(Machine), id);
-        
-        return machine;
-    }
-
-    /// <summary>
-    /// Получить список машин
-    /// </summary>
-    /// <returns></returns>
-    public async Task<IEnumerable<Machine>> GetAllAsync()
-    {
-        return await _dbContext.Machines.ToListAsync();
-    }
-
-    /// <summary>
-    /// Добавить кофемашину
-    /// </summary>
-    /// <param name="entity"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public async Task<Machine> AddAsync(Machine entity)
-    {
-        if (!await _dbContext.Machines.AnyAsync(x => x.SerialNumber == entity.SerialNumber))
-            throw new AlreadyExistsException(nameof(Machine), entity.SerialNumber);
-
-        Machine newMachine = new Machine()
-        {
-            SerialNumber = entity.SerialNumber,
-            Description = entity.Description
-        };
-        
-        await _dbContext.Machines.AddAsync(newMachine);
-        await _dbContext.TrySaveChangesToDbAsync();
-        
-        return newMachine;
-    }
-    
-    /// <summary>
-    /// Изменить кофемашину
-    /// </summary>
-    /// <param name="entity"></param>
-    /// <returns></returns>
-    /// <exception cref="NotFoundException"></exception>
-    public async Task<Machine> UpdateAsync(Machine entity)
-    {
-        var machine = await _dbContext.Machines.FirstOrDefaultAsync(x => x.Id == entity.Id);
-        
-        if (machine == null)
-            throw new NotFoundException(nameof(Machine), entity.Id);
-        
-        machine.SerialNumber = entity.SerialNumber;
-        machine.Description = entity.Description;
-        machine.Balance = entity.Balance;
-        
-        _dbContext.Machines.Update(machine);
-        await _dbContext.TrySaveChangesToDbAsync();
-        
-        return machine;
-    }
-
-    /// <summary>
-    /// Удалить кофемашину
-    /// </summary>
-    /// <param name="entity"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public async Task<bool> DeleteAsync(Machine entity)
-    {
-        var machine = await _dbContext.Machines.FirstOrDefaultAsync(x => 
-            x.Id == entity.Id && 
-            x.SerialNumber == entity.SerialNumber);
-        
-        if (machine == null)
-            throw new NotFoundException(nameof(Machine), entity.SerialNumber);
-        
-        _dbContext.Machines.Remove(machine);
-        await _dbContext.TrySaveChangesToDbAsync();
-        
-        return true;
     }
 
     /// <summary>
@@ -203,11 +111,85 @@ public class MachineRepository : IMachineRepository
     }
 
     /// <summary>
+    /// Добавить банкноты в машину.
+    /// </summary>
+    /// <param name="banknotes"></param>
+    /// <param name="machine"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public async Task<Machine> AddBanknotesToMachineAsync(IEnumerable<Banknote> banknotes, Machine machine)
+    {
+        var banknoteMachines = await _dbContext.BanknotesToMachines.Include(bm => bm.Banknote)
+            .Where(bm => bm.Machine.SerialNumber == machine.SerialNumber).ToListAsync();
+
+        foreach (var banknote in banknotes)
+        {
+            bool presence = false;
+            foreach (var bm in banknoteMachines)
+            {
+                if (bm.Banknote == banknote)
+                {
+                    presence = true;
+                    bm.CountBanknote++;
+                    _dbContext.BanknotesToMachines.Update(bm);
+                }
+            }
+
+            if (presence == false)
+            {
+                var bm = new BanknoteToMachine()
+                {
+                    Banknote = banknote,
+                    CountBanknote = 1,
+                    Machine = machine
+                };
+                await _dbContext.BanknotesToMachines.AddAsync(bm);
+            }
+        }
+        
+        await _dbContext.TrySaveChangesToDbAsync();
+        
+        return machine;
+    }
+
+    /// <summary>
+    /// Вычесть банкноты из машины.
+    /// </summary>
+    /// <param name="banknotes"></param>
+    /// <param name="machine"></param>
+    /// <returns></returns>
+    public async Task<Machine> SubtractBanknotesFromMachineAsync(IEnumerable<Banknote> banknotes, Machine machine)
+    {
+        var banknoteMachines = await _dbContext.BanknotesToMachines
+            .Include(bm => bm.Machine)
+            .Include(bm => bm.Banknote)
+            .Where(bm => bm.Machine == machine)
+            .ToListAsync();
+
+        foreach (var bm in banknoteMachines)
+        {
+            foreach (var banknote in banknotes)
+            {
+                if (bm.Machine.SerialNumber == machine.SerialNumber && 
+                    bm.Banknote.Nominal == banknote.Nominal && bm.CountBanknote >= 1)
+                {
+                    bm.CountBanknote--;
+                    _dbContext.BanknotesToMachines.Update(bm);
+                }   
+            }
+        }
+        
+        await _dbContext.TrySaveChangesToDbAsync();
+        
+        return machine;
+    }
+
+    /// <summary>
     /// Получить список кофе из кофемашины
     /// </summary>
     /// <param name="machine"></param>
     /// <returns></returns>
-    public async Task<List<Coffee>> GetCoffeesFromMachineAsync(Machine machine)
+    public async Task<IEnumerable<Coffee>> GetCoffeesFromMachineAsync(Machine machine)
     {
         var coffeesToMachines = _dbContext.CoffeesToMachines.Where(cm => cm.Machine == machine);
         return await coffeesToMachines.Select(cm => cm.Coffee).ToListAsync();

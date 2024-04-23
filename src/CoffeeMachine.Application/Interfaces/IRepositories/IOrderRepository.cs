@@ -9,21 +9,21 @@ public interface IOrderRepository : IBaseRepository<Order>
     /// </summary>
     /// <param name="coffee"></param>
     /// <returns>Список покупок</returns>
-    public Task<List<Order>> GetByCoffeeAsync(Coffee coffee);
+    public Task<IEnumerable<Order>> GetByCoffeeAsync(Coffee coffee);
     
     /// <summary>
     /// Получить покупки по кофемашине
     /// </summary>
     /// <param name="machine"></param>
     /// <returns>Список покупок</returns>
-    public Task<List<Order>> GetByMachineAsync(Machine machine);
+    public Task<IEnumerable<Order>> GetByMachineAsync(Machine machine);
     
     /// <summary>
     /// Получить покупки по статусу оплаты
     /// </summary>
     /// <param name="status"></param>
     /// <returns>Список покупок</returns>
-    public Task<List<Order>> GetByStatusAsync(string status);
+    public Task<IEnumerable<Order>> GetByStatusAsync(string status);
     
     /// <summary>
     /// Получить покупки в определённый период
@@ -31,5 +31,5 @@ public interface IOrderRepository : IBaseRepository<Order>
     /// <param name="dateStart"></param>
     /// <param name="dateEnd"></param>
     /// <returns>Список покупок</returns>
-    public Task<List<Order>> GetByDateAsync(DateTime dateStart, DateTime dateEnd);
+    public Task<IEnumerable<Order>> GetByDateAsync(DateTime dateStart, DateTime dateEnd);
 }

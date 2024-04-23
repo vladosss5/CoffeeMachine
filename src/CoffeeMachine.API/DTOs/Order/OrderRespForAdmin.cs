@@ -10,7 +10,7 @@ public class OrderRespForAdmin
     public string Status { get; set; }
     public DateTime DateTimeCreate { get; set; }
     public MachineRespForAdmin Machine { get; set; }
-    public CoffeeRespForAdmin Coffee { get; set; }
+    public CoffeeRespForAdminDto Coffee { get; set; }
 
     public IEnumerable<TransactionForOrderDto> Transactions { get; set; } = new List<TransactionForOrderDto>();
 }

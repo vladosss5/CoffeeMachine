@@ -42,7 +42,7 @@ public class OrderService : IOrderService
         }
         
         var banknotesPay = order.Transactions.Select(t => t.Banknote).ToList();
-        await _unitOfWork.Banknote.AddBanknotesToMachineAsync(banknotesPay, order.Machine);
+        await _unitOfWork.Machine.AddBanknotesToMachineAsync(banknotesPay, order.Machine);
         
         order.Status = "Внесены деньги";
         await _unitOfWork.Order.UpdateAsync(order);
@@ -58,7 +58,7 @@ public class OrderService : IOrderService
             return await ErrorChange(order, banknotesPay);
         }
         
-        await _unitOfWork.Banknote.SubtractBanknotesFromMachineAsync(delivery, order.Machine);
+        await _unitOfWork.Machine.SubtractBanknotesFromMachineAsync(delivery, order.Machine);
         
         foreach (var banknote in delivery)
         {
@@ -71,7 +71,7 @@ public class OrderService : IOrderService
             await _unitOfWork.Transaction.AddAsync(newTransaction);
         }
         
-        order.Transactions = await _unitOfWork.Transaction.GetByOrderAsync(order);
+        // order.Transactions = await _unitOfWork.Transaction.GetByOrderAsync(order);
         order.Status = "Готово";
         order = await _unitOfWork.Order.UpdateAsync(order);
         order.Transactions = order.Transactions.Where(t => t.IsPayment == false).ToList();
@@ -126,7 +126,7 @@ public class OrderService : IOrderService
     /// <returns></returns>
     private async Task<Order> ErrorChange(Order order, List<Banknote> banknotes)
     {
-        await _unitOfWork.Banknote.SubtractBanknotesFromMachineAsync(banknotes, order.Machine);
+        await _unitOfWork.Machine.SubtractBanknotesFromMachineAsync(banknotes, order.Machine);
         order.Status = "Нет сдачи";
         await _unitOfWork.Order.UpdateAsync(order);
         order.Transactions = order.Transactions.Where(t => t.IsPayment == false).ToList();

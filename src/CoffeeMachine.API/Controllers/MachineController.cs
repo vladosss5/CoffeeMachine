@@ -10,11 +10,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CoffeeMachine.API.Controllers
 {
+    /// <summary>
+    /// Класс управления кофемашинами.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class MachineController : ControllerBase
     {
-         private readonly IAdminService _adminService;
+        private readonly IAdminService _adminService;
         private readonly IMapper _mapper;
         
         public MachineController(IAdminService adminService, IMapper mapper)
@@ -24,10 +27,11 @@ namespace CoffeeMachine.API.Controllers
         }
 
         /// <summary>
-        /// Получить список всех кофемашин
+        /// Получить список всех кофемашин.
         /// </summary>
         /// <returns></returns>
         [HttpGet]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<MachineRespForAdmin>))]
         public async Task<IActionResult> GetAllMachines()
         {
             var machines = await _adminService.GetAllMachinesAsync();
@@ -36,7 +40,7 @@ namespace CoffeeMachine.API.Controllers
         }
 
         /// <summary>
-        /// Получить банкноты из кофемашины
+        /// Получить банкноты из кофемашины.
         /// </summary>
         /// <param name="machineReq"></param>
         /// <returns></returns>
@@ -51,7 +55,7 @@ namespace CoffeeMachine.API.Controllers
         }
 
         /// <summary>
-        /// Добавить кофемашину
+        /// Добавить кофемашину.
         /// </summary>
         /// <param name="machineReq"></param>
         /// <returns></returns>
@@ -66,7 +70,7 @@ namespace CoffeeMachine.API.Controllers
         }
         
         /// <summary>
-        /// Изменить кофемашину
+        /// Изменить кофемашину.
         /// </summary>
         /// <param name="machineReq"></param>
         /// <returns></returns>
@@ -80,7 +84,7 @@ namespace CoffeeMachine.API.Controllers
         }
 
         /// <summary>
-        /// Удалить кофемашину
+        /// Удалить кофемашину.
         /// </summary>
         /// <param name="machineReq"></param>
         /// <returns></returns>
@@ -93,7 +97,7 @@ namespace CoffeeMachine.API.Controllers
         }
 
         /// <summary>
-        /// Добавить банкноты в кофемашину
+        /// Добавить банкноты в кофемашину.
         /// </summary>
         /// <param name="substrBanknoteToMachineReq"></param>
         /// <returns></returns>
@@ -108,7 +112,7 @@ namespace CoffeeMachine.API.Controllers
         }
         
         /// <summary>
-        /// Взять банкноты из кофемашины
+        /// Взять банкноты из кофемашины.
         /// </summary>
         /// <param name="substrBanknoteToMachineReq"></param>
         /// <returns></returns>
@@ -123,7 +127,7 @@ namespace CoffeeMachine.API.Controllers
         }
         
         /// <summary>
-        /// Добавить кофе в кофемашину
+        /// Добавить кофе в кофемашину.
         /// </summary>
         /// <param name="req"></param>
         /// <returns></returns>
@@ -138,7 +142,7 @@ namespace CoffeeMachine.API.Controllers
         }
         
         /// <summary>
-        /// Удалить кофе из кофемашины
+        /// Удалить кофе из кофемашины.
         /// </summary>
         /// <param name="req"></param>
         /// <returns></returns>

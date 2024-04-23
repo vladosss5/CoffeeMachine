@@ -21,36 +21,48 @@ namespace CoffeeMachine.API.Controllers
         }
         
         /// <summary>
-        /// Получить список всех кофе
+        /// Получить список всех кофе.
         /// </summary>
         /// <returns></returns>
         [HttpGet]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<CoffeeRespForAdminDto>))]
         public async Task<IActionResult> GetAllCoffees()
         {
             var coffees = await _adminService.GetAllCoffeesAsync();
-            var coffeesResp = coffees.Select(c => _mapper.Map<CoffeeRespForAdmin>(c));
+            var coffeesResp = coffees.Select(c => _mapper.Map<CoffeeRespForAdminDto>(c));
             return Ok(coffeesResp);
         }
         
+        [HttpGet("Id")]
+        [ProducesResponseType(200, Type = typeof(CoffeeRespForAdminDto))]
+        public async Task<IActionResult> GetCoffeeById([FromQuery] int id)
+        {
+            // var coffee = await _adminService.(id);
+            // var coffeeResp = _mapper.Map<CoffeeRespForAdminDto>(coffee);
+            return Ok();
+        }
+        
         /// <summary>
-        /// Добавить кофе
+        /// Добавить кофе.
         /// </summary>
         /// <param name="coffeeAddReq"></param>
         /// <returns></returns>
         [HttpPost]
+        [ProducesResponseType(200, Type = typeof(CoffeeRespForAdminDto))]
         public async Task<IActionResult> AddCoffee([FromBody] CoffeeAddReq coffeeAddReq)
         {
             var coffee = _mapper.Map<Coffee>(coffeeAddReq);
             var resp = await _adminService.CreateNewCoffeeAsync(coffee);
-            var coffeeResp = _mapper.Map<CoffeeRespForAdmin>(resp);
+            var coffeeResp = _mapper.Map<CoffeeRespForAdminDto>(resp);
             return Ok(coffeeResp);
         }
         /// <summary>
-        /// Удалить кофе
+        /// Удалить кофе.
         /// </summary>
         /// <param name="coffeeReq"></param>
         /// <returns></returns>
         [HttpDelete]
+        [ProducesResponseType(200, Type = typeof(bool))]
         public async Task<IActionResult> DeleteCoffee([FromBody] CoffeeReq coffeeReq)
         {
             var coffee = _mapper.Map<Coffee>(coffeeReq);
@@ -69,7 +81,7 @@ namespace CoffeeMachine.API.Controllers
         {
             var coffee = _mapper.Map<Coffee>(coffeeUpdateReq);
             var coffeeResp = await _adminService.UpdateCoffeeAsync(coffee);
-            var resp = _mapper.Map<CoffeeRespForAdmin>(coffeeResp);
+            var resp = _mapper.Map<CoffeeRespForAdminDto>(coffeeResp);
             return Ok(resp);
         }
     }

@@ -5,25 +5,16 @@ namespace CoffeeMachine.Application.Interfaces.IRepositories;
 public interface ICoffeeRepository : IBaseRepository<Coffee>
 {
     /// <summary>
-    /// Получить кофе по названию
+    /// Получить кофе по названию.
     /// </summary>
     /// <param name="nameCoffe"></param>
     /// <returns>Кофе</returns>
     public Task<Coffee> GetByNameAsync(string nameCoffe);
     
     /// <summary>
-    /// Добавить кофе в кофемашину
+    /// Получить список доступных для машины кофе.
     /// </summary>
-    /// <param name="coffee"></param>
     /// <param name="machine"></param>
     /// <returns></returns>
-    public Task<Coffee> AddCoffeeByMachineAsync(Coffee coffee, Machine machine);
-    
-    /// <summary>
-    /// Удалить кофе из кофемашины
-    /// </summary>
-    /// <param name="coffee"></param>
-    /// <param name="machine"></param>
-    /// <returns></returns>
-    public Task<Coffee> DeleteCoffeeFromMachineAsync(Coffee coffee, Machine machine);
+    public Task<IEnumerable<Coffee>> GetCoffeesFromMachineAsync(Machine machine);
 }
