@@ -66,12 +66,6 @@ public class MachineRepository : GenericRepository<Machine>, IMachineRepository
     /// <returns></returns>
     public async Task<Machine> AddCoffeeInMachineAsync(Coffee coffee, Machine machine)
     {
-        if (!await _dbContext.Coffees.AnyAsync(c => coffee.Id == c.Id))
-            throw new NotFoundException(nameof(Coffee), coffee.Id);
-
-        if (!await _dbContext.Machines.AnyAsync(m => machine.Id == m.Id))
-            throw new NotFoundException(nameof(Machine), machine.Id);
-
         if (!await _dbContext.CoffeesToMachines.AnyAsync(ctm => ctm.Coffee == coffee && ctm.Machine == machine))
             throw new AlreadyExistsException(nameof(Coffee), coffee.Name);
         
@@ -96,12 +90,6 @@ public class MachineRepository : GenericRepository<Machine>, IMachineRepository
     /// <exception cref="NotImplementedException"></exception>
     public async Task<Machine> DeleteCoffeeFromMachineAsync(Coffee coffee, Machine machine)
     {
-        if (!await _dbContext.Coffees.AnyAsync(c => coffee.Id == c.Id))
-            throw new NotFoundException(nameof(Coffee), coffee.Id);
-
-        if (!await _dbContext.Machines.AnyAsync(m => machine.Id == m.Id))
-            throw new NotFoundException(nameof(Machine), machine.Id);
-        
         var coffeeMachine = _dbContext.CoffeesToMachines.Where(cm => cm.Coffee == coffee && cm.Machine == machine);
         
         _dbContext.CoffeesToMachines.RemoveRange(coffeeMachine);

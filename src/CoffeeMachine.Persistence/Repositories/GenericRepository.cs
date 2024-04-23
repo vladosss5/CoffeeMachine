@@ -1,4 +1,5 @@
-﻿using CoffeeMachine.Application.Interfaces.IRepositories;
+﻿using CoffeeMachine.Application.Exceptions;
+using CoffeeMachine.Application.Interfaces.IRepositories;
 using CoffeeMachine.Persistence.Data.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,7 +16,12 @@ public class GenericRepository<T> : IBaseRepository<T> where T : class
 
     public async Task<T> GetByIdAsync(long id)
     {
-        return await _dbContext.Set<T>().FindAsync(id);
+        var entity = await _dbContext.Set<T>().FindAsync(id);
+
+        if (entity == null)
+            throw new NotFoundException(nameof(T), id);
+        
+        return entity;
     }
 
     public async Task<IEnumerable<T>> GetAllAsync()

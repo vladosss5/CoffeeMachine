@@ -25,9 +25,6 @@ public class CoffeeRepository : GenericRepository<Coffee>, ICoffeeRepository
     {
         var coffee = await _dbContext.Coffees.FirstOrDefaultAsync(x => x.Name == nameCoffe);
         
-        if (coffee == null)
-            throw new NotFoundException(nameof(Coffee), nameCoffe);
-        
         return coffee;
     }
 

@@ -17,8 +17,8 @@ public class MappingProfile : Profile
         CreateMap<CoffeeForOrderReq, Coffee>().ReverseMap();
         CreateMap<CoffeeForOrderResp, Coffee>().ReverseMap();
         CreateMap<CoffeeReq, Coffee>().ReverseMap();
-        CreateMap<CoffeeRespForAdminDto, Coffee>().ReverseMap();
-        CreateMap<CoffeeAddReq, Coffee>().ReverseMap();
+        CreateMap<CoffeeResponseForAdminDto, Coffee>().ReverseMap();
+        // CreateMap<CoffeeAddReq, Coffee>().ReverseMap();
         CreateMap<CoffeeAddResp, Coffee>().ReverseMap();
         CreateMap<CoffeeUpdateDto, Coffee>().ReverseMap();
         

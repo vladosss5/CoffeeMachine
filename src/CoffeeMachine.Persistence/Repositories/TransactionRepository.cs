@@ -19,7 +19,7 @@ public class TransactionRepository : GenericRepository<Transaction>, ITransactio
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    public async Task<IEnumerable<Transaction>> GetByTypeAsync(bool type)
+    public async Task<IEnumerable<Transaction>> GetTransactionsByTypeAsync(bool type)
     {
         return await _dbContext.Transactions.Where(t => t.IsPayment == type).ToListAsync();
     }
@@ -29,7 +29,7 @@ public class TransactionRepository : GenericRepository<Transaction>, ITransactio
     /// </summary>
     /// <param name="order"></param>
     /// <returns></returns>
-    public async Task<IEnumerable<Transaction>> GetByOrderAsync(Order order)
+    public async Task<IEnumerable<Transaction>> GetTransactionsByOrderAsync(Order order)
     {
         return await _dbContext.Transactions.Where(t => t.Order == order).ToListAsync();
     }
