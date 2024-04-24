@@ -1,0 +1,38 @@
+﻿version: '3.5'
+networks:
+  nst-containers:
+    driver: bridge
+    
+services:
+  coffeemachine.api:
+    image: coffeemachine.api
+    build:
+      context: .
+      dockerfile: src/CoffeeMachine.API/Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - coffeemachinee-containers
+    depends_on:
+      - postgres_db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionString=host=postgres-container;port=5432;database=TestAspNetApp;Username=postgres;Password=toor;
+
+  postgres_db:
+    container_name: postgres-container
+    image: postgres:16.2
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: toor
+      POSTGRES_DB: CoffeeMachine
+    ports:
+      - "5432:5432"
+    networks:
+      coffeemachinee-containers:
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:
