@@ -1,5 +1,7 @@
+using CoffeeMachine.Application.Exceptions;
 using CoffeeMachine.Core.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace CoffeeMachine.Persistence.Data.Context;
 
@@ -83,11 +85,13 @@ public partial class DataContext : DbContext
             entity.HasOne(e => e.Coffee)
                 .WithMany(e => e.Orders)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("order_coffee_fk");
+                .HasConstraintName("order_coffee_fk")
+                .IsRequired();
             entity.HasOne(e => e.Machine)
                 .WithMany(e => e.Orders)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("order_machine_fk");
+                .HasConstraintName("order_machine_fk")
+                .IsRequired();
         });
         
         modelBuilder.Entity<Transaction>(entity =>
@@ -111,6 +115,11 @@ public partial class DataContext : DbContext
         try
         {
             await SaveChangesAsync();
+        }
+        catch (NotFoundException e)
+        { 
+            Console.WriteLine(e);
+            throw;
         }
         catch (Exception e)
         {

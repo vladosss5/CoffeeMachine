@@ -36,15 +36,13 @@ public class BanknoteRepository : GenericRepository<Banknote>, IBanknoteReposito
     /// </summary>
     /// <param name="machine"></param>
     /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public async Task<IEnumerable<Banknote>> GetBanknotesByMachineAsync(Machine machine) 
+    public async Task<IEnumerable<BanknoteToMachine>> GetBanknotesByMachineAsync(Machine machine) 
     {
-        var banknotes = await _dbContext.BanknotesToMachines
+        var banknotesToMachine = await _dbContext.BanknotesToMachines
             .Where(bm => bm.Machine.SerialNumber == machine.SerialNumber && bm.CountBanknote != 0)
-            .Select(bm => bm.Banknote)
-            .OrderByDescending(b => b.Nominal)
+            .Include(bm => bm.Banknote)
             .ToListAsync();
 
-        return banknotes;
+        return banknotesToMachine;
     }
 }

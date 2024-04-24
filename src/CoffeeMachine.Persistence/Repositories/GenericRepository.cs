@@ -5,8 +5,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeMachine.Persistence.Repositories;
 
+
+/// <summary>
+/// Обобщённый класс для CRUD операций.
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public class GenericRepository<T> : IBaseRepository<T> where T : class
 {
+    /// <summary>
+    /// Контекст базы данных
+    /// </summary>
     private readonly DataContext _dbContext;
 
     public GenericRepository(DataContext dbContext)
@@ -14,21 +22,30 @@ public class GenericRepository<T> : IBaseRepository<T> where T : class
         _dbContext = dbContext;
     }
 
+    /// <summary>
+    /// Получить сущность по Id.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public async Task<T> GetByIdAsync(long id)
     {
-        var entity = await _dbContext.Set<T>().FindAsync(id);
-
-        if (entity == null)
-            throw new NotFoundException(nameof(T), id);
-        
-        return entity;
+        return await _dbContext.Set<T>().FindAsync(id);
     }
 
+    /// <summary>
+    /// Получить список записей объекта.
+    /// </summary>
+    /// <returns></returns>
     public async Task<IEnumerable<T>> GetAllAsync()
     {
         return await _dbContext.Set<T>().ToListAsync();
     }
 
+    /// <summary>
+    /// Добавить запись объекта.
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <returns></returns>
     public async Task<T> AddAsync(T entity)
     {
         var result = await _dbContext.Set<T>().AddAsync(entity);
@@ -36,6 +53,11 @@ public class GenericRepository<T> : IBaseRepository<T> where T : class
         return result.Entity;
     }
 
+    /// <summary>
+    /// Обновить запись объекта.
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <returns></returns>
     public async Task<T> UpdateAsync(T entity)
     {
         var result = _dbContext.Set<T>().Update(entity);
@@ -43,6 +65,11 @@ public class GenericRepository<T> : IBaseRepository<T> where T : class
         return result.Entity;
     }
 
+    /// <summary>
+    /// Удалить запись объекта.
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <returns></returns>
     public async Task<bool> DeleteAsync(T entity)
     {
          _dbContext.Set<T>().Remove(entity);

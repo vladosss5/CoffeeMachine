@@ -7,6 +7,6 @@ public class Order : BaseModel
     
     public Coffee Coffee { get; set; }
     public Machine Machine { get; set; }
-    
-    public List<Transaction> Transactions { get; set; }
+
+    public IEnumerable<Transaction> Transactions { get; set; } = new List<Transaction>();
 }

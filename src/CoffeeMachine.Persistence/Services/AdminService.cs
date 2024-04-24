@@ -57,10 +57,6 @@ public class AdminService : IAdminService
     /// <exception cref="NotFoundException"></exception>
     public async Task<Machine> UpdateMachineAsync(Machine machine)
     {
-        var identity = await GetMachineByIdAsync(machine.Id);
-        if (identity == null)
-            throw new NotFoundException(nameof(Machine), machine.Id);
-        
         return await _unitOfWork.Machine.UpdateAsync(machine);
     }
 
@@ -205,7 +201,7 @@ public class AdminService : IAdminService
     /// <param name="machineId"></param>
     /// <returns></returns>
     /// <exception cref="NotFoundException"></exception>
-    public async Task<IEnumerable<Banknote>> GetBanknotesByMachineAsync(long machineId)
+    public async Task<IEnumerable<BanknoteToMachine>> GetBanknotesByMachineAsync(long machineId)
     {
         var machine = await _unitOfWork.Machine.GetByIdAsync(machineId);
         if (machine == null)
@@ -256,9 +252,6 @@ public class AdminService : IAdminService
     /// <exception cref="NotFoundException"></exception>
     public async Task<Coffee> UpdateCoffeeAsync(Coffee coffee)
     {
-        if (await _unitOfWork.Coffee.GetByIdAsync(coffee.Id) == null)
-            throw new NotFoundException(nameof(Coffee), coffee.Id);
-        
         return await _unitOfWork.Coffee.UpdateAsync(coffee);
     }
 
@@ -316,7 +309,7 @@ public class AdminService : IAdminService
     /// <exception cref="NotFoundException"></exception>
     public async Task<Order> GetOrderByIdAsync(long orderId)
     {
-        var order = await _unitOfWork.Order.GetByIdAsync(orderId);
+        var order = await _unitOfWork.Order.GetOrderByIdAsyncIcludeOtherEntities(orderId);
         if (order == null)
             throw new NotFoundException(nameof(Order), orderId);
 
@@ -348,6 +341,30 @@ public class AdminService : IAdminService
     }
 
     /// <summary>
+    /// Получить список транзакций.
+    /// </summary>
+    /// <returns></returns>
+    public async Task<IEnumerable<Transaction>> GetAllTransactionsAsync()
+    {
+        return await _unitOfWork.Transaction.GetAllAsync();
+    }
+
+    /// <summary>
+    /// Получить транзакцию по Id.
+    /// </summary>
+    /// <param name="transactionId"></param>
+    /// <returns></returns>
+    /// <exception cref="NotFoundException"></exception>
+    public async Task<Transaction> GetTransactionByIdAsync(long transactionId)
+    {
+        var transaction = await _unitOfWork.Transaction.GetByIdAsync(transactionId);
+        if (transaction == null)
+            throw new NotFoundException(nameof(Transaction), transactionId);
+        
+        return transaction;
+    }
+
+    /// <summary>
     /// Получить транзакции по типу.
     /// </summary>
     /// <param name="type"></param>
@@ -362,8 +379,12 @@ public class AdminService : IAdminService
     /// </summary>
     /// <param name="order"></param>
     /// <returns></returns>
-    public async Task<IEnumerable<Transaction>> GetTransactionsByOrderAsync(Order order)
+    public async Task<IEnumerable<Transaction>> GetTransactionsByOrderAsync(long orderId)
     {
+        var order = await _unitOfWork.Order.GetByIdAsync(orderId);
+        if (order == null)
+            throw new NotFoundException(nameof(Order), orderId);
+        
         return await _unitOfWork.Transaction.GetTransactionsByOrderAsync(order);
     }
 }

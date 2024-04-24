@@ -23,8 +23,6 @@
 
     <ItemGroup>
       <Folder Include="Controllers\" />
-      <Folder Include="DTOs\BanknoteToMachine\" />
-      <Folder Include="DTOs\CoffeesInMachine\" />
       <Folder Include="Logs\" />
     </ItemGroup>
 

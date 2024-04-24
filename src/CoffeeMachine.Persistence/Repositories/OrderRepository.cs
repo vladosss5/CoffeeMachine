@@ -8,11 +8,28 @@ namespace CoffeeMachine.Persistence.Repositories;
 
 public class OrderRepository : GenericRepository<Order>, IOrderRepository
 {
+    /// <summary>
+    /// Контекст данных.
+    /// </summary>
     private readonly DataContext _dbContext;
 
     public OrderRepository(DataContext dbContext) : base(dbContext)
     {
         _dbContext = dbContext;
+    }
+
+    /// <summary>
+    /// Получить полную информацию о заказе по Id.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public async Task<Order> GetOrderByIdAsyncIcludeOtherEntities(long id)
+    {
+        return await _dbContext.Orders
+            .Include(o => o.Machine)
+            .Include(o => o.Coffee)
+            .Include(o => o.Transactions)
+            .FirstOrDefaultAsync(o => o.Id == id);
     }
 
     /// <summary>

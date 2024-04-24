@@ -61,7 +61,7 @@ public class MachineRepository : GenericRepository<Machine>, IMachineRepository
     /// <returns></returns>
     public async Task<Machine> AddCoffeeInMachineAsync(Coffee coffee, Machine machine)
     {
-        if (!await _dbContext.CoffeesToMachines.AnyAsync(ctm => ctm.Coffee == coffee && ctm.Machine == machine))
+        if (await _dbContext.CoffeesToMachines.AnyAsync(ctm => ctm.Coffee == coffee && ctm.Machine == machine))
             throw new AlreadyExistsException(nameof(Coffee), coffee.Name);
         
         var coffeeMachine = new CoffeeToMachine()

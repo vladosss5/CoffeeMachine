@@ -5,6 +5,13 @@ namespace CoffeeMachine.Application.Interfaces.IRepositories;
 public interface IOrderRepository : IBaseRepository<Order>
 {
     /// <summary>
+    /// Полчить полную информацию о заказе по Id.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public Task<Order> GetOrderByIdAsyncIcludeOtherEntities(long id);
+    
+    /// <summary>
     /// Получить список покупок по кофе.
     /// </summary>
     /// <param name="coffee"></param>

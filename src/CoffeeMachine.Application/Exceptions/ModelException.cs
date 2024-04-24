@@ -2,6 +2,9 @@
 
 namespace CoffeeMachine.Application.Exceptions;
 
+/// <summary>
+/// Ошибка: модель некорректна.
+/// </summary>
 public class ModelException : Exception
 {
     public List<ValidationResult> Errors { get; set; }

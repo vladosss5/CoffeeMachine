@@ -32,11 +32,11 @@ public class OrderService : IOrderService
         if (!await _unitOfWork.Machine.CheckCoffeeInMachineAsync(order.Machine, order.Coffee))
             throw new Exception("Данная машина не умеет готовить выбранный кофе");
         
-        
         order = await _unitOfWork.Order.AddAsync(order);
         
         foreach (var transaction in orderRequest.Transactions)
         {
+            transaction.Banknote = await _unitOfWork.Banknote.GetByNominalAsync(transaction.Banknote.Nominal);
             transaction.Order = order;
             await _unitOfWork.Transaction.AddAsync(transaction);
         }
@@ -88,7 +88,7 @@ public class OrderService : IOrderService
     /// <returns></returns>
     private async Task<List<Banknote>> CalculateChange(int coffeePrice, IEnumerable<Transaction> transactions, Machine machine)
     {
-        var banknotes = await _unitOfWork.Banknote
+        var banknotesToMachine = await _unitOfWork.Banknote
             .GetBanknotesByMachineAsync(machine);
         
         var change = new List<Banknote>();
@@ -99,7 +99,7 @@ public class OrderService : IOrderService
         if (remainingChange <= 0)
             return change;
 
-        foreach (Banknote banknote in banknotes)
+        foreach (var banknote in banknotesToMachine.Select(bm => bm.Banknote))
         {
             int count = remainingChange / banknote.Nominal;
             for (int i = 0; i < count; i++)

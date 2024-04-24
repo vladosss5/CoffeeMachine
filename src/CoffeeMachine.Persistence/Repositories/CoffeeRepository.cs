@@ -23,13 +23,19 @@ public class CoffeeRepository : GenericRepository<Coffee>, ICoffeeRepository
     /// <exception cref="NotImplementedException"></exception>
     public async Task<Coffee> GetByNameAsync(string nameCoffe)
     {
-        var coffee = await _dbContext.Coffees.FirstOrDefaultAsync(x => x.Name == nameCoffe);
-        
-        return coffee;
+        return await _dbContext.Coffees.FirstOrDefaultAsync(x => x.Name == nameCoffe);
     }
 
-    public Task<IEnumerable<Coffee>> GetCoffeesFromMachineAsync(Machine machine)
+    /// <summary>
+    /// Получить кофе доступные кофемашине.
+    /// </summary>
+    /// <param name="machine"></param>
+    /// <returns></returns>
+    public async Task<IEnumerable<Coffee>> GetCoffeesFromMachineAsync(Machine machine)
     {
-        throw new NotImplementedException();
+        return await _dbContext.CoffeesToMachines
+            .Where(cm => cm.Machine == machine)
+            .Select(cm => cm.Coffee)
+            .ToListAsync();
     }
 }

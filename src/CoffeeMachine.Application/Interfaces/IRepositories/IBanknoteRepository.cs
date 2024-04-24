@@ -16,5 +16,5 @@ public interface IBanknoteRepository : IBaseRepository<Banknote>
     /// </summary>
     /// <param name="machine"></param>
     /// <returns></returns>
-    public Task<IEnumerable<Banknote>> GetBanknotesByMachineAsync(Machine machine);
+    public Task<IEnumerable<BanknoteToMachine>> GetBanknotesByMachineAsync(Machine machine);
 }

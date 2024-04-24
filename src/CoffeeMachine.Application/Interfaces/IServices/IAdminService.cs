@@ -89,7 +89,7 @@ public interface IAdminService
     /// </summary>
     /// <param name="machineId"></param>
     /// <returns></returns>
-    public Task<IEnumerable<Banknote>> GetBanknotesByMachineAsync(long machineId);
+    public Task<IEnumerable<BanknoteToMachine>> GetBanknotesByMachineAsync(long machineId);
 
     /// <summary>
     /// Получить кофе по Id.
@@ -147,17 +147,30 @@ public interface IAdminService
     public Task<Order> GetOrderByIdAsync(long orderId);
     
     /// <summary>
-    /// Получить список всех заказов
+    /// Получить список всех заказов.
     /// </summary>
     /// <returns></returns>
     public Task<IEnumerable<Order>> GetAllOrdersAsync();
     
     /// <summary>
-    /// Удалить заказ
+    /// Удалить заказ.
     /// </summary>
     /// <param name="orderId"></param>
     /// <returns></returns>
     public Task<bool> DeleteOrderAsync(long orderId);
+    
+    /// <summary>
+    /// Вывести список транзакций.
+    /// </summary>
+    /// <returns></returns>
+    public Task<IEnumerable<Transaction>> GetAllTransactionsAsync();
+    
+    /// <summary>
+    /// Получить транзакцию по Id.
+    /// </summary>
+    /// <param name="transactionId"></param>
+    /// <returns></returns>
+    public Task<Transaction> GetTransactionByIdAsync(long transactionId);
     
     /// <summary>
     /// Получить транзакции по типу.
@@ -171,5 +184,5 @@ public interface IAdminService
     /// </summary>
     /// <param name="order"></param>
     /// <returns>Список транзакций</returns>
-    public Task<IEnumerable<Transaction>> GetTransactionsByOrderAsync(Order order);
+    public Task<IEnumerable<Transaction>> GetTransactionsByOrderAsync(long orderId);
 }
