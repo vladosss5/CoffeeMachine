@@ -2,5 +2,6 @@ bin/
 obj/
 /src/CoffeeMachine.API/Logs
 .idea
+tests/
 netcoreapp3.1/
 config/
