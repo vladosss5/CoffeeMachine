@@ -8,11 +8,11 @@ namespace CoffeeMachine.Persistence.Repositories;
 
 public class BanknoteRepository : GenericRepository<Banknote>, IBanknoteRepository
 {
-    private readonly DataContext _dbContext;
+    private readonly DataContext _dataContext;
 
     public BanknoteRepository(DataContext dataContext) : base(dataContext)
     {
-        _dbContext = dataContext;
+        _dataContext = dataContext;
     }
 
     /// <summary>
@@ -23,7 +23,7 @@ public class BanknoteRepository : GenericRepository<Banknote>, IBanknoteReposito
     /// <exception cref="NotImplementedException"></exception>
     public async Task<Banknote> GetByNominalAsync(int par)
     {
-        var banknote = await _dbContext.Banknotes.FirstOrDefaultAsync(x => x.Nominal == par);
+        var banknote = await _dataContext.Banknotes.FirstOrDefaultAsync(x => x.Nominal == par);
         
         if (banknote == null)
             throw new NotFoundException(nameof(Banknote), par);
@@ -38,7 +38,7 @@ public class BanknoteRepository : GenericRepository<Banknote>, IBanknoteReposito
     /// <returns></returns>
     public async Task<IEnumerable<BanknoteToMachine>> GetBanknotesByMachineAsync(Machine machine) 
     {
-        var banknotesToMachine = await _dbContext.BanknotesToMachines
+        var banknotesToMachine = await _dataContext.BanknotesToMachines
             .Where(bm => bm.Machine.SerialNumber == machine.SerialNumber && bm.CountBanknote != 0)
             .OrderByDescending(bm => bm.Banknote.Nominal)
             .Include(bm => bm.Banknote)

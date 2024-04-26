@@ -15,11 +15,11 @@ public class GenericRepository<T> : IBaseRepository<T> where T : class
     /// <summary>
     /// Контекст базы данных
     /// </summary>
-    private readonly DataContext _dbContext;
+    private readonly DataContext _dataContext;
 
-    public GenericRepository(DataContext dbContext)
+    public GenericRepository(DataContext dataContext)
     {
-        _dbContext = dbContext;
+        _dataContext = dataContext;
     }
 
     /// <summary>
@@ -29,7 +29,7 @@ public class GenericRepository<T> : IBaseRepository<T> where T : class
     /// <returns></returns>
     public async Task<T> GetByIdAsync(long id)
     {
-        return await _dbContext.Set<T>().FindAsync(id);
+        return await _dataContext.Set<T>().FindAsync(id);
     }
 
     /// <summary>
@@ -38,7 +38,7 @@ public class GenericRepository<T> : IBaseRepository<T> where T : class
     /// <returns></returns>
     public async Task<IEnumerable<T>> GetAllAsync()
     {
-        return await _dbContext.Set<T>().ToListAsync();
+        return await _dataContext.Set<T>().ToListAsync();
     }
 
     /// <summary>
@@ -48,8 +48,8 @@ public class GenericRepository<T> : IBaseRepository<T> where T : class
     /// <returns></returns>
     public async Task<T> AddAsync(T entity)
     {
-        var result = await _dbContext.Set<T>().AddAsync(entity);
-        await _dbContext.TrySaveChangesToDbAsync();
+        var result = await _dataContext.Set<T>().AddAsync(entity);
+        await _dataContext.TrySaveChangesToDbAsync();
         return result.Entity;
     }
 
@@ -60,8 +60,8 @@ public class GenericRepository<T> : IBaseRepository<T> where T : class
     /// <returns></returns>
     public async Task<T> UpdateAsync(T entity)
     {
-        var result = _dbContext.Set<T>().Update(entity);
-        await _dbContext.TrySaveChangesToDbAsync();
+        var result = _dataContext.Set<T>().Update(entity);
+        await _dataContext.TrySaveChangesToDbAsync();
         return result.Entity;
     }
 
@@ -72,8 +72,8 @@ public class GenericRepository<T> : IBaseRepository<T> where T : class
     /// <returns></returns>
     public async Task<bool> DeleteAsync(T entity)
     {
-         _dbContext.Set<T>().Remove(entity);
-         await _dbContext.TrySaveChangesToDbAsync();
+         _dataContext.Set<T>().Remove(entity);
+         await _dataContext.TrySaveChangesToDbAsync();
          return true;
     }
 }

@@ -17,7 +17,7 @@ public class MappingProfile : Profile
     public MappingProfile()
     {
         CreateMap<Banknote, BanknoteDto>().ReverseMap();
-
+        
         CreateMap<BanknoteToMachineResponseDto, BanknoteToMachine>().ReverseMap();
         
         CreateMap<CoffeeForOrderRequestDto, Coffee>().ReverseMap();

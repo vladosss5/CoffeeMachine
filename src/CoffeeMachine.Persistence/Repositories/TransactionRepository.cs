@@ -7,11 +7,11 @@ namespace CoffeeMachine.Persistence.Repositories;
 
 public class TransactionRepository : GenericRepository<Transaction>, ITransactionRepository
 {
-    private readonly DataContext _dbContext;
+    private readonly DataContext _dataContext;
 
-    public TransactionRepository(DataContext dbContext) : base(dbContext)
+    public TransactionRepository(DataContext dataContext) : base(dataContext)
     {
-        _dbContext = dbContext;
+        _dataContext = dataContext;
     }
 
     /// <summary>
@@ -21,7 +21,7 @@ public class TransactionRepository : GenericRepository<Transaction>, ITransactio
     /// <returns></returns>
     public async Task<IEnumerable<Transaction>> GetTransactionsByTypeAsync(bool type)
     {
-        return await _dbContext.Transactions.Where(t => t.IsPayment == type).ToListAsync();
+        return await _dataContext.Transactions.Where(t => t.IsPayment == type).ToListAsync();
     }
 
     /// <summary>
@@ -31,6 +31,6 @@ public class TransactionRepository : GenericRepository<Transaction>, ITransactio
     /// <returns></returns>
     public async Task<IEnumerable<Transaction>> GetTransactionsByOrderAsync(Order order)
     {
-        return await _dbContext.Transactions.Where(t => t.Order == order).ToListAsync();
+        return await _dataContext.Transactions.Where(t => t.Order == order).ToListAsync();
     }
 }

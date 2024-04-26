@@ -11,11 +11,11 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
     /// <summary>
     /// Контекст данных.
     /// </summary>
-    private readonly DataContext _dbContext;
+    private readonly DataContext _dataContext;
 
-    public OrderRepository(DataContext dbContext) : base(dbContext)
+    public OrderRepository(DataContext dataContext) : base(dataContext)
     {
-        _dbContext = dbContext;
+        _dataContext = dataContext;
     }
 
     /// <summary>
@@ -25,7 +25,7 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
     /// <returns></returns>
     public async Task<Order> GetOrderByIdAsyncIcludeOtherEntities(long id)
     {
-        return await _dbContext.Orders
+        return await _dataContext.Orders
             .Include(o => o.Machine)
             .Include(o => o.Coffee)
             .Include(o => o.Transactions)
@@ -39,7 +39,7 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
     /// <returns></returns>
     public async Task<IEnumerable<Order>> GetByCoffeeAsync(Coffee coffee)
     {
-        return await _dbContext.Orders.Where(o => o.Coffee == coffee).ToListAsync();
+        return await _dataContext.Orders.Where(o => o.Coffee == coffee).ToListAsync();
     }
 
     /// <summary>
@@ -49,7 +49,7 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
     /// <returns></returns>
     public async Task<IEnumerable<Order>> GetByMachineAsync(Machine machine)
     {
-        return await _dbContext.Orders.Where(o => o.Machine == machine).ToListAsync();
+        return await _dataContext.Orders.Where(o => o.Machine == machine).ToListAsync();
     }
 
     /// <summary>
@@ -60,7 +60,7 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
     /// <exception cref="NotImplementedException"></exception>
     public async Task<IEnumerable<Order>> GetByStatusAsync(string status)
     {
-        return await _dbContext.Orders.Where(o => o.Status == status).ToListAsync();
+        return await _dataContext.Orders.Where(o => o.Status == status).ToListAsync();
     }
 
     /// <summary>
@@ -71,7 +71,7 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
     /// <returns></returns>
     public async Task<IEnumerable<Order>> GetByDateAsync(DateTime dateStart, DateTime dateEnd)
     {
-        return await _dbContext.Orders
+        return await _dataContext.Orders
             .Where(p => p.DateTimeCreate >= dateStart && p.DateTimeCreate <= dateEnd)
             .ToListAsync();
     }

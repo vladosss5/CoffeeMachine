@@ -8,11 +8,11 @@ namespace CoffeeMachine.Persistence.Repositories;
 
 public class MachineRepository : GenericRepository<Machine>, IMachineRepository
 {
-    private readonly DataContext _dbContext;
+    private readonly DataContext _dataContext;
 
-    public MachineRepository(DataContext dbContext) : base(dbContext)
+    public MachineRepository(DataContext dataContext) : base(dataContext)
     {
-        _dbContext = dbContext;
+        _dataContext = dataContext;
     }
 
     /// <summary>
@@ -23,7 +23,7 @@ public class MachineRepository : GenericRepository<Machine>, IMachineRepository
     /// <exception cref="NotFoundException"></exception>
     public async Task<Machine> GetBySerialNumberAsync(string serialNumber)
     {
-        return await _dbContext.Machines.FirstOrDefaultAsync(x => x.SerialNumber == serialNumber);
+        return await _dataContext.Machines.FirstOrDefaultAsync(x => x.SerialNumber == serialNumber);
     }
 
     /// <summary>
@@ -35,7 +35,7 @@ public class MachineRepository : GenericRepository<Machine>, IMachineRepository
     {
         var machine = await GetBySerialNumberAsync(entity.SerialNumber);
         
-        var banknoteMachines = await _dbContext.BanknotesToMachines.Where(bm =>
+        var banknoteMachines = await _dataContext.BanknotesToMachines.Where(bm =>
             bm.Machine.SerialNumber == machine.SerialNumber).Include(bm => bm.Banknote).ToListAsync();
         
         int balance = 0;
@@ -47,8 +47,8 @@ public class MachineRepository : GenericRepository<Machine>, IMachineRepository
         
         machine.Balance = balance;
         
-        _dbContext.Machines.Update(machine);
-        await _dbContext.TrySaveChangesToDbAsync();
+        _dataContext.Machines.Update(machine);
+        await _dataContext.TrySaveChangesToDbAsync();
         
         return balance;
     }
@@ -61,7 +61,7 @@ public class MachineRepository : GenericRepository<Machine>, IMachineRepository
     /// <returns></returns>
     public async Task<Machine> AddCoffeeInMachineAsync(Coffee coffee, Machine machine)
     {
-        if (await _dbContext.CoffeesToMachines.AnyAsync(ctm => ctm.Coffee == coffee && ctm.Machine == machine))
+        if (await _dataContext.CoffeesToMachines.AnyAsync(ctm => ctm.Coffee == coffee && ctm.Machine == machine))
             throw new AlreadyExistsException(nameof(Coffee), coffee.Name);
         
         var coffeeMachine = new CoffeeToMachine()
@@ -70,8 +70,8 @@ public class MachineRepository : GenericRepository<Machine>, IMachineRepository
             Machine = machine
         };
         
-        await _dbContext.CoffeesToMachines.AddAsync(coffeeMachine);
-        await _dbContext.TrySaveChangesToDbAsync();
+        await _dataContext.CoffeesToMachines.AddAsync(coffeeMachine);
+        await _dataContext.TrySaveChangesToDbAsync();
         
         return machine;
     }
@@ -85,10 +85,10 @@ public class MachineRepository : GenericRepository<Machine>, IMachineRepository
     /// <exception cref="NotImplementedException"></exception>
     public async Task<Machine> DeleteCoffeeFromMachineAsync(Coffee coffee, Machine machine)
     {
-        var coffeeMachine = _dbContext.CoffeesToMachines.Where(cm => cm.Coffee == coffee && cm.Machine == machine);
+        var coffeeMachine = _dataContext.CoffeesToMachines.Where(cm => cm.Coffee == coffee && cm.Machine == machine);
         
-        _dbContext.CoffeesToMachines.RemoveRange(coffeeMachine);
-        await _dbContext.TrySaveChangesToDbAsync();
+        _dataContext.CoffeesToMachines.RemoveRange(coffeeMachine);
+        await _dataContext.TrySaveChangesToDbAsync();
 
         return machine;
     }
@@ -102,7 +102,7 @@ public class MachineRepository : GenericRepository<Machine>, IMachineRepository
     /// <exception cref="NotImplementedException"></exception>
     public async Task<Machine> AddBanknotesToMachineAsync(IEnumerable<Banknote> banknotes, Machine machine)
     {
-        var banknoteMachines = await _dbContext.BanknotesToMachines.Include(bm => bm.Banknote)
+        var banknoteMachines = await _dataContext.BanknotesToMachines.Include(bm => bm.Banknote)
             .Where(bm => bm.Machine.SerialNumber == machine.SerialNumber).ToListAsync();
 
         foreach (var banknote in banknotes)
@@ -114,7 +114,7 @@ public class MachineRepository : GenericRepository<Machine>, IMachineRepository
                 {
                     presence = true;
                     bm.CountBanknote++;
-                    _dbContext.BanknotesToMachines.Update(bm);
+                    _dataContext.BanknotesToMachines.Update(bm);
                 }
             }
 
@@ -126,11 +126,11 @@ public class MachineRepository : GenericRepository<Machine>, IMachineRepository
                     CountBanknote = 1,
                     Machine = machine
                 };
-                await _dbContext.BanknotesToMachines.AddAsync(bm);
+                await _dataContext.BanknotesToMachines.AddAsync(bm);
             }
         }
         
-        await _dbContext.TrySaveChangesToDbAsync();
+        await _dataContext.TrySaveChangesToDbAsync();
         
         return machine;
     }
@@ -143,7 +143,7 @@ public class MachineRepository : GenericRepository<Machine>, IMachineRepository
     /// <returns></returns>
     public async Task<Machine> SubtractBanknotesFromMachineAsync(IEnumerable<Banknote> banknotes, Machine machine)
     {
-        var banknoteMachines = await _dbContext.BanknotesToMachines
+        var banknoteMachines = await _dataContext.BanknotesToMachines
             .Include(bm => bm.Machine)
             .Include(bm => bm.Banknote)
             .Where(bm => bm.Machine == machine)
@@ -157,12 +157,12 @@ public class MachineRepository : GenericRepository<Machine>, IMachineRepository
                     bm.Banknote.Nominal == banknote.Nominal && bm.CountBanknote >= 1)
                 {
                     bm.CountBanknote--;
-                    _dbContext.BanknotesToMachines.Update(bm);
+                    _dataContext.BanknotesToMachines.Update(bm);
                 }   
             }
         }
         
-        await _dbContext.TrySaveChangesToDbAsync();
+        await _dataContext.TrySaveChangesToDbAsync();
         
         return machine;
     }
@@ -174,7 +174,7 @@ public class MachineRepository : GenericRepository<Machine>, IMachineRepository
     /// <returns></returns>
     public async Task<IEnumerable<Coffee>> GetCoffeesFromMachineAsync(Machine machine)
     {
-        var coffeesToMachines = _dbContext.CoffeesToMachines.Where(cm => cm.Machine == machine);
+        var coffeesToMachines = _dataContext.CoffeesToMachines.Where(cm => cm.Machine == machine);
         return await coffeesToMachines.Select(cm => cm.Coffee).ToListAsync();
     }
     
@@ -186,6 +186,6 @@ public class MachineRepository : GenericRepository<Machine>, IMachineRepository
     /// <returns></returns>
     public async Task<bool> CheckCoffeeInMachineAsync(Machine machine, Coffee coffee)
     {
-        return await _dbContext.CoffeesToMachines.AnyAsync(cm => cm.Coffee == coffee && cm.Machine == machine);
+        return await _dataContext.CoffeesToMachines.AnyAsync(cm => cm.Coffee == coffee && cm.Machine == machine);
     }
 }

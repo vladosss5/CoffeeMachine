@@ -8,11 +8,11 @@ namespace CoffeeMachine.Persistence.Repositories;
 
 public class CoffeeRepository : GenericRepository<Coffee>, ICoffeeRepository
 {
-    private readonly DataContext _dbContext;
+    private readonly DataContext _dataContext;
 
-    public CoffeeRepository(DataContext dbContext) : base(dbContext)
+    public CoffeeRepository(DataContext dataContext) : base(dataContext)
     {
-        _dbContext = dbContext;
+        _dataContext = dataContext;
     }
 
     /// <summary>
@@ -23,7 +23,7 @@ public class CoffeeRepository : GenericRepository<Coffee>, ICoffeeRepository
     /// <exception cref="NotImplementedException"></exception>
     public async Task<Coffee> GetByNameAsync(string nameCoffe)
     {
-        return await _dbContext.Coffees.FirstOrDefaultAsync(x => x.Name == nameCoffe);
+        return await _dataContext.Coffees.FirstOrDefaultAsync(x => x.Name == nameCoffe);
     }
 
     /// <summary>
@@ -33,7 +33,7 @@ public class CoffeeRepository : GenericRepository<Coffee>, ICoffeeRepository
     /// <returns></returns>
     public async Task<IEnumerable<Coffee>> GetCoffeesFromMachineAsync(Machine machine)
     {
-        return await _dbContext.CoffeesToMachines
+        return await _dataContext.CoffeesToMachines
             .Where(cm => cm.Machine == machine)
             .Select(cm => cm.Coffee)
             .ToListAsync();
