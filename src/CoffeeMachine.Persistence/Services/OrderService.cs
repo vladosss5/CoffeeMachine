@@ -26,6 +26,7 @@ public class OrderService : IOrderService
         {
             Machine = await _unitOfWork.Machine.GetBySerialNumberAsync(orderRequest.Machine.SerialNumber),
             Coffee = await _unitOfWork.Coffee.GetByNameAsync(orderRequest.Coffee.Name),
+            DateTimeCreate = DateTime.UtcNow,
             Status = "Принято",
         };
 

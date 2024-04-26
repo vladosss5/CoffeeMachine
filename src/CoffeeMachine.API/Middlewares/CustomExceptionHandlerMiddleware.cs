@@ -64,6 +64,7 @@ public class CustomExceptionHandlerMiddleware
             
             case NotFoundException notFoundException:
                 code = HttpStatusCode.NotFound;
+                result = JsonSerializer.Serialize(new { error = notFoundException.Message });
                 _logger.LogError(
                     "Error Message: {exceptionMessage}, Time of occurrence {time}",
                     notFoundException.Message, DateTime.UtcNow);
@@ -71,21 +72,22 @@ public class CustomExceptionHandlerMiddleware
             
             case AlreadyExistsException alreadyExistsException:
                 code = HttpStatusCode.BadRequest;
+                result = JsonSerializer.Serialize(new { error = alreadyExistsException.Message });
                 _logger.LogError(
                     "Error Message: {exceptionMessage}, Time of occurrence {time}",
                     alreadyExistsException.Message, DateTime.UtcNow);
+                break;
+            
+            default: 
+                code = HttpStatusCode.InternalServerError;
+                result = JsonSerializer.Serialize(new { error = exception.Message });
+                _logger.LogError(
+                    "Error Message: {ex}, Time of occurrence {time}", exception.Message, DateTime.UtcNow);
                 break;
         }
         
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)code;
-
-        if (result == string.Empty)
-        {
-            result = JsonSerializer.Serialize(new { error = exception.Message });
-            _logger.LogError(
-                "Error Message: {ex}, Time of occurrence {time}", exception.Message, DateTime.UtcNow);
-        }
         
         return context.Response.WriteAsync(result);
     }

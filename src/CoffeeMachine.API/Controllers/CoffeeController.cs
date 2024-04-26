@@ -104,12 +104,12 @@ namespace CoffeeMachine.API.Controllers
         /// <summary>
         /// Получение списка кофе из кофемашины.
         /// </summary>
-        /// <param name="idMachine"></param>
+        /// <param name="machineId"></param>
         /// <returns></returns>
-        [HttpGet("GetCoffeesFromMachine/{idMachine}")]
-        public async Task<IActionResult> GetCoffeesFromMachineAsync(long idMachine)
+        [HttpGet("GetCoffeesFromMachine/{machineId}")]
+        public async Task<IActionResult> GetCoffeesFromMachineAsync(long machineId)
         {
-            var response = await _adminService.GetCoffeesFromMachineAsync(idMachine);
+            var response = await _adminService.GetCoffeesFromMachineAsync(machineId);
             var coffeesResponse = response.Select(c => _mapper.Map<CoffeeFullResponseDto>(c)).ToList();
             
             return Ok(coffeesResponse);

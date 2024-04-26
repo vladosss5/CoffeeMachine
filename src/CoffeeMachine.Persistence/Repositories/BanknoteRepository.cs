@@ -40,6 +40,7 @@ public class BanknoteRepository : GenericRepository<Banknote>, IBanknoteReposito
     {
         var banknotesToMachine = await _dbContext.BanknotesToMachines
             .Where(bm => bm.Machine.SerialNumber == machine.SerialNumber && bm.CountBanknote != 0)
+            .OrderByDescending(bm => bm.Banknote.Nominal)
             .Include(bm => bm.Banknote)
             .ToListAsync();
 

@@ -106,13 +106,13 @@ namespace CoffeeMachine.API.Controllers
         /// <summary>
         /// Контроллер для добавления кофе в кофемашину.
         /// </summary>
-        /// <param name="idMachine"></param>
-        /// <param name="idCoffee"></param>
+        /// <param name="machineId"></param>
+        /// <param name="coffeeId"></param>
         /// <returns></returns>
-        [HttpPost("AddCoffeeToMachines/{idMachine}")]
-        public async Task<IActionResult> AddCoffeeToMachinesAsync(long idMachine, [FromBody] long idCoffee)
+        [HttpPost("AddCoffeeToMachines/{machineId}")]
+        public async Task<IActionResult> AddCoffeeToMachinesAsync(long machineId, [FromBody] long coffeeId)
         {
-            var machine = await _adminService.AddCoffeeInMachineAsync(idCoffee, idMachine);
+            var machine = await _adminService.AddCoffeeInMachineAsync(coffeeId, machineId);
             var machineResponse = new CoffeesInMachineResponseDto()
             {
                 Machine = _mapper.Map<MachineFullResponseDto>(machine),
@@ -125,14 +125,14 @@ namespace CoffeeMachine.API.Controllers
         /// <summary>
         /// Контроллер для удаления кофе из кофемашины.
         /// </summary>
-        /// <param name="idMachine"></param>
-        /// <param name="idCoffee"></param>
+        /// <param name="machineId"></param>
+        /// <param name="coffeeId"></param>
         /// <returns></returns>
-        [HttpPost("DeleteCoffeeFromMachines/{idMachine}")]
+        [HttpPost("DeleteCoffeeFromMachines/{machineId}")]
         public async Task<IActionResult> DeleteCoffeeFromMachinesAsync(
-            [FromRoute] long idMachine, [FromBody] long idCoffee)
+            [FromRoute] long machineId, [FromBody] long coffeeId)
         {
-            var machine = await _adminService.DeleteCoffeeFromMachineAsync(idCoffee, idMachine);
+            var machine = await _adminService.DeleteCoffeeFromMachineAsync(coffeeId, machineId);
             var machineResponse = new CoffeesInMachineResponseDto()
             {
                 Machine = _mapper.Map<MachineFullResponseDto>(machine),
@@ -145,15 +145,15 @@ namespace CoffeeMachine.API.Controllers
         /// <summary>
         /// Контроллер для добавления банкнот в кофемашину.
         /// </summary>
-        /// <param name="idMachine"></param>
+        /// <param name="machineId"></param>
         /// <param name="banknotesRequest"></param>
         /// <returns></returns>
-        [HttpPost("AddBanknotesToMachines/{idMachine}")]
+        [HttpPost("AddBanknotesToMachines/{machineId}")]
         public async Task<IActionResult> AddBanknoteToMachinesAsync(
-            [FromRoute] long idMachine, [FromBody] IEnumerable<BanknoteDto> banknotesRequest)
+            [FromRoute] long machineId, [FromBody] IEnumerable<BanknoteDto> banknotesRequest)
         {
             var banknotes = banknotesRequest.Select(b => _mapper.Map<Banknote>(b));
-            var response = await _adminService.AddBanknotesToMachineAsync(banknotes, idMachine);
+            var response = await _adminService.AddBanknotesToMachineAsync(banknotes, machineId);
             var machineResponse = _mapper.Map<MachineEditDto>(response);
             
             return Ok(machineResponse);
@@ -162,16 +162,16 @@ namespace CoffeeMachine.API.Controllers
         /// <summary>
         /// Контроллер для вычитания банкнот из кофемашины.
         /// </summary>
-        /// <param name="idMachine"></param>
+        /// <param name="machineId"></param>
         /// <param name="banknotesRequest"></param>
         /// <returns></returns>
-        [HttpPost("DeleteBanknotesFromMachines/{idMachine}")]
+        [HttpPost("DeleteBanknotesFromMachines/{machineId}")]
         public async Task<IActionResult> SubtractBanknotesFromMachinesAsync(
-            [FromRoute] long idMachine, [FromBody] IEnumerable<BanknoteDto> banknotesRequest)
+            [FromRoute] long machineId, [FromBody] IEnumerable<BanknoteDto> banknotesRequest)
 
         {
             var banknotes = banknotesRequest.Select(b => _mapper.Map<Banknote>(b));
-            var response = await _adminService.SubtractBanknotesFromMachineAsync(banknotes, idMachine);
+            var response = await _adminService.SubtractBanknotesFromMachineAsync(banknotes, machineId);
             var machineResponse = _mapper.Map<MachineEditDto>(response);
             
             return Ok(machineResponse);
@@ -180,12 +180,12 @@ namespace CoffeeMachine.API.Controllers
         /// <summary>
         /// Контроллер для получения списка банкнот в кофемашине.
         /// </summary>
-        /// <param name="idMachine"></param>
+        /// <param name="machineId"></param>
         /// <returns></returns>
-        [HttpGet("GetBanknotesByMachine/{idMachine}")]
-        public async Task<IActionResult> GetBanknotesByMachineAsync([FromRoute] long idMachine)
+        [HttpGet("GetBanknotesByMachine/{machineId}")]
+        public async Task<IActionResult> GetBanknotesByMachineAsync([FromRoute] long machineId)
         {
-            var banknotesToMachines = await _adminService.GetBanknotesByMachineAsync(idMachine);
+            var banknotesToMachines = await _adminService.GetBanknotesByMachineAsync(machineId);
             var banknotesResponse = banknotesToMachines.Select(bm => _mapper.Map<BanknoteToMachineResponseDto>(bm));
             
             return Ok(banknotesResponse);
