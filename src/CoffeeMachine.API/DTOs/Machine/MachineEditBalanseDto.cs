@@ -1,5 +1,9 @@
 ﻿namespace CoffeeMachine.API.DTOs.Machine;
 
+/// <summary>
+/// Передаваемый объект "кофемашина".
+/// Используется для изменения кофемашины.
+/// </summary>
 public class MachineEditDto
 {
     public long Id { get; set; }

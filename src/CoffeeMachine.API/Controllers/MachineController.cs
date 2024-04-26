@@ -116,7 +116,7 @@ namespace CoffeeMachine.API.Controllers
             var machineResponse = new CoffeesInMachineResponseDto()
             {
                 Machine = _mapper.Map<MachineFullResponseDto>(machine),
-                Coffees = machine.CoffeesToMachines.Select(cm => _mapper.Map<CoffeeFullResponseDto>(cm.Coffee))
+                Coffees = machine.CoffeesToMachines.Select(cm => _mapper.Map<CoffeeFullResponseDto>(cm.Coffee)).ToList()
             };
             
             return Ok(machineResponse);
@@ -136,7 +136,7 @@ namespace CoffeeMachine.API.Controllers
             var machineResponse = new CoffeesInMachineResponseDto()
             {
                 Machine = _mapper.Map<MachineFullResponseDto>(machine),
-                Coffees = machine.CoffeesToMachines.Select(cm => _mapper.Map<CoffeeFullResponseDto>(cm.Coffee))
+                Coffees = machine.CoffeesToMachines.Select(cm => _mapper.Map<CoffeeFullResponseDto>(cm.Coffee)).ToList()
             };
             
             return Ok(machineResponse);
@@ -190,7 +190,5 @@ namespace CoffeeMachine.API.Controllers
             
             return Ok(banknotesResponse);
         }
-        
-        
     }
 }

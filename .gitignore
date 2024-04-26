@@ -2,3 +2,4 @@ bin/
 obj/
 /src/CoffeeMachine.API/Logs
 .idea
+tests

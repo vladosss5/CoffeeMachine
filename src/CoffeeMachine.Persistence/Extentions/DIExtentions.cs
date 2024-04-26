@@ -12,10 +12,17 @@ namespace CoffeeMachine.Persistence.Extentions;
 
 public static class DIExtentions
 {
+    /// <summary>
+    /// Метод расширения добавляющий сервисы для
+    /// Подключения к БД
+    /// Связывания интерфейсов с реализациейми
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
+    /// <returns></returns>
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection");
-        
         services.AddDbContext<DataContext>(options => options.UseNpgsql(connectionString));
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();

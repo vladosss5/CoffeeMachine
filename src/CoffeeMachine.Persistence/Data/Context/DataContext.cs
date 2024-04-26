@@ -14,8 +14,8 @@ public partial class DataContext : DbContext
         : base(options)
     { }
     
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseNpgsql("Server=postgres-container;port=5432;user id=postgres;password=toor;database=CoffeeMachine;");
+    // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    //     => optionsBuilder.UseNpgsql("Server=postgres-container;port=5432;user id=postgres;password=toor;database=CoffeeMachine;");
     
     public virtual DbSet<Banknote> Banknotes { get; set; }
     public virtual DbSet<BanknoteToMachine> BanknotesToMachines { get; set; }

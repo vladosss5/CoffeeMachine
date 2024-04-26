@@ -6,9 +6,19 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace CoffeeMachine.API.Middlewares;
 
+/// <summary>
+/// Миддлвейр для обработки исключений.
+/// </summary>
 public class CustomExceptionHandlerMiddleware
 {
+    /// <summary>
+    /// Ссылка на следующий миддлвейр
+    /// </summary>
     private readonly RequestDelegate _next;
+    
+    /// <summary>
+    /// Логгер
+    /// </summary>
     private readonly ILogger<CustomExceptionHandlerMiddleware> _logger;
 
     public CustomExceptionHandlerMiddleware(RequestDelegate next,
@@ -18,6 +28,10 @@ public class CustomExceptionHandlerMiddleware
         _logger = logger;
     }
 
+    /// <summary>
+    /// Асинхронный метод для отлова исключений.
+    /// </summary>
+    /// <param name="context"></param>
     public async Task Invoke(HttpContext context)
     {
         try
@@ -30,6 +44,12 @@ public class CustomExceptionHandlerMiddleware
         }
     }
 
+    /// <summary>
+    /// Метод обработки исключений.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="exception"></param>
+    /// <returns></returns>
     private Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
         var code = HttpStatusCode.InternalServerError;
@@ -63,6 +83,8 @@ public class CustomExceptionHandlerMiddleware
         if (result == string.Empty)
         {
             result = JsonSerializer.Serialize(new { error = exception.Message });
+            _logger.LogError(
+                "Error Message: {ex}, Time of occurrence {time}", exception.Message, DateTime.UtcNow);
         }
         
         return context.Response.WriteAsync(result);
