@@ -57,7 +57,6 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
     /// </summary>
     /// <param name="status"></param>
     /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
     public async Task<IEnumerable<Order>> GetByStatusAsync(string status)
     {
         return await _dataContext.Orders.Where(o => o.Status == status).ToListAsync();
