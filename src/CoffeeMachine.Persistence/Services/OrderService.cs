@@ -6,20 +6,30 @@ using CoffeeMachine.Core.Models;
 
 namespace CoffeeMachine.Persistence.Services;
 
+/// <summary>
+/// Сервис заказов.
+/// </summary>
 public class OrderService : IOrderService
 {
+    /// <summary>
+    /// Unit Of Work.
+    /// </summary>
     private readonly IUnitOfWork _unitOfWork;
 
+    /// <summary>
+    /// Конструктор класса.
+    /// </summary>
+    /// <param name="unitOfWork">Unit Of Work.</param>
     public OrderService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }
     
     /// <summary>
-    /// Метод для создания заказа
+    /// Метод для создания заказа.
     /// </summary>
-    /// <param name="orderRequest"></param>
-    /// <returns></returns>
+    /// <param name="orderRequest">Запрашиваемый заказ.</param>
+    /// <returns>Заказ.</returns>
     public async Task<Order> CreateOrderAsync(Order orderRequest)
     {
         var order = new Order()
@@ -72,7 +82,6 @@ public class OrderService : IOrderService
             await _unitOfWork.Transaction.AddAsync(newTransaction);
         }
         
-        // order.Transactions = await _unitOfWork.Transaction.GetByOrderAsync(order);
         order.Status = "Готово";
         order = await _unitOfWork.Order.UpdateAsync(order);
         order.Transactions = order.Transactions.Where(t => t.IsPayment == false).ToList();
@@ -81,12 +90,12 @@ public class OrderService : IOrderService
     
     
     /// <summary>
-    /// Метод для расчета сдачи
+    /// Расчет сдачи.
     /// </summary>
-    /// <param name="coffeePrice"></param>
-    /// <param name="transactions"></param>
-    /// <param name="machine"></param>
-    /// <returns></returns>
+    /// <param name="coffeePrice">Цена кофе.</param>
+    /// <param name="transactions">Список транзакций.</param>
+    /// <param name="machine">Кофемашина.</param>
+    /// <returns>Список банкнот для сдачи.</returns>
     private async Task<List<Banknote>> CalculateChange(int coffeePrice, IEnumerable<Transaction> transactions, Machine machine)
     {
         var banknotesToMachine = await _unitOfWork.Banknote
@@ -120,11 +129,11 @@ public class OrderService : IOrderService
     }
 
     /// <summary>
-    /// Метод возвращающий ошибку при сдаче
+    /// Ошибка при сдаче.
     /// </summary>
-    /// <param name="order"></param>
-    /// <param name="banknotes"></param>
-    /// <returns></returns>
+    /// <param name="order">Заказ.</param>
+    /// <param name="banknotes">Список банкнот.</param>
+    /// <returns>Заказ.</returns>
     private async Task<Order> ErrorChange(Order order, List<Banknote> banknotes)
     {
         await _unitOfWork.Machine.SubtractBanknotesFromMachineAsync(banknotes, order.Machine);

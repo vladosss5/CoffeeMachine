@@ -13,9 +13,7 @@ namespace CoffeeMachine.Persistence.Extentions;
 public static class DIExtentions
 {
     /// <summary>
-    /// Метод расширения добавляющий сервисы для
-    /// Подключения к БД
-    /// Связывания интерфейсов с реализациейми
+    /// Метод расширения добавляющий сервисы для подключения к БД и связывания интерфейсов с реализациейми
     /// </summary>
     /// <param name="services"></param>
     /// <param name="configuration"></param>

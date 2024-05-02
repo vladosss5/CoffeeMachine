@@ -28,8 +28,8 @@ public class AdminService : IAdminService
     /// <summary>
     /// Получить кофемашину по Id.
     /// </summary>
-    /// <param name="machineId"></param>
-    /// <returns></returns>
+    /// <param name="machineId">Идентификатор кофемашины.</param>
+    /// <returns>Кофемашина.</returns>
     public async Task<Machine> GetMachineByIdAsync(long machineId)
     {
         return await _unitOfWork.Machine.GetByIdAsync(machineId);
@@ -38,7 +38,7 @@ public class AdminService : IAdminService
     /// <summary>
     /// Получить список всех кофемашин.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Список кофемашин.</returns>
     public async Task<IEnumerable<Machine>> GetAllMachinesAsync()
     {
         return await _unitOfWork.Machine.GetAllAsync();
@@ -47,9 +47,8 @@ public class AdminService : IAdminService
     /// <summary>
     /// Создать новую кофемашину.
     /// </summary>
-    /// <param name="machine"></param>
-    /// <returns></returns>
-    /// <exception cref="AlreadyExistsException"></exception>
+    /// <param name="machine">Кофемашина.</param>
+    /// <returns>Созданная кофемашина.</returns>
     public async Task<Machine> CreateNewMachineAsync(Machine machine)
     {
         var identity = await _unitOfWork.Machine.GetBySerialNumberAsync(machine.SerialNumber);
@@ -62,9 +61,8 @@ public class AdminService : IAdminService
     /// <summary>
     /// Изменить кофемашину.
     /// </summary>
-    /// <param name="machine"></param>
-    /// <returns></returns>
-    /// <exception cref="NotFoundException"></exception>
+    /// <param name="machine">Кофемашина.</param>
+    /// <returns>Изменённая кофемашина.</returns>
     public async Task<Machine> UpdateMachineAsync(Machine machine)
     {
         return await _unitOfWork.Machine.UpdateAsync(machine);
@@ -73,9 +71,7 @@ public class AdminService : IAdminService
     /// <summary>
     /// Удалить кофемашину.
     /// </summary>
-    /// <param name="machineId"></param>
-    /// <returns></returns>
-    /// <exception cref="NotFoundException"></exception>
+    /// <param name="machineId">Идентификатор кофемашины.</param>
     public async Task DeleteMachineAsync(long machineId)
     {
         var identity = await _unitOfWork.Machine.GetByIdAsync(machineId);
@@ -87,11 +83,10 @@ public class AdminService : IAdminService
     }
 
     /// <summary>
-    /// Получить кофемашину по серийному номеру.
+    /// Получить кофемашину по серийному номеру
     /// </summary>
-    /// <param name="serialNumber"></param>
-    /// <returns></returns>
-    /// <exception cref="NotFoundException"></exception>
+    /// <param name="serialNumber">Серийному номер.</param>
+    /// <returns>Кофемашина.</returns>
     public async Task<Machine> GetMachineBySerialNumberAsync(string serialNumber)
     {
         var identity = await _unitOfWork.Machine.GetBySerialNumberAsync(serialNumber);
@@ -104,9 +99,8 @@ public class AdminService : IAdminService
     /// <summary>
     /// Обновить баланс кофемашины.
     /// </summary>
-    /// <param name="machineId"></param>
-    /// <returns></returns>
-    /// <exception cref="NotFoundException"></exception>
+    /// <param name="machineId">Идентификатор кофемашины.</param>
+    /// <returns>Баланс.</returns>
     public async Task<int> UpdateBalanceAsync(long machineId)
     {
         var machine = await _unitOfWork.Machine.GetByIdAsync(machineId);
@@ -119,10 +113,9 @@ public class AdminService : IAdminService
     /// <summary>
     /// Добавить кофе в кофемашину.
     /// </summary>
-    /// <param name="coffeeId"></param>
-    /// <param name="machineId"></param>
-    /// <returns></returns>
-    /// <exception cref="NotFoundException"></exception>
+    /// <param name="coffeeId">Идентификатор кофе.</param>
+    /// <param name="machineId">Идентификатор кофемашины.</param>
+    /// <returns>Кофемашина.</returns>
     public async Task<Machine> AddCoffeeInMachineAsync(long coffeeId, long machineId)
     {
         var coffee = await _unitOfWork.Coffee.GetByIdAsync(coffeeId);
@@ -139,10 +132,9 @@ public class AdminService : IAdminService
     /// <summary>
     /// Удалить кофе из кофемашины.
     /// </summary>
-    /// <param name="coffeeId"></param>
-    /// <param name="machineId"></param>
-    /// <returns></returns>
-    /// <exception cref="NotFoundException"></exception>
+    /// <param name="coffeeId">Идентификатор кофе.</param>
+    /// <param name="machineId">Идентификатор кофемашины.</param>
+    /// <returns>Кофемашина.</returns>
     public async Task<Machine> DeleteCoffeeFromMachineAsync(long coffeeId, long machineId)
     {
         var coffee = await _unitOfWork.Coffee.GetByIdAsync(coffeeId);
@@ -157,12 +149,11 @@ public class AdminService : IAdminService
     }
 
     /// <summary>
-    /// Добавить банкноты в автомат.
+    /// Добавить банкноты в кофемашину.
     /// </summary>
-    /// <param name="banknotesRequest"></param>
-    /// <param name="machineId"></param>
-    /// <returns></returns>
-    /// <exception cref="NotFoundException"></exception>
+    /// <param name="banknotesRequest">Список банкнот.</param>
+    /// <param name="machineId">Идентификатор кофемашины.</param>
+    /// <returns>Кофемашина.</returns>
     public async Task<Machine> AddBanknotesToMachineAsync(IEnumerable<Banknote> banknotesRequest, long machineId)
     {
         var banknotes = new List<Banknote>();
@@ -182,12 +173,11 @@ public class AdminService : IAdminService
     }
 
     /// <summary>
-    /// Выдать банкноты из автомата.
+    /// Извлечь банкноты из кофемашины.
     /// </summary>
-    /// <param name="banknotesRequest"></param>
-    /// <param name="machineId"></param>
-    /// <returns></returns>
-    /// <exception cref="NotFoundException"></exception>
+    /// <param name="banknotesRequest">Список банкнот.</param>
+    /// <param name="machineId">Идентификатор кофемашины.</param>
+    /// <returns>Кофемашина.</returns>
     public async Task<Machine> SubtractBanknotesFromMachineAsync(IEnumerable<Banknote> banknotesRequest, long machineId)
     {
         var banknotes = new List<Banknote>();
@@ -209,9 +199,8 @@ public class AdminService : IAdminService
     /// <summary>
     /// Получить список банкнот в кофемашине.
     /// </summary>
-    /// <param name="machineId"></param>
-    /// <returns></returns>
-    /// <exception cref="NotFoundException"></exception>
+    /// <param name="machineId">Идентификатор кофемашины.</param>
+    /// <returns>Список банкнот.</returns>
     public async Task<IEnumerable<BanknoteToMachine>> GetBanknotesByMachineAsync(long machineId)
     {
         var machine = await _unitOfWork.Machine.GetByIdAsync(machineId);
@@ -224,8 +213,8 @@ public class AdminService : IAdminService
     /// <summary>
     /// Получить кофе по Id.
     /// </summary>
-    /// <param name="coffeeId"></param>
-    /// <returns></returns>
+    /// <param name="coffeeId">Идентификатор кофе.</param>
+    /// <returns>Кофе.</returns>
     public async Task<Coffee> GetCoffeeByIdAsync(long coffeeId)
     {
         return await _unitOfWork.Coffee.GetByIdAsync(coffeeId);
@@ -234,7 +223,7 @@ public class AdminService : IAdminService
     /// <summary>
     /// Получить список кофе.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Список кофе.</returns>
     public async Task<IEnumerable<Coffee>> GetAllCoffeesAsync()
     {
         return await _unitOfWork.Coffee.GetAllAsync();
@@ -243,9 +232,8 @@ public class AdminService : IAdminService
     /// <summary>
     /// Создать новый кофе.
     /// </summary>
-    /// <param name="coffee"></param>
-    /// <returns></returns>
-    /// <exception cref="AlreadyExistsException"></exception>
+    /// <param name="coffee">Кофе.</param>
+    /// <returns>Созданный кофе.</returns>
     public async Task<Coffee> CreateNewCoffeeAsync(Coffee coffee)
     {
         var identity = await _unitOfWork.Coffee.GetByNameAsync(coffee.Name);
@@ -256,22 +244,20 @@ public class AdminService : IAdminService
     }
 
     /// <summary>
-    /// Обновить кофе.
+    /// Изменить кофе.
     /// </summary>
-    /// <param name="coffee"></param>
-    /// <returns></returns>
-    /// <exception cref="NotFoundException"></exception>
+    /// <param name="coffee">Кофе.</param>
+    /// <returns>Измененный кофе.</returns>
     public async Task<Coffee> UpdateCoffeeAsync(Coffee coffee)
     {
         return await _unitOfWork.Coffee.UpdateAsync(coffee);
     }
-
+    
     /// <summary>
     /// Удалить кофе.
     /// </summary>
-    /// <param name="coffeeId"></param>
+    /// <param name="coffeeId">Идентификатор кофе.</param>
     /// <returns></returns>
-    /// <exception cref="NotFoundException"></exception>
     public async Task DeleteCoffeeAsync(long coffeeId)
     {
         var coffee = await _unitOfWork.Coffee.GetByIdAsync(coffeeId);
@@ -285,9 +271,8 @@ public class AdminService : IAdminService
     /// <summary>
     /// Получить кофе по названию.
     /// </summary>
-    /// <param name="nameCoffe"></param>
-    /// <returns></returns>
-    /// <exception cref="NotFoundException"></exception>
+    /// <param name="nameCoffe">Название кофе.</param>
+    /// <returns>Кофе</returns>
     public async Task<Coffee> GetByNameAsync(string nameCoffe)
     {
         var coffee = await _unitOfWork.Coffee.GetByNameAsync(nameCoffe);
@@ -301,9 +286,8 @@ public class AdminService : IAdminService
     /// <summary>
     /// Получить список доступных кофе для машины.
     /// </summary>
-    /// <param name="machineId"></param>
-    /// <returns></returns>
-    /// <exception cref="NotFoundException"></exception>
+    /// <param name="machineId">Идентификатор кофемашины.</param>
+    /// <returns>Список кофе.</returns>
     public async Task<IEnumerable<Coffee>> GetCoffeesFromMachineAsync(long machineId)
     {
         var machine = await _unitOfWork.Machine.GetByIdAsync(machineId);
@@ -316,9 +300,8 @@ public class AdminService : IAdminService
     /// <summary>
     /// Получить заказ по Id.
     /// </summary>
-    /// <param name="orderId"></param>
-    /// <returns></returns>
-    /// <exception cref="NotFoundException"></exception>
+    /// <param name="orderId">Идентификатор заказа.</param>
+    /// <returns>Заказ.</returns>
     public async Task<Order> GetOrderByIdAsync(long orderId)
     {
         var order = await _unitOfWork.Order.GetOrderByIdAsyncIcludeOtherEntities(orderId);
@@ -329,9 +312,9 @@ public class AdminService : IAdminService
     }
 
     /// <summary>
-    /// Получить список всех заказов
+    /// Получить список всех заказов.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Список заказов.</returns>
     public async Task<IEnumerable<Order>> GetAllOrdersAsync()
     {
         return await _unitOfWork.Order.GetAllAsync();
@@ -340,9 +323,7 @@ public class AdminService : IAdminService
     /// <summary>
     /// Удалить заказ.
     /// </summary>
-    /// <param name="orderId"></param>
-    /// <returns></returns>
-    /// <exception cref="NotFoundException"></exception>
+    /// <param name="orderId">Идентификатор заказа.</param>
     public async Task DeleteOrderAsync(long orderId)
     {
         var order = await _unitOfWork.Order.GetByIdAsync(orderId);
@@ -353,9 +334,9 @@ public class AdminService : IAdminService
     }
 
     /// <summary>
-    /// Получить список транзакций.
+    /// Вывести список транзакций.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Список транзакций.</returns>
     public async Task<IEnumerable<Transaction>> GetAllTransactionsAsync()
     {
         return await _unitOfWork.Transaction.GetAllAsync();
@@ -364,9 +345,8 @@ public class AdminService : IAdminService
     /// <summary>
     /// Получить транзакцию по Id.
     /// </summary>
-    /// <param name="transactionId"></param>
-    /// <returns></returns>
-    /// <exception cref="NotFoundException"></exception>
+    /// <param name="transactionId">Идентификатор транзакции.</param>
+    /// <returns>Транзакция.</returns>
     public async Task<Transaction> GetTransactionByIdAsync(long transactionId)
     {
         var transaction = await _unitOfWork.Transaction.GetByIdAsync(transactionId);
@@ -377,10 +357,10 @@ public class AdminService : IAdminService
     }
 
     /// <summary>
-    /// Получить транзакции по типу.
+    /// Получить транзакции по типу. True - покупка, false - продажа.
     /// </summary>
-    /// <param name="type"></param>
-    /// <returns></returns>
+    /// <param name="type">Тип.</param>
+    /// <returns>Список транзакций.</returns>
     public async Task<IEnumerable<Transaction>> GetTransactionsByTypeAsync(bool type)
     {
         return await _unitOfWork.Transaction.GetTransactionsByTypeAsync(type);
@@ -389,8 +369,8 @@ public class AdminService : IAdminService
     /// <summary>
     /// Получить транзакции покупки.
     /// </summary>
-    /// <param name="orderId"></param>
-    /// <returns></returns>
+    /// <param name="orderId">Идентификатор заказа.</param>
+    /// <returns>Список транзакций</returns>
     public async Task<IEnumerable<Transaction>> GetTransactionsByOrderAsync(long orderId)
     {
         var order = await _unitOfWork.Order.GetByIdAsync(orderId);

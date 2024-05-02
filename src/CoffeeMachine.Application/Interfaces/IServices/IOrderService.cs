@@ -5,9 +5,9 @@ namespace CoffeeMachine.Application.Interfaces.IServices;
 public interface IOrderService
 {
     /// <summary>
-    /// Логика покупки
+    /// Создать заказ.
     /// </summary>
-    /// <param name="order"></param>
-    /// <returns>Покупку</returns>
+    /// <param name="order">Заказ.</param>
+    /// <returns>Покупка.</returns>
     public Task<Order> CreateOrderAsync(Order order);
 }

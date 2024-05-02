@@ -5,7 +5,7 @@ namespace CoffeeMachine.Application.Extensions;
 public static class DIExtensions
 {
     /// <summary>
-    /// Метод добавления автомапера.
+    /// Добавления автомапера.
     /// </summary>
     /// <param name="services"></param>
     /// <returns></returns>
