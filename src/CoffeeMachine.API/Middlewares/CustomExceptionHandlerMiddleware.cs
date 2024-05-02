@@ -2,37 +2,40 @@
 using System.Net;
 using System.Text.Json;
 using CoffeeMachine.Application.Exceptions;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace CoffeeMachine.API.Middlewares;
 
 /// <summary>
-/// Миддлвейр для обработки исключений.
+/// Обработки исключений.
 /// </summary>
 public class CustomExceptionHandlerMiddleware
 {
     /// <summary>
-    /// Ссылка на следующий миддлвейр
+    /// Ссылка на следующий объект в конвейере.
     /// </summary>
     private readonly RequestDelegate _next;
     
     /// <summary>
-    /// Логгер
+    /// Сервис логирования.
     /// </summary>
     private readonly ILogger<CustomExceptionHandlerMiddleware> _logger;
 
-    public CustomExceptionHandlerMiddleware(RequestDelegate next,
-        ILogger<CustomExceptionHandlerMiddleware> logger)
+    /// <summary>
+    /// Конструктор класса.
+    /// </summary>
+    /// <param name="next">Ссылка на следующий объект в конвейере.</param>
+    /// <param name="logger">Сервис логирования.</param>
+    public CustomExceptionHandlerMiddleware(RequestDelegate next, ILogger<CustomExceptionHandlerMiddleware> logger)
     {
         _next = next;
         _logger = logger;
     }
 
     /// <summary>
-    /// Асинхронный метод для отлова исключений.
+    /// Отлов исключений.
     /// </summary>
-    /// <param name="context"></param>
-    public async Task Invoke(HttpContext context)
+    /// <param name="context">Специфичная информация об отдельном HTTP-запросе.</param>
+    public async Task InvokeAsync(HttpContext context)
     {
         try
         {
@@ -45,7 +48,7 @@ public class CustomExceptionHandlerMiddleware
     }
 
     /// <summary>
-    /// Метод обработки исключений.
+    /// Обработка исключений.
     /// </summary>
     /// <param name="context"></param>
     /// <param name="exception"></param>

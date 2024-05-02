@@ -48,7 +48,7 @@ namespace CoffeeMachine.API.Controllers
         /// <param name="id">Идентификатор заказа.</param>
         /// <returns>Заказ.</returns>
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetOrderById(long id)
+        public async Task<IActionResult> GetOrderByIdAsync(long id)
         {
             var result = await _adminService.GetOrderByIdAsync(id);
             var orderResponse = _mapper.Map<OrderResponseDto>(result);
@@ -61,7 +61,7 @@ namespace CoffeeMachine.API.Controllers
         /// <param name="orderRequest">Запрос заказа.</param>
         /// <returns>Заказ.</returns>
         [HttpPost]
-        public async Task<IActionResult> CreateOrder([FromBody] OrderAddRequestDto orderRequest)
+        public async Task<IActionResult> CreateOrderAsync([FromBody] OrderAddRequestDto orderRequest)
         {
             var order = _mapper.Map<OrderAddResponseDto>(await _orderService.CreateOrderAsync(_mapper.Map<Order>(orderRequest)));
             return Ok(order);
