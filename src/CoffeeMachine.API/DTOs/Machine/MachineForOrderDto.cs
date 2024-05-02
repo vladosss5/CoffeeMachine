@@ -11,5 +11,5 @@ public class MachineForOrderDto
     /// <summary>
     /// Серийный номер.
     /// </summary>
-    public string SerialNumber { get; set; }
+    public long Id { get; set; }
 }

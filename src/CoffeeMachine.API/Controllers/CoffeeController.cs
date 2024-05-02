@@ -15,7 +15,7 @@ namespace CoffeeMachine.API.Controllers
     public class CoffeeController : ControllerBase
     {
         /// <summary>
-        /// Сервис администратора.
+        /// <inheritdoc cref="IAdminService"/>
         /// </summary>
         private readonly IAdminService _adminService;
         
@@ -24,6 +24,11 @@ namespace CoffeeMachine.API.Controllers
         /// </summary>
         private readonly IMapper _mapper;
         
+        /// <summary>
+        /// Конструктор класса.
+        /// </summary>
+        /// <param name="adminService">Cервис администратора.</param>
+        /// <param name="mapper">Сервис автомаппера.</param>
         public CoffeeController(IAdminService adminService, IMapper mapper)
         {
             _adminService = adminService;   
@@ -31,10 +36,10 @@ namespace CoffeeMachine.API.Controllers
         }
 
         /// <summary>
-        /// Контроллер для получения кофе по Id.
+        /// Получить кофе по Id.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">Идентификатор кофе.</param>
+        /// <returns>Кофе.</returns>
         [HttpGet("{id}")]
         [ProducesResponseType(200, Type = typeof(Coffee))]
         public async Task<IActionResult> GetCoffeeByIdAsync(long id)
@@ -44,9 +49,9 @@ namespace CoffeeMachine.API.Controllers
         }
 
         /// <summary>
-        /// Контроллер для получения списка всех кофе.
+        /// Получить список всех кофе.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Список кофе.</returns>
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Coffee>))]
         public async Task<IActionResult> GetAllCoffeesAsync()
@@ -56,35 +61,33 @@ namespace CoffeeMachine.API.Controllers
         }
 
         /// <summary>
-        /// Контроллер для создания нового кофе.
+        /// Создать новый кофе.
         /// </summary>
         /// <param name="coffeeRequest"></param>
-        /// <returns></returns>
+        /// <returns>Кофе.</returns>
         [HttpPost]
         [ProducesResponseType(200, Type = typeof(Coffee))]
-        public async Task<IActionResult> CreateNewCoffeeAsync([FromBody] CoffeeReqestDto coffeeRequest)
+        public async Task<IActionResult> CreateNewCoffeeAsync([FromBody] CoffeeDto coffeeRequest)
         {
             var coffee = _mapper.Map<Coffee>(coffeeRequest);
             var response = await _adminService.CreateNewCoffeeAsync(coffee);
-            var coffeeResponse = _mapper.Map<CoffeeFullResponseDto>(response);
+            var coffeeResponse = _mapper.Map<CoffeeDto>(response);
             
             return Ok(coffeeResponse);
         }
 
         /// <summary>
-        /// Контроллер для изменения кофе.
+        /// Изменить кофе.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="coffeeRequest"></param>
-        /// <returns></returns>
+        /// <param name="coffeeRequest">Изменяемый кофе.</param>
+        /// <returns>Кофе.</returns>
         [HttpPut("{id}")]
         [ProducesResponseType(200, Type = typeof(Coffee))]
-        public async Task<IActionResult> UpdateCoffeeAsync([FromRoute] long id, [FromBody] CoffeeReqestDto coffeeRequest)
+        public async Task<IActionResult> UpdateCoffeeAsync(CoffeeDto coffeeRequest)
         {
             var coffee = _mapper.Map<Coffee>(coffeeRequest);
-            coffee.Id = id;
             var response = await _adminService.UpdateCoffeeAsync(coffee);
-            var coffeeResponse = _mapper.Map<CoffeeFullResponseDto>(response);
+            var coffeeResponse = _mapper.Map<CoffeeDto>(response);
             
             return Ok(coffeeResponse);
         }
@@ -92,27 +95,12 @@ namespace CoffeeMachine.API.Controllers
         /// <summary>
         /// Удаление кофе.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">Идентификатор кофе.</param>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCoffeeAsync(long id)
         {
             await _adminService.DeleteCoffeeAsync(id);
             return NoContent();
-        }
-
-        /// <summary>
-        /// Получение списка кофе из кофемашины.
-        /// </summary>
-        /// <param name="machineId"></param>
-        /// <returns></returns>
-        [HttpGet("GetCoffeesFromMachine/{machineId}")]
-        public async Task<IActionResult> GetCoffeesFromMachineAsync(long machineId)
-        {
-            var response = await _adminService.GetCoffeesFromMachineAsync(machineId);
-            var coffeesResponse = response.Select(c => _mapper.Map<CoffeeFullResponseDto>(c)).ToList();
-            
-            return Ok(coffeesResponse);
         }
     }
 }

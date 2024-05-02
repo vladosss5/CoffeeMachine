@@ -36,33 +36,6 @@ public class MachineRepository : GenericRepository<Machine>, IMachineRepository
     }
 
     /// <summary>
-    /// Пересчитать баланс кофемашины.
-    /// </summary>
-    /// <param name="entity">Кофемашина.</param>
-    /// <returns>Баланс кофемашины.</returns>
-    public async Task<int> UpdateBalanceAsync(Machine entity)
-    {
-        var machine = await GetBySerialNumberAsync(entity.SerialNumber);
-        
-        var banknoteMachines = await _dataContext.BanknotesToMachines.Where(bm =>
-            bm.Machine.SerialNumber == machine.SerialNumber).Include(bm => bm.Banknote).ToListAsync();
-        
-        int balance = 0;
-
-        foreach (var bm in banknoteMachines)
-        {
-            balance += bm.Banknote.Nominal * bm.CountBanknote;
-        }
-        
-        machine.Balance = balance;
-        
-        _dataContext.Machines.Update(machine);
-        await _dataContext.TrySaveChangesToDbAsync();
-        
-        return balance;
-    }
-
-    /// <summary>
     /// Добавить кофе в кофемашину.
     /// </summary>
     /// <param name="coffee">Кофе.</param>

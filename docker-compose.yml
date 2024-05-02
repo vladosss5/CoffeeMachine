@@ -29,7 +29,7 @@ services:
       POSTGRES_PASSWORD: toor
       POSTGRES_DB: CoffeeMachine
     ports:
-      - "5432:5432"
+      - "7654:5432"
     networks:
       coffeemachine_net:
     volumes:

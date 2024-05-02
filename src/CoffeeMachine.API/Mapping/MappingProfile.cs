@@ -18,18 +18,16 @@ public class MappingProfile : Profile
     {
         CreateMap<Banknote, BanknoteDto>().ReverseMap();
         
-        CreateMap<BanknoteToMachineResponseDto, BanknoteToMachine>().ReverseMap();
+        CreateMap<BanknoteToMachineDto, BanknoteToMachine>().ReverseMap();
         
         CreateMap<CoffeeForOrderRequestDto, Coffee>().ReverseMap();
         CreateMap<CoffeeForOrderResponseDto, Coffee>().ReverseMap();
-        CreateMap<CoffeeFullRequestDto, Coffee>().ReverseMap();
-        CreateMap<CoffeeFullResponseDto, Coffee>().ReverseMap();
-        CreateMap<CoffeeReqestDto, Coffee>().ReverseMap();
+        CreateMap<CoffeeDto, Coffee>().ReverseMap();
         
         CreateMap<MachineForOrderDto, Machine>().ReverseMap();
         CreateMap<MachineEditDto, Machine>().ReverseMap();
         CreateMap<MachineCreateDto, Machine>().ReverseMap();
-        CreateMap<MachineFullResponseDto, Machine>().ReverseMap();
+        CreateMap<MachineDto, Machine>().ReverseMap();
         
         CreateMap<OrderAddRequestDto, Order>().ReverseMap();
         CreateMap<OrderAddResponseDto, Order>().ReverseMap();

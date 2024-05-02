@@ -2,6 +2,9 @@ using CoffeeMachine.Core.Models;
 
 namespace CoffeeMachine.Application.Interfaces.IServices;
 
+/// <summary>
+/// Сервис заказов.
+/// </summary>
 public interface IOrderService
 {
     /// <summary>

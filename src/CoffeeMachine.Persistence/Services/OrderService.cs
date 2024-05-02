@@ -15,14 +15,21 @@ public class OrderService : IOrderService
     /// Unit Of Work.
     /// </summary>
     private readonly IUnitOfWork _unitOfWork;
+    
+    /// <summary>
+    /// Сервис администратора.
+    /// </summary>
+    private readonly IAdminService _adminService;
 
     /// <summary>
     /// Конструктор класса.
     /// </summary>
     /// <param name="unitOfWork">Unit Of Work.</param>
-    public OrderService(IUnitOfWork unitOfWork)
+    /// <param name="adminService">Сервис администратора.</param>
+    public OrderService(IUnitOfWork unitOfWork, IAdminService adminService)
     {
         _unitOfWork = unitOfWork;
+        _adminService = adminService;
     }
     
     /// <summary>
@@ -34,7 +41,7 @@ public class OrderService : IOrderService
     {
         var order = new Order()
         {
-            Machine = await _unitOfWork.Machine.GetBySerialNumberAsync(orderRequest.Machine.SerialNumber),
+            Machine = await _unitOfWork.Machine.GetByIdAsync(orderRequest.Machine.Id),
             Coffee = await _unitOfWork.Coffee.GetByNameAsync(orderRequest.Coffee.Name),
             DateTimeCreate = DateTime.UtcNow,
             Status = "Принято",
@@ -57,6 +64,7 @@ public class OrderService : IOrderService
         
         order.Status = "Внесены деньги";
         await _unitOfWork.Order.UpdateAsync(order);
+        await _adminService.UpdateBalanceAsync(order.Machine.Id);
         
         var delivery = new List<Banknote>();
         
@@ -85,6 +93,7 @@ public class OrderService : IOrderService
         order.Status = "Готово";
         order = await _unitOfWork.Order.UpdateAsync(order);
         order.Transactions = order.Transactions.Where(t => t.IsPayment == false).ToList();
+        await _adminService.UpdateBalanceAsync(order.Machine.Id);
         return order;
     }
     
@@ -151,6 +160,8 @@ public class OrderService : IOrderService
             };
             await _unitOfWork.Transaction.AddAsync(newTransaction);
         }
+        
+        await _adminService.UpdateBalanceAsync(order.Machine.Id);
         
         return order;
     }

@@ -95,19 +95,33 @@ public class AdminService : IAdminService
         
         return identity;
     }
-
+    
     /// <summary>
-    /// Обновить баланс кофемашины.
+    /// Пересчитать баланс кофемашины.
     /// </summary>
     /// <param name="machineId">Идентификатор кофемашины.</param>
-    /// <returns>Баланс.</returns>
+    /// <returns>Баланс кофемашины.</returns>
     public async Task<int> UpdateBalanceAsync(long machineId)
     {
         var machine = await _unitOfWork.Machine.GetByIdAsync(machineId);
+        
         if (machine == null)
             throw new NotFoundException(nameof(Machine), machineId);
+
+        var banknoteMachines = await _unitOfWork.Banknote.GetBanknotesByMachineAsync(machine);
         
-        return await _unitOfWork.Machine.UpdateBalanceAsync(machine);
+        int balance = 0;
+
+        foreach (var bm in banknoteMachines)
+        {
+            balance += bm.Banknote.Nominal * bm.CountBanknote;
+        }
+        
+        machine.Balance = balance;
+        
+        await _unitOfWork.Machine.UpdateAsync(machine);
+        
+        return balance;
     }
 
     /// <summary>
@@ -167,7 +181,7 @@ public class AdminService : IAdminService
         }
         
         machine = await _unitOfWork.Machine.AddBanknotesToMachineAsync(banknotes, machine);
-        machine.Balance = await _unitOfWork.Machine.UpdateBalanceAsync(machine);
+        machine.Balance = await UpdateBalanceAsync(machine.Id);
 
         return machine;
     }
@@ -191,7 +205,7 @@ public class AdminService : IAdminService
         }
         
         machine = await _unitOfWork.Machine.SubtractBanknotesFromMachineAsync(banknotes, machine);
-        machine.Balance = await _unitOfWork.Machine.UpdateBalanceAsync(machine);
+        machine.Balance = await UpdateBalanceAsync(machine.Id);
 
         return machine;
     }

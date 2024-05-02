@@ -3,9 +3,9 @@
 /// <summary>
 /// Передаваемый объект.
 /// Имеет все поля сущности "кофе", кроме ссылок.
-/// Используется для ответа.
+/// Используется для запроса.
 /// </summary>
-public class CoffeeFullResponseDto
+public class CoffeeDto
 {
     /// <summary>
     /// Идентификатор.

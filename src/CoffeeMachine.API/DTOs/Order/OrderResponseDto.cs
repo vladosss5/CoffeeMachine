@@ -27,10 +27,10 @@ public class OrderResponseDto
     /// <summary>
     /// Ссылка на передаваемый объект "кофе".
     /// </summary>
-    public CoffeeFullResponseDto Coffee { get; set; }
+    public CoffeeDto Coffee { get; set; }
     
     /// <summary>
     /// Ссылка на передаваемый объект "машина".
     /// </summary>
-    public MachineFullResponseDto Machine { get; set; }
+    public MachineDto Machine { get; set; }
 }

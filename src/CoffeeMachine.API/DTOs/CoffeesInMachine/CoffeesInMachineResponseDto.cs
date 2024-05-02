@@ -12,10 +12,10 @@ public class CoffeesInMachineResponseDto
     /// <summary>
     /// Ссылка на передаваемы объект "машина".
     /// </summary>
-    public MachineFullResponseDto Machine { get; set; }
+    public MachineDto Machine { get; set; }
     
     /// <summary>
     /// Коллекция передаваемых объектов "кофе".
     /// </summary>
-    public List<CoffeeFullResponseDto> Coffees { get; set; } = new List<CoffeeFullResponseDto>();
+    public List<CoffeeDto> Coffees { get; set; } = new List<CoffeeDto>();
 }

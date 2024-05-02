@@ -20,15 +20,21 @@ namespace CoffeeMachine.API.Controllers
         private readonly IMapper _mapper;
         
         /// <summary>
-        /// Сервис для работы с заказами.
+        /// <inheritdoc cref="IOrderService"/>
         /// </summary>
         private readonly IOrderService _orderService;
         
         /// <summary>
-        /// Сервис администратора.
+        /// <inheritdoc cref="IAdminService"/>
         /// </summary>
         private readonly IAdminService _adminService;
 
+        /// <summary>
+        /// Конструктор класса.
+        /// </summary>
+        /// <param name="mapper">Сервис автомаппера.</param>
+        /// <param name="orderService">Сервис заказов.</param>
+        /// <param name="adminService">Сервис администратора.</param>
         public OrderController(IMapper mapper, IOrderService orderService, IAdminService adminService)
         {
             _mapper = mapper;
@@ -37,10 +43,10 @@ namespace CoffeeMachine.API.Controllers
         }
 
         /// <summary>
-        /// Контроллер для получения заказа по Id.
+        /// Получить заказ по Id.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">Идентификатор заказа.</param>
+        /// <returns>Заказ.</returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrderById(long id)
         {
@@ -50,10 +56,10 @@ namespace CoffeeMachine.API.Controllers
         }
 
         /// <summary>
-        /// Контроллер для создания нового заказа.
+        /// Создать новый заказ.
         /// </summary>
-        /// <param name="orderRequest"></param>
-        /// <returns></returns>
+        /// <param name="orderRequest">Запрос заказа.</param>
+        /// <returns>Заказ.</returns>
         [HttpPost]
         public async Task<IActionResult> CreateOrder([FromBody] OrderAddRequestDto orderRequest)
         {

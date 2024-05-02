@@ -5,7 +5,7 @@ namespace CoffeeMachine.API.DTOs.BanknoteToMachine;
 /// <summary>
 /// Передаваемый объект "банкноты в машине".
 /// </summary>
-public class BanknoteToMachineResponseDto
+public class BanknoteToMachineDto
 {
     /// <summary>
     /// Банкнота.
