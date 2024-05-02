@@ -2,30 +2,33 @@
 
 namespace CoffeeMachine.Application.Interfaces;
 
+/// <summary>
+/// Unit of work.
+/// </summary>
 public interface IUnitOfWork
 {
     /// <summary>
-    /// Репозиторий для работы с банкнотами.
+    /// <inheritdoc cref="IBanknoteRepository"/>
     /// </summary>
     public IBanknoteRepository Banknote { get; }
     
     /// <summary>
-    /// Репозиторий для работы с кофе.
+    /// <inheritdoc cref="ICoffeeRepository"/>
     /// </summary>
     public ICoffeeRepository Coffee { get; }
     
     /// <summary>
-    /// Репозиторий для работы с кофемашинами.
+    /// <inheritdoc cref="IMachineRepository"/>
     /// </summary>
     public IMachineRepository Machine { get; }
     
     /// <summary>
-    /// Репозиторий для работы с заказами.
+    /// <inheritdoc cref="IOrderRepository"/>
     /// </summary>
     public IOrderRepository Order { get; }
     
     /// <summary>
-    /// Репозиторий для работы с транзакциями.
+    /// <inheritdoc cref="ITransactionRepository"/>
     /// </summary>
     public ITransactionRepository Transaction { get; }
 }

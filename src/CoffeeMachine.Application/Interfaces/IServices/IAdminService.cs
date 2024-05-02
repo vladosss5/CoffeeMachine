@@ -2,6 +2,9 @@
 
 namespace CoffeeMachine.Application.Interfaces.IServices;
 
+/// <summary>
+/// Сервис администратора.
+/// </summary>
 public interface IAdminService
 {
     /// <summary>
@@ -36,7 +39,7 @@ public interface IAdminService
     /// </summary>
     /// <param name="machineId"></param>
     /// <returns></returns>
-    public Task<bool> DeleteMachineAsync(long machineId);
+    public Task DeleteMachineAsync(long machineId);
     
     /// <summary>
     /// Получить кофемашину по серийному номеру
@@ -123,7 +126,7 @@ public interface IAdminService
     /// </summary>
     /// <param name="coffeeId"></param>
     /// <returns></returns>
-    public Task<bool> DeleteCoffeeAsync(long coffeeId);
+    public Task DeleteCoffeeAsync(long coffeeId);
     
     /// <summary>
     /// Получить кофе по названию.
@@ -157,7 +160,7 @@ public interface IAdminService
     /// </summary>
     /// <param name="orderId"></param>
     /// <returns></returns>
-    public Task<bool> DeleteOrderAsync(long orderId);
+    public Task DeleteOrderAsync(long orderId);
     
     /// <summary>
     /// Вывести список транзакций.

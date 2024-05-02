@@ -6,10 +6,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeMachine.Persistence.Repositories;
 
+/// <summary>
+/// Репозиторий кофемашины.
+/// </summary>
 public class MachineRepository : GenericRepository<Machine>, IMachineRepository
 {
+    /// <summary>
+    /// <inheritdoc cref="DataContext"/>
+    /// </summary>
     private readonly DataContext _dataContext;
 
+    /// <summary>
+    /// Конструктор класса.
+    /// </summary>
+    /// <param name="dataContext">Контекст для работы с базой данных.</param>
     public MachineRepository(DataContext dataContext) : base(dataContext)
     {
         _dataContext = dataContext;
@@ -18,19 +28,18 @@ public class MachineRepository : GenericRepository<Machine>, IMachineRepository
     /// <summary>
     /// Получить кофкмашину по серийному номеру
     /// </summary>
-    /// <param name="serialNumber"></param>
-    /// <returns></returns>
-    /// <exception cref="NotFoundException"></exception>
+    /// <param name="serialNumber">Серийный номер</param>
+    /// <returns>Кофемашина.</returns>
     public async Task<Machine> GetBySerialNumberAsync(string serialNumber)
     {
         return await _dataContext.Machines.FirstOrDefaultAsync(x => x.SerialNumber == serialNumber);
     }
 
     /// <summary>
-    /// Пересчитать баланс машины
+    /// Пересчитать баланс кофемашины.
     /// </summary>
-    /// <param name="entity"></param>
-    /// <returns></returns>
+    /// <param name="entity">Кофемашина.</param>
+    /// <returns>Баланс кофемашины.</returns>
     public async Task<int> UpdateBalanceAsync(Machine entity)
     {
         var machine = await GetBySerialNumberAsync(entity.SerialNumber);
@@ -54,16 +63,13 @@ public class MachineRepository : GenericRepository<Machine>, IMachineRepository
     }
 
     /// <summary>
-    /// Добавить кофе в кофемашину
+    /// Добавить кофе в кофемашину.
     /// </summary>
-    /// <param name="coffee"></param>
-    /// <param name="machine"></param>
-    /// <returns></returns>
+    /// <param name="coffee">Кофе.</param>
+    /// <param name="machine">Кофемашина.</param>
+    /// <returns>Кофемашина.</returns>
     public async Task<Machine> AddCoffeeInMachineAsync(Coffee coffee, Machine machine)
     {
-        if (await _dataContext.CoffeesToMachines.AnyAsync(ctm => ctm.Coffee == coffee && ctm.Machine == machine))
-            throw new AlreadyExistsException(nameof(Coffee), coffee.Name);
-        
         var coffeeMachine = new CoffeeToMachine()
         {
             Coffee = coffee,
@@ -77,12 +83,11 @@ public class MachineRepository : GenericRepository<Machine>, IMachineRepository
     }
 
     /// <summary>
-    /// Удалить кофе из кофемашины
+    /// Удалить кофе из кофемашины.
     /// </summary>
-    /// <param name="coffee"></param>
-    /// <param name="machine"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
+    /// <param name="coffee">Кофе.</param>
+    /// <param name="machine">Кофемашина.</param>
+    /// <returns>Кофемашина.</returns>
     public async Task<Machine> DeleteCoffeeFromMachineAsync(Coffee coffee, Machine machine)
     {
         var coffeeMachine = _dataContext.CoffeesToMachines.Where(cm => cm.Coffee == coffee && cm.Machine == machine);
@@ -94,12 +99,11 @@ public class MachineRepository : GenericRepository<Machine>, IMachineRepository
     }
 
     /// <summary>
-    /// Добавить банкноты в машину.
+    /// Добавить банкноты в кофемашину.
     /// </summary>
-    /// <param name="banknotes"></param>
-    /// <param name="machine"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
+    /// <param name="banknotes">Список банкнот.</param>
+    /// <param name="machine">Кофемашина.</param>
+    /// <returns>Кофемашина.</returns>
     public async Task<Machine> AddBanknotesToMachineAsync(IEnumerable<Banknote> banknotes, Machine machine)
     {
         var banknoteMachines = await _dataContext.BanknotesToMachines.Include(bm => bm.Banknote)
@@ -138,9 +142,9 @@ public class MachineRepository : GenericRepository<Machine>, IMachineRepository
     /// <summary>
     /// Вычесть банкноты из машины.
     /// </summary>
-    /// <param name="banknotes"></param>
-    /// <param name="machine"></param>
-    /// <returns></returns>
+    /// <param name="banknotes">Список банкнот.</param>
+    /// <param name="machine">Кофемашина.</param>
+    /// <returns>Кофемашина.</returns>
     public async Task<Machine> SubtractBanknotesFromMachineAsync(IEnumerable<Banknote> banknotes, Machine machine)
     {
         var banknoteMachines = await _dataContext.BanknotesToMachines
@@ -168,9 +172,9 @@ public class MachineRepository : GenericRepository<Machine>, IMachineRepository
     }
 
     /// <summary>
-    /// Получить список кофе из кофемашины
+    /// Получить список кофе из кофемашины.
     /// </summary>
-    /// <param name="machine"></param>
+    /// <param name="machine">Кофемашина.</param>
     /// <returns></returns>
     public async Task<IEnumerable<Coffee>> GetCoffeesFromMachineAsync(Machine machine)
     {
@@ -179,11 +183,11 @@ public class MachineRepository : GenericRepository<Machine>, IMachineRepository
     }
     
     /// <summary>
-    /// Проверить есть ли кофе в кофемашине
+    /// Проверить есть ли кофе в кофемашине. True - есть, False - нет.
     /// </summary>
-    /// <param name="machine"></param>
-    /// <param name="coffee"></param>
-    /// <returns></returns>
+    /// <param name="machine">Кофемашина.</param>
+    /// <param name="coffee">Кофе.</param>
+    /// <returns>bool</returns>
     public async Task<bool> CheckCoffeeInMachineAsync(Machine machine, Coffee coffee)
     {
         return await _dataContext.CoffeesToMachines.AnyAsync(cm => cm.Coffee == coffee && cm.Machine == machine);

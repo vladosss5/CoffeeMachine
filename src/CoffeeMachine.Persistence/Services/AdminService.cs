@@ -6,10 +6,20 @@ using CoffeeMachine.Core.Models;
 
 namespace CoffeeMachine.Persistence.Services;
 
+/// <summary>
+/// Сервис администратора.
+/// </summary>
 public class AdminService : IAdminService
 {
+    /// <summary>
+    /// <inheritdoc cref="IUnitOfWork"/>
+    /// </summary>
     private readonly IUnitOfWork _unitOfWork;
 
+    /// <summary>
+    /// Конструктор класса.
+    /// </summary>
+    /// <param name="unitOfWork">Unit of work.</param>
     public AdminService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
@@ -66,13 +76,14 @@ public class AdminService : IAdminService
     /// <param name="machineId"></param>
     /// <returns></returns>
     /// <exception cref="NotFoundException"></exception>
-    public async Task<bool> DeleteMachineAsync(long machineId)
+    public async Task DeleteMachineAsync(long machineId)
     {
         var identity = await _unitOfWork.Machine.GetByIdAsync(machineId);
+        
         if (identity == null)
             throw new NotFoundException(nameof(Machine), machineId);
         
-        return await _unitOfWork.Machine.DeleteAsync(identity);
+        await _unitOfWork.Machine.DeleteAsync(identity);
     }
 
     /// <summary>
@@ -261,13 +272,14 @@ public class AdminService : IAdminService
     /// <param name="coffeeId"></param>
     /// <returns></returns>
     /// <exception cref="NotFoundException"></exception>
-    public async Task<bool> DeleteCoffeeAsync(long coffeeId)
+    public async Task DeleteCoffeeAsync(long coffeeId)
     {
         var coffee = await _unitOfWork.Coffee.GetByIdAsync(coffeeId);
+        
         if (coffee == null)
             throw new NotFoundException(nameof(Coffee), coffeeId);
         
-        return await _unitOfWork.Coffee.DeleteAsync(coffee);
+        await _unitOfWork.Coffee.DeleteAsync(coffee);
     }
 
     /// <summary>
@@ -331,13 +343,13 @@ public class AdminService : IAdminService
     /// <param name="orderId"></param>
     /// <returns></returns>
     /// <exception cref="NotFoundException"></exception>
-    public async Task<bool> DeleteOrderAsync(long orderId)
+    public async Task DeleteOrderAsync(long orderId)
     {
         var order = await _unitOfWork.Order.GetByIdAsync(orderId);
         if (order == null)
             throw new NotFoundException(nameof(Order), orderId);
         
-        return await _unitOfWork.Order.DeleteAsync(order);
+        await _unitOfWork.Order.DeleteAsync(order);
     }
 
     /// <summary>
@@ -377,7 +389,7 @@ public class AdminService : IAdminService
     /// <summary>
     /// Получить транзакции покупки.
     /// </summary>
-    /// <param name="order"></param>
+    /// <param name="orderId"></param>
     /// <returns></returns>
     public async Task<IEnumerable<Transaction>> GetTransactionsByOrderAsync(long orderId)
     {
