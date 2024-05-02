@@ -6,10 +6,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeMachine.Persistence.Repositories;
 
+/// <summary>
+/// Репозиторий банкнот.
+/// </summary>
 public class BanknoteRepository : GenericRepository<Banknote>, IBanknoteRepository
 {
+    /// <summary>
+    /// <inheritdoc cref="DataContext"/>
+    /// </summary>
     private readonly DataContext _dataContext;
 
+    
+    /// <summary>
+    /// Конструктор класса.
+    /// </summary>
+    /// <param name="dataContext">Контекст для работы с базой данных.</param>
     public BanknoteRepository(DataContext dataContext) : base(dataContext)
     {
         _dataContext = dataContext;
@@ -18,24 +29,18 @@ public class BanknoteRepository : GenericRepository<Banknote>, IBanknoteReposito
     /// <summary>
     /// Получить банкноту по номиналу.
     /// </summary>
-    /// <param name="par"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public async Task<Banknote> GetByNominalAsync(int par)
+    /// <param name="nominal"> Номинал банкноты. </param>
+    /// <returns> Банкнота с указанным номиналом. </returns>
+    public async Task<Banknote> GetByNominalAsync(int nominal)
     {
-        var banknote = await _dataContext.Banknotes.FirstOrDefaultAsync(x => x.Nominal == par);
-        
-        if (banknote == null)
-            throw new NotFoundException(nameof(Banknote), par);
-
-        return banknote;
+        return await _dataContext.Banknotes.FirstOrDefaultAsync(x => x.Nominal == nominal);
     }
 
     /// <summary>
     /// Получить список банкнот в машине.
     /// </summary>
-    /// <param name="machine"></param>
-    /// <returns></returns>
+    /// <param name="machine"> Кофемашина. </param>
+    /// <returns> Список банкнот в кофемашине. </returns>
     public async Task<IEnumerable<BanknoteToMachine>> GetBanknotesByMachineAsync(Machine machine) 
     {
         var banknotesToMachine = await _dataContext.BanknotesToMachines

@@ -6,10 +6,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeMachine.Persistence.Repositories;
 
+/// <summary>
+/// Репозиторий кофе.
+/// </summary>
 public class CoffeeRepository : GenericRepository<Coffee>, ICoffeeRepository
 {
+    /// <summary>
+    /// <inheritdoc cref="DataContext"/>
+    /// </summary>
     private readonly DataContext _dataContext;
 
+    /// <summary>
+    /// Конструктор класса.
+    /// </summary>
+    /// <param name="dataContext">Контекст для работы с базой данных.</param>
     public CoffeeRepository(DataContext dataContext) : base(dataContext)
     {
         _dataContext = dataContext;
@@ -18,9 +28,8 @@ public class CoffeeRepository : GenericRepository<Coffee>, ICoffeeRepository
     /// <summary>
     /// Получить кофе по названию
     /// </summary>
-    /// <param name="nameCoffe"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
+    /// <param name="nameCoffe">Название кофе.</param>
+    /// <returns>Кофе с указанным названием.</returns>
     public async Task<Coffee> GetByNameAsync(string nameCoffe)
     {
         return await _dataContext.Coffees.FirstOrDefaultAsync(x => x.Name == nameCoffe);
@@ -29,8 +38,8 @@ public class CoffeeRepository : GenericRepository<Coffee>, ICoffeeRepository
     /// <summary>
     /// Получить кофе доступные кофемашине.
     /// </summary>
-    /// <param name="machine"></param>
-    /// <returns></returns>
+    /// <param name="machine">Кофемашина.</param>
+    /// <returns>Список кофе.</returns>
     public async Task<IEnumerable<Coffee>> GetCoffeesFromMachineAsync(Machine machine)
     {
         return await _dataContext.CoffeesToMachines

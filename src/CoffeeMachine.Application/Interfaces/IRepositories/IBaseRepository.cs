@@ -1,38 +1,41 @@
 namespace CoffeeMachine.Application.Interfaces.IRepositories;
 
+/// <summary>
+/// Бащовый репозиторий.
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public interface IBaseRepository<T> where T : class
 {
     /// <summary>
-    /// Получение объекта по Id
+    /// Получить сущность по Id.
     /// </summary>
-    /// <param name="id"></param>
-    /// <returns>Запрошеный объект</returns>
+    /// <param name="id">Идентификатор сущности.</param>
+    /// <returns>Сущность.</returns>
     public Task<T> GetByIdAsync(long id);
     
     /// <summary>
-    /// Получение списка всех объектов
+    /// Получить список записей объектов.
     /// </summary>
-    /// <returns>Коллекция запрошенных объектов</returns>
+    /// <returns>Список сущностей.</returns>
     public Task<IEnumerable<T>> GetAllAsync();
     
     /// <summary>
-    /// Добавление объекта
+    /// Добавить запись объекта.
     /// </summary>
-    /// <param name="entity"></param>
-    /// <returns>Добавленный объект</returns>
+    /// <param name="entity">Сущность.</param>
+    /// <returns>Добавленная сущность.</returns>
     public Task<T> AddAsync(T entity);
     
     /// <summary>
-    /// Обновление объекта
+    /// Обновление записи объекта
     /// </summary>
     /// <param name="entity"></param>
     /// <returns>Обновлённый объект</returns>
     public Task<T> UpdateAsync(T entity);
     
     /// <summary>
-    /// Удаление объекта
+    /// Удалить запись объекта.
     /// </summary>
-    /// <param name="entity"></param>
-    /// <returns>true или ошибку</returns>
-    public Task<bool> DeleteAsync(T entity);
+    /// <param name="entity">Сущность.</param>
+    public Task DeleteAsync(T entity);
 }

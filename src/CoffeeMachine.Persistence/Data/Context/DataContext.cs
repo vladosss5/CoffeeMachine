@@ -5,11 +5,21 @@ using Microsoft.EntityFrameworkCore.Internal;
 
 namespace CoffeeMachine.Persistence.Data.Context;
 
+/// <summary>
+/// Контекст для работы с базой данных.
+/// </summary>
 public partial class DataContext : DbContext
 {
+    /// <summary>
+    /// Конструктор класса.
+    /// </summary>
     public DataContext()
     { }
 
+    /// <summary>
+    /// Перегрузка конструктора класса.
+    /// </summary>
+    /// <param name="options"></param>
     public DataContext(DbContextOptions<DataContext> options)
         : base(options)
     { }
@@ -17,12 +27,39 @@ public partial class DataContext : DbContext
     // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     //     => optionsBuilder.UseNpgsql("Server=postgres-container;port=5432;user id=postgres;password=toor;database=CoffeeMachine;");
     
+    /// <summary>
+    /// Банкноты.
+    /// </summary>
     public virtual DbSet<Banknote> Banknotes { get; set; }
+    
+    /// <summary>
+    /// Банкноты в кофемашине.
+    /// </summary>
     public virtual DbSet<BanknoteToMachine> BanknotesToMachines { get; set; }
+    
+    /// <summary>
+    /// Кофе.
+    /// </summary>
     public virtual DbSet<Coffee> Coffees { get; set; }
+    
+    /// <summary>
+    /// Кофе в кофемашине.
+    /// </summary>
     public virtual DbSet<CoffeeToMachine> CoffeesToMachines { get; set; }
+    
+    /// <summary>
+    /// Кофемашина.
+    /// </summary>
     public virtual DbSet<Machine> Machines { get; set; }
+    
+    /// <summary>
+    /// Заказ.
+    /// </summary>
     public virtual DbSet<Order> Orders { get; set; }
+    
+    /// <summary>
+    /// Транзакция.
+    /// </summary>
     public virtual DbSet<Transaction> Transactions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -110,6 +147,9 @@ public partial class DataContext : DbContext
         });
     }
 
+    /// <summary>
+    /// Метод сохранения изменений в базе данных.
+    /// </summary>
     public async Task TrySaveChangesToDbAsync()
     {
         try
@@ -127,5 +167,6 @@ public partial class DataContext : DbContext
             throw;
         }
     }
+    
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
