@@ -59,10 +59,11 @@ public class BanknoteRepositoryTests : IDisposable
             new Coffee{Id = 2, Name = "Latte", Price = 400},
             new Coffee{Id = 3, Name = "Espresso", Price = 300}
         };
-        
-        Assert.AreEqual(expected[1].Name, coffees.ToList()[1].Name);
-        Assert.AreEqual(expected[2].Name, coffees.ToList()[2].Name);
-        Assert.AreEqual(expected[3].Name, coffees.ToList()[3].Name);
+
+        for (int i = 0; i < expected.Count; ++i)
+        {
+            Assert.AreEqual(expected[i].Name, coffees.ToList()[i].Name);
+        }
     }
 
     [Test]
