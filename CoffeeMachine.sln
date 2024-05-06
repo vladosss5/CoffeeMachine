@@ -15,12 +15,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		docker-compose.yml = docker-compose.yml
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{641999BB-31A8-4183-9BCD-3DA57AA8F6E3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoffeeMachine.IntegrationTests", "tests\CoffeeMachine.IntegrationTests\CoffeeMachine.IntegrationTests.csproj", "{66E903F0-4168-4CE8-87AC-03F32ED4575C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoffeeMachine.UnitTests", "tests\CoffeeMachine.UnitTests\CoffeeMachine.UnitTests.csproj", "{C8DFC20C-84BC-40EF-AFE2-B3DDB14E5514}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,8 +25,6 @@ Global
 		{53D63B3B-A051-4485-9F5D-12A5488803D8} = {AB403AEA-46AC-4999-8714-313A4FD263BC}
 		{031384AD-CD94-4064-9ACB-6DC092199624} = {AB403AEA-46AC-4999-8714-313A4FD263BC}
 		{7A729D1E-1563-4C31-AD1A-9C40E3155957} = {AB403AEA-46AC-4999-8714-313A4FD263BC}
-		{66E903F0-4168-4CE8-87AC-03F32ED4575C} = {641999BB-31A8-4183-9BCD-3DA57AA8F6E3}
-		{C8DFC20C-84BC-40EF-AFE2-B3DDB14E5514} = {641999BB-31A8-4183-9BCD-3DA57AA8F6E3}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{1564CB3E-3BBB-4164-8AB5-C3ED1FABFE86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -51,13 +43,5 @@ Global
 		{7A729D1E-1563-4C31-AD1A-9C40E3155957}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A729D1E-1563-4C31-AD1A-9C40E3155957}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A729D1E-1563-4C31-AD1A-9C40E3155957}.Release|Any CPU.Build.0 = Release|Any CPU
-		{66E903F0-4168-4CE8-87AC-03F32ED4575C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{66E903F0-4168-4CE8-87AC-03F32ED4575C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{66E903F0-4168-4CE8-87AC-03F32ED4575C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{66E903F0-4168-4CE8-87AC-03F32ED4575C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C8DFC20C-84BC-40EF-AFE2-B3DDB14E5514}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C8DFC20C-84BC-40EF-AFE2-B3DDB14E5514}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C8DFC20C-84BC-40EF-AFE2-B3DDB14E5514}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C8DFC20C-84BC-40EF-AFE2-B3DDB14E5514}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
