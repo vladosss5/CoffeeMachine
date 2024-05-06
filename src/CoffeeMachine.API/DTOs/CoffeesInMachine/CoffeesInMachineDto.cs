@@ -4,10 +4,9 @@ using CoffeeMachine.API.DTOs.Machine;
 namespace CoffeeMachine.API.DTOs.CoffeesInMachine;
 
 /// <summary>
-/// Передаваемы объект "кофе в машине".
-/// Используется для ответа.
+/// Передаваемый объект "кофе в машине".
 /// </summary>
-public class CoffeesInMachineResponseDto
+public class CoffeesInMachineDto
 {
     /// <summary>
     /// Ссылка на передаваемы объект "машина".
