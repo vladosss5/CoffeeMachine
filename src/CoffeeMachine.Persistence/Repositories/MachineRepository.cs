@@ -63,84 +63,11 @@ public class MachineRepository : GenericRepository<Machine>, IMachineRepository
     /// <returns>Кофемашина.</returns>
     public async Task<Machine> DeleteCoffeeFromMachineAsync(Coffee coffee, Machine machine)
     {
-        var coffeeMachine = _dataContext.CoffeesToMachines.Where(cm => cm.Coffee == coffee && cm.Machine == machine);
+        var coffeeMachine = await _dataContext.CoffeesToMachines.FirstOrDefaultAsync(cm => cm.Coffee == coffee && cm.Machine == machine);
         
-        _dataContext.CoffeesToMachines.RemoveRange(coffeeMachine);
+        _dataContext.CoffeesToMachines.Remove(coffeeMachine);
         await _dataContext.TrySaveChangesToDbAsync();
 
-        return machine;
-    }
-
-    /// <summary>
-    /// Добавить банкноты в кофемашину.
-    /// </summary>
-    /// <param name="banknotes">Список банкнот.</param>
-    /// <param name="machine">Кофемашина.</param>
-    /// <returns>Кофемашина.</returns>
-    public async Task<Machine> AddBanknotesToMachineAsync(IEnumerable<Banknote> banknotes, Machine machine)
-    {
-        var banknoteMachines = await _dataContext.BanknotesToMachines.Include(bm => bm.Banknote)
-            .Where(bm => bm.Machine.SerialNumber == machine.SerialNumber).ToListAsync();
-
-        foreach (var banknote in banknotes)
-        {
-            bool presence = false;
-            foreach (var bm in banknoteMachines)
-            {
-                if (bm.Banknote == banknote)
-                {
-                    presence = true;
-                    bm.CountBanknote++;
-                    _dataContext.BanknotesToMachines.Update(bm);
-                }
-            }
-
-            if (presence == false)
-            {
-                var bm = new BanknoteToMachine()
-                {
-                    Banknote = banknote,
-                    CountBanknote = 1,
-                    Machine = machine
-                };
-                await _dataContext.BanknotesToMachines.AddAsync(bm);
-            }
-        }
-        
-        await _dataContext.TrySaveChangesToDbAsync();
-        
-        return machine;
-    }
-
-    /// <summary>
-    /// Вычесть банкноты из машины.
-    /// </summary>
-    /// <param name="banknotes">Список банкнот.</param>
-    /// <param name="machine">Кофемашина.</param>
-    /// <returns>Кофемашина.</returns>
-    public async Task<Machine> SubtractBanknotesFromMachineAsync(IEnumerable<Banknote> banknotes, Machine machine)
-    {
-        var banknoteMachines = await _dataContext.BanknotesToMachines
-            .Include(bm => bm.Machine)
-            .Include(bm => bm.Banknote)
-            .Where(bm => bm.Machine == machine)
-            .ToListAsync();
-
-        foreach (var bm in banknoteMachines)
-        {
-            foreach (var banknote in banknotes)
-            {
-                if (bm.Machine.SerialNumber == machine.SerialNumber && 
-                    bm.Banknote.Nominal == banknote.Nominal && bm.CountBanknote >= 1)
-                {
-                    bm.CountBanknote--;
-                    _dataContext.BanknotesToMachines.Update(bm);
-                }   
-            }
-        }
-        
-        await _dataContext.TrySaveChangesToDbAsync();
-        
         return machine;
     }
 

@@ -37,20 +37,4 @@ public interface IMachineRepository : IBaseRepository<Machine>
     /// <param name="machine">Кофемашина.</param>
     /// <returns>Кофемашина.</returns>
     public Task<Machine> DeleteCoffeeFromMachineAsync(Coffee coffee, Machine machine);
-    
-    /// <summary>
-    /// Добавить банкноты в кофемашину.
-    /// </summary>
-    /// <param name="banknotes">Список банкнот.</param>
-    /// <param name="machine">Кофемашина.</param>
-    /// <returns>Кофемашина.</returns>
-    public Task<Machine> AddBanknotesToMachineAsync(IEnumerable<Banknote> banknotes, Machine machine);
-    
-    /// <summary>
-    /// Вычесть банкноты из машины.
-    /// </summary>
-    /// <param name="banknotes">Список банкнот.</param>
-    /// <param name="machine">Кофемашина.</param>
-    /// <returns>Кофемашина.</returns>
-    public Task<Machine> SubtractBanknotesFromMachineAsync(IEnumerable<Banknote> banknotes, Machine machine);
 }

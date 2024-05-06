@@ -63,8 +63,15 @@ public class AdminService : IAdminService
     /// </summary>
     /// <param name="machine">Кофемашина.</param>
     /// <returns>Изменённая кофемашина.</returns>
-    public async Task<Machine> UpdateMachineAsync(Machine machine)
+    public async Task<Machine> UpdateMachineAsync(Machine entity)
     {
+        var machine = await _unitOfWork.Machine.GetByIdAsync(entity.Id);
+        if (machine == null)
+            throw new NotFoundException(nameof(Machine), entity.Id);
+        
+        machine.SerialNumber = entity.SerialNumber;
+        machine.Description = entity.Description;
+        
         return await _unitOfWork.Machine.UpdateAsync(machine);
     }
 
@@ -110,18 +117,11 @@ public class AdminService : IAdminService
 
         var banknoteMachines = await _unitOfWork.Banknote.GetBanknotesByMachineAsync(machine);
         
-        int balance = 0;
-
-        foreach (var bm in banknoteMachines)
-        {
-            balance += bm.Banknote.Nominal * bm.CountBanknote;
-        }
-        
-        machine.Balance = balance;
+        machine.Balance = banknoteMachines.Sum(x => x.Banknote.Nominal * x.CountBanknote);
         
         await _unitOfWork.Machine.UpdateAsync(machine);
         
-        return balance;
+        return machine.Balance;
     }
 
     /// <summary>
@@ -170,17 +170,52 @@ public class AdminService : IAdminService
     /// <returns>Кофемашина.</returns>
     public async Task<Machine> AddBanknotesToMachineAsync(IEnumerable<Banknote> banknotesRequest, long machineId)
     {
-        var banknotes = new List<Banknote>();
         var machine = await _unitOfWork.Machine.GetByIdAsync(machineId);
         if (machine == null)
             throw new NotFoundException(nameof(Machine), machineId);
-
+        
+        var banknotes = new List<Banknote>();
+        var banknoteMachines = new List<BanknoteToMachine>();
+            
+        banknoteMachines.AddRange(await _unitOfWork.Banknote.GetBanknotesByMachineAsync(machine));
+        
         foreach (var banknote in banknotesRequest)
         {
             banknotes.Add(await _unitOfWork.Banknote.GetByNominalAsync(banknote.Nominal));
         }
+
+        foreach (var banknote in banknotes)
+        {
+            bool presence = false;
+            foreach (var bm in banknoteMachines)
+            {
+                if (bm.Banknote == banknote)
+                {
+                    presence = true;
+                    bm.CountBanknote++;
+                    machine.BanknotesToMachines.ToList().Add(bm);
+                    await _unitOfWork.Machine.UpdateAsync(machine);
+                }
+            }
+
+            if (presence == false)
+            {
+                var newBM = new BanknoteToMachine
+                {
+                    Banknote = banknote,
+                    CountBanknote = 1,
+                    Machine = machine
+                };
+                var banknoteMachine = machine.BanknotesToMachines.Select(x => x).ToList();
+                banknoteMachine.Add(newBM);
+                banknoteMachines.Add(newBM);
+                machine.BanknotesToMachines = banknoteMachine;
+                await _unitOfWork.Machine.UpdateAsync(machine);
+
+                presence = true;
+            }
+        }
         
-        machine = await _unitOfWork.Machine.AddBanknotesToMachineAsync(banknotes, machine);
         machine.Balance = await UpdateBalanceAsync(machine.Id);
 
         return machine;
@@ -194,17 +229,37 @@ public class AdminService : IAdminService
     /// <returns>Кофемашина.</returns>
     public async Task<Machine> SubtractBanknotesFromMachineAsync(IEnumerable<Banknote> banknotesRequest, long machineId)
     {
-        var banknotes = new List<Banknote>();
         var machine = await _unitOfWork.Machine.GetByIdAsync(machineId);
         if (machine == null)
             throw new NotFoundException(nameof(Machine), machineId);
+        
+        var banknotes = new List<Banknote>();
+        var banknoteMachines = new List<BanknoteToMachine>();
+            
+        banknoteMachines.AddRange(await _unitOfWork.Banknote.GetBanknotesByMachineAsync(machine));
         
         foreach (var banknote in banknotesRequest)
         {
             banknotes.Add(await _unitOfWork.Banknote.GetByNominalAsync(banknote.Nominal));
         }
+
+        foreach (var bm in banknoteMachines)
+        {
+            foreach (var banknote in banknotes)
+            {
+                if (bm.Banknote.Nominal == banknote.Nominal && bm.CountBanknote > 0)
+                {
+                    bm.CountBanknote--;
+                    machine.BanknotesToMachines.ToList().Add(bm);
+                    await _unitOfWork.Machine.UpdateAsync(machine);
+                }
+                else
+                {
+                    throw new BusinessException();
+                }
+            }
+        }
         
-        machine = await _unitOfWork.Machine.SubtractBanknotesFromMachineAsync(banknotes, machine);
         machine.Balance = await UpdateBalanceAsync(machine.Id);
 
         return machine;
