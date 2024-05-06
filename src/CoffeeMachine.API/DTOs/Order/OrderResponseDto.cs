@@ -25,12 +25,12 @@ public class OrderResponseDto
     public DateTime DateTimeCreate { get; set; }
     
     /// <summary>
-    /// Ссылка на передаваемый объект "кофе".
+    /// Кофе.
     /// </summary>
     public CoffeeDto Coffee { get; set; }
     
     /// <summary>
-    /// Ссылка на передаваемый объект "машина".
+    /// Машина.
     /// </summary>
     public MachineDto Machine { get; set; }
 }

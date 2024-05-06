@@ -88,7 +88,7 @@ namespace CoffeeMachine.API.Controllers
         /// <returns>Кофемашина.</returns>
         [HttpPut]
         [ProducesResponseType(200, Type = typeof(Machine))]
-        public async Task<IActionResult> UpdateMachineAsync([FromBody] MachineEditDto machineRequest)
+        public async Task<IActionResult> UpdateMachineAsync([FromBody] MachineDto machineRequest)
         {
             var machine = _mapper.Map<Machine>(machineRequest);
             var response = await _adminService.UpdateMachineAsync(machine);
@@ -117,7 +117,7 @@ namespace CoffeeMachine.API.Controllers
         public async Task<IActionResult> AddCoffeeToMachinesAsync(long machineId, [FromBody] long coffeeId)
         {
             var machine = await _adminService.AddCoffeeInMachineAsync(coffeeId, machineId);
-            var machineResponse = new CoffeesInMachineResponseDto()
+            var machineResponse = new CoffeesInMachineDto()
             {
                 Machine = _mapper.Map<MachineDto>(machine),
                 Coffees = machine.CoffeesToMachines.Select(cm => _mapper.Map<CoffeeDto>(cm.Coffee)).ToList()
@@ -137,7 +137,7 @@ namespace CoffeeMachine.API.Controllers
             [FromRoute] long machineId, [FromBody] long coffeeId)
         {
             var machine = await _adminService.DeleteCoffeeFromMachineAsync(coffeeId, machineId);
-            var machineResponse = new CoffeesInMachineResponseDto()
+            var machineResponse = new CoffeesInMachineDto()
             {
                 Machine = _mapper.Map<MachineDto>(machine),
                 Coffees = machine.CoffeesToMachines.Select(cm => _mapper.Map<CoffeeDto>(cm.Coffee)).ToList()
@@ -158,7 +158,7 @@ namespace CoffeeMachine.API.Controllers
         {
             var banknotes = banknotesRequest.Select(b => _mapper.Map<Banknote>(b));
             var response = await _adminService.AddBanknotesToMachineAsync(banknotes, machineId);
-            var machineResponse = _mapper.Map<MachineEditDto>(response);
+            var machineResponse = _mapper.Map<MachineDto>(response);
             
             return Ok(machineResponse);
         }
@@ -175,7 +175,7 @@ namespace CoffeeMachine.API.Controllers
         {
             var banknotes = banknotesRequest.Select(b => _mapper.Map<Banknote>(b));
             var response = await _adminService.SubtractBanknotesFromMachineAsync(banknotes, machineId);
-            var machineResponse = _mapper.Map<MachineEditDto>(response);
+            var machineResponse = _mapper.Map<MachineDto>(response);
             
             return Ok(machineResponse);
         }

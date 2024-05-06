@@ -9,7 +9,7 @@ namespace CoffeeMachine.API.DTOs.Machine;
 public class MachineForOrderDto
 {
     /// <summary>
-    /// Серийный номер.
+    /// Идентификатор.
     /// </summary>
     public long Id { get; set; }
 }

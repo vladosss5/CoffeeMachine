@@ -11,17 +11,17 @@ namespace CoffeeMachine.API.DTOs.Order;
 public class OrderAddResponseDto
 {
     /// <summary>
-    /// Ссылка на передаваемый объект "машина".
+    /// Машина.
     /// </summary>
     public MachineForOrderDto Machine { get; set; }
     
     /// <summary>
-    /// Ссылка на передаваемый объект "кофе".
+    /// Кофе.
     /// </summary>
     public CoffeeForOrderResponseDto Coffee { get; set; }
     
     /// <summary>
-    /// Статус заказа
+    /// Статус заказа.
     /// </summary>
     public string Status { get; set; }
     
