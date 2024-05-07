@@ -307,6 +307,90 @@ public class AdminServiceTest
         
         Assert.AreEqual(_coffee, result.First());
     }
+
+    [Test]
+    public async Task TestGetOrderByIdAsync()
+    {
+        var moqUnitOfWork = new Mock<IUnitOfWork>();
+        moqUnitOfWork.Setup(x => x.Order.GetOrderByIdAsyncIcludeOtherEntities(It.IsAny<long>())).ReturnsAsync(_order);
+        
+        var adminService = new AdminService(moqUnitOfWork.Object);
+        
+        var result = await adminService.GetOrderByIdAsync(1);
+        
+        Assert.AreEqual(_order, result);
+    }
+
+    [Test]
+    public async Task TestGetAllOrdersAsync()
+    {
+        var moqUnitOfWork = new Mock<IUnitOfWork>();
+        moqUnitOfWork.Setup(x => x.Order.GetAllAsync()).ReturnsAsync(new List<Order> {_order, _order, _order});
+        
+        var adminService = new AdminService(moqUnitOfWork.Object);
+        
+        var result = await adminService.GetAllOrdersAsync();
+
+        foreach (var res in result)
+        {
+            Assert.AreEqual(res, _order);
+        }
+    }
+    
+    [Test]
+    public async Task TestGetAllTransactionsAsync()
+    {
+        var moqUnitOfWork = new Mock<IUnitOfWork>();
+        moqUnitOfWork.Setup(x => x.Transaction.GetAllAsync()).ReturnsAsync(_transactions);
+        
+        var adminService = new AdminService(moqUnitOfWork.Object);
+        
+        var result = await adminService.GetAllTransactionsAsync();
+        
+        Assert.AreEqual(_transactions, result);
+    }
+    
+    [Test]
+    public async Task TestGetTransactionByIdAsync()
+    {
+        var moqUnitOfWork = new Mock<IUnitOfWork>();
+        moqUnitOfWork.Setup(x => x.Transaction.GetByIdAsync(It.IsAny<long>())).ReturnsAsync(_transactions[0]);
+        
+        var adminService = new AdminService(moqUnitOfWork.Object);
+        
+        var result = await adminService.GetTransactionByIdAsync(1);
+        
+        Assert.AreEqual(_transactions[0], result);
+    }
+    
+    [Test]
+    public async Task TestGetTransactionByTypeAsync()
+    {
+        var moqUnitOfWork = new Mock<IUnitOfWork>();
+        moqUnitOfWork.Setup(x => x.Transaction.GetTransactionsByTypeAsync(It.IsAny<bool>()))
+            .ReturnsAsync(_transactions.Where(x => x.IsPayment == true));
+        
+        var adminService = new AdminService(moqUnitOfWork.Object);
+        
+        var result = await adminService.GetTransactionsByTypeAsync(true);
+        
+        Assert.AreEqual(_transactions.Where(x => x.IsPayment == true), result);
+    }
+    
+    [Test]
+    public async Task TestGetTransactionsByOrderAsync()
+    {
+        var moqUnitOfWork = new Mock<IUnitOfWork>();
+        moqUnitOfWork.Setup(x => x.Order.GetByIdAsync(It.IsAny<long>())).ReturnsAsync(_order);
+        moqUnitOfWork.Setup(x => x.Transaction.GetTransactionsByOrderAsync(It.IsAny<Order>()))
+            .ReturnsAsync(_transactions.Where(x => x.Order == _order));
+        
+        var adminService = new AdminService(moqUnitOfWork.Object);
+        
+        var result = await adminService.GetTransactionsByOrderAsync(1);
+        
+        Assert.AreEqual(_transactions.Where(x => x.Order == _order), result);
+    }
     
     private void FillingData()
     {
