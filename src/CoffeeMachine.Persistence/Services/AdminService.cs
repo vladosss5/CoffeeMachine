@@ -315,10 +315,17 @@ public class AdminService : IAdminService
     /// <summary>
     /// Изменить кофе.
     /// </summary>
-    /// <param name="coffee">Кофе.</param>
+    /// <param name="coffeeRequest">Кофе.</param>
     /// <returns>Измененный кофе.</returns>
-    public async Task<Coffee> UpdateCoffeeAsync(Coffee coffee)
+    public async Task<Coffee> UpdateCoffeeAsync(Coffee coffeeRequest)
     {
+        var coffee = await _unitOfWork.Coffee.GetByIdAsync(coffeeRequest.Id);
+        if (coffee == null)
+            throw new NotFoundException(nameof(Coffee), coffeeRequest.Id);
+        
+        coffee.Name = coffeeRequest.Name;
+        coffee.Price = coffeeRequest.Price;
+        
         return await _unitOfWork.Coffee.UpdateAsync(coffee);
     }
     
