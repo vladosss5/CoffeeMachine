@@ -15,7 +15,6 @@ public class OrderServiceTest
     public List<Transaction> transactions;
     public List<Banknote> banknotes;
     public List<BanknoteToMachine> banknotesToMachines;
-    // public 
     
     public OrderServiceTest()
     {
@@ -64,10 +63,10 @@ public class OrderServiceTest
                     new Transaction{Id = 1, Banknote = banknotes[3], Order = new Order{Id = 1}, IsPayment = true},
                     new Transaction{Id = 2, Banknote = banknotes[3], Order = new Order{Id = 1}, IsPayment = true},
                     new Transaction{Id = 3, Banknote = banknotes[4], Order = new Order{Id = 1}, IsPayment = false},
-                    new Transaction{Id = 3, Banknote = banknotes[5], Order = new Order{Id = 1}, IsPayment = false},
-                    new Transaction{Id = 3, Banknote = banknotes[6], Order = new Order{Id = 1}, IsPayment = false},
-                    new Transaction{Id = 3, Banknote = banknotes[8], Order = new Order{Id = 1}, IsPayment = false},
-                    new Transaction{Id = 3, Banknote = banknotes[8], Order = new Order{Id = 1}, IsPayment = false}
+                    new Transaction{Id = 4, Banknote = banknotes[5], Order = new Order{Id = 1}, IsPayment = false},
+                    new Transaction{Id = 5, Banknote = banknotes[6], Order = new Order{Id = 1}, IsPayment = false},
+                    new Transaction{Id = 6, Banknote = banknotes[8], Order = new Order{Id = 1}, IsPayment = false},
+                    new Transaction{Id = 7, Banknote = banknotes[8], Order = new Order{Id = 1}, IsPayment = false}
                 }
             });
 

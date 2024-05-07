@@ -253,7 +253,7 @@ public class AdminService : IAdminService
                     machine.BanknotesToMachines.ToList().Add(bm);
                     await _unitOfWork.Machine.UpdateAsync(machine);
                 }
-                else
+                else if (bm.CountBanknote == 0)
                 {
                     throw new BusinessException();
                 }
@@ -286,7 +286,11 @@ public class AdminService : IAdminService
     /// <returns>Кофе.</returns>
     public async Task<Coffee> GetCoffeeByIdAsync(long coffeeId)
     {
-        return await _unitOfWork.Coffee.GetByIdAsync(coffeeId);
+        var coffee = await _unitOfWork.Coffee.GetByIdAsync(coffeeId);
+        if (coffee == null)
+            throw new NotFoundException(nameof(Coffee), coffeeId);
+        
+        return coffee;
     }
 
     /// <summary>
@@ -315,10 +319,17 @@ public class AdminService : IAdminService
     /// <summary>
     /// Изменить кофе.
     /// </summary>
-    /// <param name="coffee">Кофе.</param>
+    /// <param name="coffeeRequest">Кофе.</param>
     /// <returns>Измененный кофе.</returns>
-    public async Task<Coffee> UpdateCoffeeAsync(Coffee coffee)
+    public async Task<Coffee> UpdateCoffeeAsync(Coffee coffeeRequest)
     {
+        var coffee = await _unitOfWork.Coffee.GetByIdAsync(coffeeRequest.Id);
+        if (coffee == null)
+            throw new NotFoundException(nameof(Coffee), coffeeRequest.Id);
+        
+        coffee.Name = coffeeRequest.Name;
+        coffee.Price = coffeeRequest.Price;
+        
         return await _unitOfWork.Coffee.UpdateAsync(coffee);
     }
     
@@ -345,7 +356,6 @@ public class AdminService : IAdminService
     public async Task<Coffee> GetByNameAsync(string nameCoffe)
     {
         var coffee = await _unitOfWork.Coffee.GetByNameAsync(nameCoffe);
-
         if (coffee == null)
             throw new NotFoundException(nameof(Coffee), nameCoffe);
         
