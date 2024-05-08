@@ -88,7 +88,7 @@ public class OrderControllerTests
         };
         
         //Act
-        HttpResponseMessage response = await httpClient.PostAsJsonAsync("/api/order", requestOrder);
+        var response = await httpClient.PostAsJsonAsync("/api/order", requestOrder);
         
         //Assert
         Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
@@ -120,7 +120,7 @@ public class OrderControllerTests
         HttpClient httpClient = webHost.CreateClient();
         
         //Act
-        HttpResponseMessage response = await httpClient.GetAsync($"/api/order/{_order.Id}");
+        var response = await httpClient.GetAsync($"/api/order/{_order.Id}");
         
         //Assert
         Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
