@@ -3,13 +3,8 @@
 /// <summary>
 /// Кофе.
 /// </summary>
-public class CoffeeDto
+public class CoffeeCreateRequestDto
 {
-    /// <summary>
-    /// Идентификатор.
-    /// </summary>
-    public long Id { get; set; }
-    
     /// <summary>
     /// Название
     /// </summary>
