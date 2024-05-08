@@ -1,34 +1,24 @@
-using CoffeeMachine.API.Middlewares;
-using CoffeeMachine.Application.Extensions;
-using CoffeeMachine.Persistence.Extentions;
 using Serilog;
 
-var logger = Log.Logger = new LoggerConfiguration()
-    .Enrich.FromLogContext()
-    .WriteTo.Console()
-    .WriteTo.File($"{Environment.CurrentDirectory}/Logs/{DateTime.UtcNow:yyyy/dd/MM}.txt")
-    .CreateLogger();
+namespace CoffeeMachine.API;
 
-logger.Information("Starting web host");
-
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddControllers();
-builder.Services.AddApplicationCore();
-builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Host.UseSerilog();
-
-var app = builder.Build();
-
-if (app.Environment.IsDevelopment())
+public static class Program
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    public static async Task Main(string[] args)
+    {
+        var host = CreateHostBuilder(args).Build();
+        await host.RunAsync();
+    }
+
+    public static IHostBuilder CreateHostBuilder(string[] args) =>
+        Host.CreateDefaultBuilder(args)
+            .UseSerilog() // Use Serilog for logging
+            .ConfigureAppConfiguration((hostingContext, config) =>
+            {
+                config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            })
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder.UseStartup<Startup>();
+            });
 }
-
-app.UseCustomExceptionHandler();
-app.MapControllers();
-
-app.Run();

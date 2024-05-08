@@ -67,7 +67,7 @@ namespace CoffeeMachine.API.Controllers
         /// <returns>Кофе.</returns>
         [HttpPost]
         [ProducesResponseType(200, Type = typeof(Coffee))]
-        public async Task<IActionResult> CreateNewCoffeeAsync([FromBody] CoffeeDto coffeeRequest)
+        public async Task<IActionResult> CreateNewCoffeeAsync([FromBody] CoffeeCreateRequestDto coffeeRequest)
         {
             var coffee = _mapper.Map<Coffee>(coffeeRequest);
             var response = await _adminService.CreateNewCoffeeAsync(coffee);

@@ -22,6 +22,7 @@ public class MappingProfile : Profile
         
         CreateMap<CoffeeForOrderRequestDto, Coffee>().ReverseMap();
         CreateMap<CoffeeForOrderResponseDto, Coffee>().ReverseMap();
+        CreateMap<CoffeeCreateRequestDto, Coffee>().ReverseMap();
         CreateMap<CoffeeDto, Coffee>().ReverseMap();
         
         CreateMap<MachineForOrderDto, Machine>().ReverseMap();
