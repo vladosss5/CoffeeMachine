@@ -4,4 +4,3 @@ obj/
 .idea
 netcoreapp3.1/
 config/
-tests/
