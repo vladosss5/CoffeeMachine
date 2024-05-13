@@ -12,25 +12,57 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 
 namespace CoffeeMachine.IntegrationTests;
 
+/// <summary>
+/// Тестирование OrderController.
+/// </summary>
 [TestFixture]
 public class OrderControllerTests
 {
+    /// <summary>
+    /// Кофе.
+    /// </summary>
     private Coffee _coffee;
+    
+    /// <summary>
+    /// Кофемашина.
+    /// </summary>
     private Machine _machine;
+    
+    /// <summary>
+    /// Банкноты.
+    /// </summary>
     private List<Banknote> _banknotes;
+    
+    /// <summary>
+    /// Банкноты в кофемашине.
+    /// </summary>
     private List<BanknoteToMachine> _banknotesToMachines;
+    
+    /// <summary>
+    /// Кофе в кофемашине.
+    /// </summary>
     private List<CoffeeToMachine> _coffeeToMachines;
-    private List<Transaction> _transactions;
+    
+    /// <summary>
+    /// Заказ.
+    /// </summary>
     private Order _order;
     
+    /// <summary>
+    /// Конструктор класса.
+    /// </summary>
     public OrderControllerTests()
     {
         FillingData();
     }
 
+    /// <summary>
+    /// Тест создания заказа.
+    /// </summary>
     [Test]
     public async Task CreateOrder_SendRequest_StatusCodeOk()
     {
@@ -50,25 +82,14 @@ public class OrderControllerTests
             });
         });
         
+        var sumDelivery = 0;
+        
         var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
         
         await context.AddRangeAsync(_coffee, _machine);
-
-        foreach (var banknote in _banknotes)
-        {
-            await context.AddRangeAsync(banknote);
-        }
-
-        foreach (var btm in _banknotesToMachines)
-        {
-            await context.AddRangeAsync(btm);
-        }
-
-        foreach (var coffeeToMachine in _coffeeToMachines)
-        {
-            await context.AddRangeAsync(coffeeToMachine);
-        }
-        
+        await context.AddRangeAsync(_banknotes);
+        await context.AddRangeAsync(_banknotesToMachines);
+        await context.AddRangeAsync(_coffeeToMachines);
         await context.SaveChangesAsync();
         
         HttpClient httpClient = webHost.CreateClient();
@@ -89,13 +110,25 @@ public class OrderControllerTests
         
         //Act
         var response = await httpClient.PostAsJsonAsync("/api/order", requestOrder);
+        var responseString = await response.Content.ReadAsStringAsync();
+        var responseOrder = JsonConvert.DeserializeObject<OrderAddResponseDto>(responseString);
         
         //Assert
         Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+        Assert.AreEqual(responseOrder.Coffee.Name, _coffee.Name);
+        foreach (var transaction in responseOrder.Transactions)
+        {
+            Assert.AreEqual(false, transaction.IsPayment);
+            sumDelivery+= transaction.Banknote.Nominal;   
+        }
+        Assert.AreEqual(164, sumDelivery);
         
         context.Database.EnsureDeleted();
     }
 
+    /// <summary>
+    /// Тест получения заказа по Id.
+    /// </summary>
     [Test]
     public async Task GetOrderById_SendRequest_StatusCodeOk()
     {
@@ -111,7 +144,7 @@ public class OrderControllerTests
                 services.AddDbContext<DataContext>(options => { options.UseInMemoryDatabase("CoffeeMachine"); });
             });
         });
-
+        
         var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
 
         await context.AddRangeAsync(_order);
@@ -121,13 +154,19 @@ public class OrderControllerTests
         
         //Act
         var response = await httpClient.GetAsync($"/api/order/{_order.Id}");
+        var responseString = await response.Content.ReadAsStringAsync();
+        var responseOrder = JsonConvert.DeserializeObject<OrderResponseDto>(responseString);
         
         //Assert
         Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+        Assert.AreEqual(_order.Id, responseOrder.Id);
         
         context.Database.EnsureDeleted();
     }
 
+    /// <summary>
+    /// Заполнение данных для тестирования.
+    /// </summary>
     private void FillingData()
     {
         _coffee = new Coffee
@@ -181,17 +220,6 @@ public class OrderControllerTests
         _order = new Order
         {
             Id = 1, Machine = _machine, Coffee = _coffee, DateTimeCreate = DateTime.UtcNow, Status = "Принято"
-        };
-
-        _transactions = new List<Transaction>
-        {
-            new Transaction{Id = 1, Banknote = _banknotes[3], Order = _order, IsPayment = true},
-            new Transaction{Id = 2, Banknote = _banknotes[3], Order = _order, IsPayment = true},
-            new Transaction{Id = 3, Banknote = _banknotes[4], Order = _order, IsPayment = false},
-            new Transaction{Id = 4, Banknote = _banknotes[5], Order = _order, IsPayment = false},
-            new Transaction{Id = 5, Banknote = _banknotes[6], Order = _order, IsPayment = false},
-            new Transaction{Id = 6, Banknote = _banknotes[8], Order = _order, IsPayment = false},
-            new Transaction{Id = 7, Banknote = _banknotes[8], Order = _order, IsPayment = false}
         };
     }
 }

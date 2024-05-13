@@ -44,11 +44,6 @@ public class MachineControllerTests
     private List<CoffeeToMachine> _coffeeToMachines;
     
     /// <summary>
-    /// Транзакции.
-    /// </summary>
-    private List<Transaction> _transactions;
-    
-    /// <summary>
     /// Заказ.
     /// </summary>
     private Order _order;
@@ -166,6 +161,8 @@ public class MachineControllerTests
     public async Task CreateMachine_SendRequest_StatusCodeOk()
     {
         //Arrange
+        FillingData();
+        
         WebApplicationFactory<Startup> webHost = new WebApplicationFactory<Startup>().WithWebHostBuilder(builder =>
         {
             builder.ConfigureTestServices(services =>
@@ -618,17 +615,6 @@ public class MachineControllerTests
         _order = new Order
         {
             Id = 1, Machine = _machine, Coffee = _coffee, DateTimeCreate = DateTime.UtcNow, Status = "Принято"
-        };
-
-        _transactions = new List<Transaction>
-        {
-            new Transaction{Id = 1, Banknote = _banknotes[3], Order = _order, IsPayment = true},
-            new Transaction{Id = 2, Banknote = _banknotes[3], Order = _order, IsPayment = true},
-            new Transaction{Id = 3, Banknote = _banknotes[4], Order = _order, IsPayment = false},
-            new Transaction{Id = 4, Banknote = _banknotes[5], Order = _order, IsPayment = false},
-            new Transaction{Id = 5, Banknote = _banknotes[6], Order = _order, IsPayment = false},
-            new Transaction{Id = 6, Banknote = _banknotes[8], Order = _order, IsPayment = false},
-            new Transaction{Id = 7, Banknote = _banknotes[8], Order = _order, IsPayment = false}
         };
     }
 }

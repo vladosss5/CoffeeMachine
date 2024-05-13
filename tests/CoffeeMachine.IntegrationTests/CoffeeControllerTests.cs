@@ -34,21 +34,6 @@ public class CoffeeControllerTests
     private List<Banknote> _banknotes;
     
     /// <summary>
-    /// Банкноты в кофемашине.
-    /// </summary>
-    private List<BanknoteToMachine> _banknotesToMachines;
-    
-    /// <summary>
-    /// Кофе в кофемашине.
-    /// </summary>
-    private List<CoffeeToMachine> _coffeeToMachines;
-    
-    /// <summary>
-    /// Транзакции.
-    /// </summary>
-    private List<Transaction> _transactions;
-    
-    /// <summary>
     /// Заказ.
     /// </summary>
     private Order _order;
@@ -315,41 +300,6 @@ public class CoffeeControllerTests
             new Banknote{Id = 8, Nominal = 5},
             new Banknote{Id = 9, Nominal = 2},
             new Banknote{Id = 10, Nominal = 1}
-        };
-
-        _banknotesToMachines = new List<BanknoteToMachine>
-        {
-            new BanknoteToMachine{Id = 1,  Machine = _machine, Banknote = _banknotes[0], CountBanknote = 10},
-            new BanknoteToMachine{Id = 2,  Machine = _machine, Banknote = _banknotes[1], CountBanknote = 10},
-            new BanknoteToMachine{Id = 3,  Machine = _machine, Banknote = _banknotes[2], CountBanknote = 10},
-            new BanknoteToMachine{Id = 4,  Machine = _machine, Banknote = _banknotes[3], CountBanknote = 10},
-            new BanknoteToMachine{Id = 5,  Machine = _machine, Banknote = _banknotes[4], CountBanknote = 10},
-            new BanknoteToMachine{Id = 6,  Machine = _machine, Banknote = _banknotes[5], CountBanknote = 10},
-            new BanknoteToMachine{Id = 7,  Machine = _machine, Banknote = _banknotes[6], CountBanknote = 10},
-            new BanknoteToMachine{Id = 8,  Machine = _machine, Banknote = _banknotes[7], CountBanknote = 10},
-            new BanknoteToMachine{Id = 9,  Machine = _machine, Banknote = _banknotes[8], CountBanknote = 10},
-            new BanknoteToMachine{Id = 10, Machine = _machine, Banknote = _banknotes[9], CountBanknote = 10}
-        };
-
-        _coffeeToMachines = new List<CoffeeToMachine>
-        {
-            new CoffeeToMachine{Id = 1,  Machine = _machine, Coffee = _coffee}
-        };
-
-        _order = new Order
-        {
-            Id = 1, Machine = _machine, Coffee = _coffee, DateTimeCreate = DateTime.UtcNow, Status = "Принято"
-        };
-
-        _transactions = new List<Transaction>
-        {
-            new Transaction{Id = 1, Banknote = _banknotes[3], Order = _order, IsPayment = true},
-            new Transaction{Id = 2, Banknote = _banknotes[3], Order = _order, IsPayment = true},
-            new Transaction{Id = 3, Banknote = _banknotes[4], Order = _order, IsPayment = false},
-            new Transaction{Id = 4, Banknote = _banknotes[5], Order = _order, IsPayment = false},
-            new Transaction{Id = 5, Banknote = _banknotes[6], Order = _order, IsPayment = false},
-            new Transaction{Id = 6, Banknote = _banknotes[8], Order = _order, IsPayment = false},
-            new Transaction{Id = 7, Banknote = _banknotes[8], Order = _order, IsPayment = false}
         };
     }
 }
