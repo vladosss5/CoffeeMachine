@@ -15,11 +15,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		docker-compose.yml = docker-compose.yml
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{641999BB-31A8-4183-9BCD-3DA57AA8F6E3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoffeeMachine.UnitTests", "src\CoffeeMachine.UnitTests\CoffeeMachine.UnitTests.csproj", "{C8DFC20C-84BC-40EF-AFE2-B3DDB14E5514}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoffeeMachine.UnitTests", "tests\CoffeeMachine.UnitTests\CoffeeMachine.UnitTests.csproj", "{C8DFC20C-84BC-40EF-AFE2-B3DDB14E5514}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoffeeMachine.IntegrationTests", "tests\CoffeeMachine.IntegrationTests\CoffeeMachine.IntegrationTests.csproj", "{4E7FE570-2A41-470B-8417-FAF1D9E092B8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoffeeMachine.IntegrationTests", "src\CoffeeMachine.IntegrationTests\CoffeeMachine.IntegrationTests.csproj", "{4E7FE570-2A41-470B-8417-FAF1D9E092B8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,8 +29,8 @@ Global
 		{53D63B3B-A051-4485-9F5D-12A5488803D8} = {AB403AEA-46AC-4999-8714-313A4FD263BC}
 		{031384AD-CD94-4064-9ACB-6DC092199624} = {AB403AEA-46AC-4999-8714-313A4FD263BC}
 		{7A729D1E-1563-4C31-AD1A-9C40E3155957} = {AB403AEA-46AC-4999-8714-313A4FD263BC}
-		{C8DFC20C-84BC-40EF-AFE2-B3DDB14E5514} = {641999BB-31A8-4183-9BCD-3DA57AA8F6E3}
-		{4E7FE570-2A41-470B-8417-FAF1D9E092B8} = {641999BB-31A8-4183-9BCD-3DA57AA8F6E3}
+		{4E7FE570-2A41-470B-8417-FAF1D9E092B8} = {AB403AEA-46AC-4999-8714-313A4FD263BC}
+		{C8DFC20C-84BC-40EF-AFE2-B3DDB14E5514} = {AB403AEA-46AC-4999-8714-313A4FD263BC}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{1564CB3E-3BBB-4164-8AB5-C3ED1FABFE86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
