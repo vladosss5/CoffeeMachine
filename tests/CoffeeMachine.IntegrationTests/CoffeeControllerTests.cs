@@ -8,25 +8,61 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace CoffeeMachine.IntegrationTests;
 
+/// <summary>
+/// Тестирование CoffeeController.
+/// </summary>
 [TestFixture]
 public class CoffeeControllerTests
 {
+    /// <summary>
+    /// Кофе.
+    /// </summary>
     private Coffee _coffee;
+    
+    /// <summary>
+    /// Кофемашина.
+    /// </summary>
     private Machine _machine;
+    
+    /// <summary>
+    /// Банкноты.
+    /// </summary>
     private List<Banknote> _banknotes;
+    
+    /// <summary>
+    /// Банкноты в кофемашине.
+    /// </summary>
     private List<BanknoteToMachine> _banknotesToMachines;
+    
+    /// <summary>
+    /// Кофе в кофемашине.
+    /// </summary>
     private List<CoffeeToMachine> _coffeeToMachines;
+    
+    /// <summary>
+    /// Транзакции.
+    /// </summary>
     private List<Transaction> _transactions;
+    
+    /// <summary>
+    /// Заказ.
+    /// </summary>
     private Order _order;
 
+    /// <summary>
+    /// Конструктор класса.
+    /// </summary>
     public CoffeeControllerTests()
     {
         FillingData();
     }
-    
+    /// <summary>
+    /// Тест для получения списка кофе.
+    /// </summary>
     [Test]
     public async Task GetCoffeeList_SendRequest_StatusCodeOk()
     {
@@ -45,6 +81,8 @@ public class CoffeeControllerTests
                 });
             });
         });
+
+        var verifyCoffees = new List<Coffee> { _coffee };
         
         var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
         
@@ -55,13 +93,24 @@ public class CoffeeControllerTests
         
         //Act
         HttpResponseMessage response = await httpClient.GetAsync("/api/coffee");
+        var responseString = await response.Content.ReadAsStringAsync();
+        var coffees = JsonConvert.DeserializeObject<List<Coffee>>(responseString);
         
         //Assert
         Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+
+        for (int i = 0; i < verifyCoffees.Count; i++)
+        {
+            Assert.AreEqual(verifyCoffees[i].Name, coffees[i].Name);
+            Assert.AreEqual(verifyCoffees[i].Price, coffees[i].Price);
+        }
         
         context.Database.EnsureDeleted();
     }
     
+    /// <summary>
+    /// Тест получения кофе по Id.
+    /// </summary>
     [Test]
     public async Task GetCoffeeById_SendRequest_StatusCodeOk()
     {
@@ -86,17 +135,23 @@ public class CoffeeControllerTests
         await context.AddRangeAsync(_coffee);
         await context.SaveChangesAsync();
         
-        HttpClient httpClient = webHost.CreateClient();
+        var httpClient = webHost.CreateClient();
         
         //Act
-        HttpResponseMessage response = await httpClient.GetAsync("/api/coffee/1");
+        var response = await httpClient.GetAsync("/api/coffee/1");
+        var responseString = await response.Content.ReadAsStringAsync();
+        var coffee = JsonConvert.DeserializeObject<Coffee>(responseString);
         
         //Assert
         Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+        Assert.AreEqual(_coffee.Id, coffee.Id);
         
         context.Database.EnsureDeleted();
     }
 
+    /// <summary>
+    /// Тест создания кофе.
+    /// </summary>
     [Test]
     public async Task CreateCoffee_SendRequest_StatusCodeOk()
     {
@@ -116,6 +171,8 @@ public class CoffeeControllerTests
             });
         });
         
+        var verifyCoffee = new Coffee{Id = 2, Name = "Latte", Price = 900};
+        
         var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
         
         await context.AddRangeAsync(_coffee);
@@ -125,15 +182,23 @@ public class CoffeeControllerTests
         
         //Act
         var responseAlreadyExist = await httpClient.PostAsJsonAsync("/api/coffee", _coffee);
-        var responseOk = await httpClient.PostAsJsonAsync("/api/coffee", new Coffee{Id = 2, Name = "Latte", Price = 900});
+        var responseOk = await httpClient.PostAsJsonAsync("/api/coffee", verifyCoffee);
+        var coffeeString = await responseOk.Content.ReadAsStringAsync();
+        var coffee = JsonConvert.DeserializeObject<Coffee>(coffeeString);
         
         //Assert
         Assert.AreEqual(HttpStatusCode.OK, responseOk.StatusCode);
         Assert.AreEqual(HttpStatusCode.BadRequest, responseAlreadyExist.StatusCode);
+        Assert.AreEqual(verifyCoffee.Id, coffee.Id);
+        Assert.AreEqual(verifyCoffee.Name, coffee.Name);
+        Assert.AreEqual(verifyCoffee.Price, coffee.Price);
         
         context.Database.EnsureDeleted();
     }
 
+    /// <summary>
+    /// Тест обновления кофе.
+    /// </summary>
     [Test]
     public async Task UpdateCoffee_SendRequest_StatusCodeOk()
     {
@@ -153,6 +218,8 @@ public class CoffeeControllerTests
             });
         });
         
+        var verifyCoffee = new Coffee{Id = 1, Name = "Latte", Price = 800};
+        
         var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
         
         await context.AddRangeAsync(_coffee);
@@ -161,16 +228,24 @@ public class CoffeeControllerTests
         var httpClient = webHost.CreateClient();
         
         //Act
-        var response = await httpClient.PutAsJsonAsync("/api/coffee/1", new Coffee{Id = 1, Name = "Latte", Price = 800});
+        var response = await httpClient.PutAsJsonAsync("/api/coffee/1", verifyCoffee);
         var responseNotFound = await httpClient.PutAsJsonAsync("/api/coffee/1", new Coffee{Id = 2, Name = "Latte", Price = 800});
+        var coffeeString = await response.Content.ReadAsStringAsync();
+        var coffee = JsonConvert.DeserializeObject<Coffee>(coffeeString);
         
         //Assert
         Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
         Assert.AreEqual(responseNotFound.StatusCode, HttpStatusCode.NotFound);
+        Assert.AreEqual(verifyCoffee.Id, coffee.Id);
+        Assert.AreEqual(verifyCoffee.Name, coffee.Name);
+        Assert.AreEqual(verifyCoffee.Price, coffee.Price);
         
         context.Database.EnsureDeleted();
     }
     
+    /// <summary>
+    /// Тест удаления кофе.
+    /// </summary>
     [Test]
     public async Task DeleteCoffee_SendRequest_StatusCodeOk()
     {
@@ -208,6 +283,9 @@ public class CoffeeControllerTests
         context.Database.EnsureDeleted();
     }
 
+    /// <summary>
+    /// Заполнение данных.
+    /// </summary>
     private void FillingData()
     {
         _coffee = new Coffee
