@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using NUnit.Framework.Legacy;
 
 namespace CoffeeMachine.IntegrationTests;
 
@@ -85,6 +86,7 @@ public class OrderControllerTests
         var sumDelivery = 0;
         
         var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
+        ClearContext(context);
         
         await context.AddRangeAsync(_coffee, _machine);
         await context.AddRangeAsync(_banknotes);
@@ -114,14 +116,14 @@ public class OrderControllerTests
         var responseOrder = JsonConvert.DeserializeObject<OrderAddResponseDto>(responseString);
         
         //Assert
-        Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
-        Assert.AreEqual(responseOrder.Coffee.Name, _coffee.Name);
+        ClassicAssert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+        ClassicAssert.AreEqual(responseOrder.Coffee.Name, _coffee.Name);
         foreach (var transaction in responseOrder.Transactions)
         {
-            Assert.AreEqual(false, transaction.IsPayment);
+            ClassicAssert.AreEqual(false, transaction.IsPayment);
             sumDelivery+= transaction.Banknote.Nominal;   
         }
-        Assert.AreEqual(164, sumDelivery);
+        ClassicAssert.AreEqual(164, sumDelivery);
         
         context.Database.EnsureDeleted();
     }
@@ -146,6 +148,7 @@ public class OrderControllerTests
         });
         
         var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
+        ClearContext(context);
 
         await context.AddRangeAsync(_order);
         await context.SaveChangesAsync();
@@ -158,10 +161,16 @@ public class OrderControllerTests
         var responseOrder = JsonConvert.DeserializeObject<OrderResponseDto>(responseString);
         
         //Assert
-        Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
-        Assert.AreEqual(_order.Id, responseOrder.Id);
+        ClassicAssert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+        ClassicAssert.AreEqual(_order.Id, responseOrder.Id);
         
         context.Database.EnsureDeleted();
+    }
+    
+    private void ClearContext(DataContext context)
+    {
+        context.Database.EnsureDeleted();
+        context.Database.EnsureCreated();
     }
 
     /// <summary>

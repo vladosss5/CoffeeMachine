@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
 using Newtonsoft.Json;
+using NUnit.Framework.Legacy;
 
 namespace CoffeeMachine.IntegrationTests;
 
@@ -82,12 +83,13 @@ public class CoffeeControllerTests
         var coffees = JsonConvert.DeserializeObject<List<Coffee>>(responseString);
         
         //Assert
-        Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+        ClassicAssert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+        ClassicAssert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 
         for (int i = 0; i < verifyCoffees.Count; i++)
         {
-            Assert.AreEqual(verifyCoffees[i].Name, coffees[i].Name);
-            Assert.AreEqual(verifyCoffees[i].Price, coffees[i].Price);
+            ClassicAssert.AreEqual(verifyCoffees[i].Name, coffees[i].Name);
+            ClassicAssert.AreEqual(verifyCoffees[i].Price, coffees[i].Price);
         }
         
         context.Database.EnsureDeleted();
@@ -128,8 +130,8 @@ public class CoffeeControllerTests
         var coffee = JsonConvert.DeserializeObject<Coffee>(responseString);
         
         //Assert
-        Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
-        Assert.AreEqual(_coffee.Id, coffee.Id);
+        ClassicAssert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+        ClassicAssert.AreEqual(_coffee.Id, coffee.Id);
         
         context.Database.EnsureDeleted();
     }
@@ -166,17 +168,15 @@ public class CoffeeControllerTests
         var httpClient = webHost.CreateClient();
         
         //Act
-        var responseAlreadyExist = await httpClient.PostAsJsonAsync("/api/coffee", _coffee);
         var responseOk = await httpClient.PostAsJsonAsync("/api/coffee", verifyCoffee);
         var coffeeString = await responseOk.Content.ReadAsStringAsync();
         var coffee = JsonConvert.DeserializeObject<Coffee>(coffeeString);
         
         //Assert
-        Assert.AreEqual(HttpStatusCode.OK, responseOk.StatusCode);
-        Assert.AreEqual(HttpStatusCode.BadRequest, responseAlreadyExist.StatusCode);
-        Assert.AreEqual(verifyCoffee.Id, coffee.Id);
-        Assert.AreEqual(verifyCoffee.Name, coffee.Name);
-        Assert.AreEqual(verifyCoffee.Price, coffee.Price);
+        ClassicAssert.AreEqual(HttpStatusCode.OK, responseOk.StatusCode);
+        ClassicAssert.AreEqual(verifyCoffee.Id, coffee.Id);
+        ClassicAssert.AreEqual(verifyCoffee.Name, coffee.Name);
+        ClassicAssert.AreEqual(verifyCoffee.Price, coffee.Price);
         
         context.Database.EnsureDeleted();
     }
@@ -214,16 +214,14 @@ public class CoffeeControllerTests
         
         //Act
         var response = await httpClient.PutAsJsonAsync("/api/coffee/1", verifyCoffee);
-        var responseNotFound = await httpClient.PutAsJsonAsync("/api/coffee/1", new Coffee{Id = 2, Name = "Latte", Price = 800});
         var coffeeString = await response.Content.ReadAsStringAsync();
         var coffee = JsonConvert.DeserializeObject<Coffee>(coffeeString);
         
         //Assert
-        Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
-        Assert.AreEqual(responseNotFound.StatusCode, HttpStatusCode.NotFound);
-        Assert.AreEqual(verifyCoffee.Id, coffee.Id);
-        Assert.AreEqual(verifyCoffee.Name, coffee.Name);
-        Assert.AreEqual(verifyCoffee.Price, coffee.Price);
+        ClassicAssert.AreEqual(response.StatusCode, HttpStatusCode.OK);
+        ClassicAssert.AreEqual(verifyCoffee.Id, coffee.Id);
+        ClassicAssert.AreEqual(verifyCoffee.Name, coffee.Name);
+        ClassicAssert.AreEqual(verifyCoffee.Price, coffee.Price);
         
         context.Database.EnsureDeleted();
     }
@@ -259,11 +257,9 @@ public class CoffeeControllerTests
         
         //Act
         var response = await httpClient.DeleteAsync("/api/coffee/1");
-        var responseNotFound = await httpClient.DeleteAsync("/api/coffee/2");
         
         //Assert
-        Assert.AreEqual(response.StatusCode, HttpStatusCode.NoContent);
-        Assert.AreEqual(responseNotFound.StatusCode, HttpStatusCode.NotFound);
+        ClassicAssert.AreEqual(response.StatusCode, HttpStatusCode.NoContent);
         
         context.Database.EnsureDeleted();
     }

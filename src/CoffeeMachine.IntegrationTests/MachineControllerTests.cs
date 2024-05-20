@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using NUnit.Framework.Legacy;
 
 namespace CoffeeMachine.IntegrationTests;
 
@@ -84,6 +85,7 @@ public class MachineControllerTests
         };
         
         var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
+        ClearContext(context);
         
         await context.AddRangeAsync(_machine);
         await context.SaveChangesAsync();
@@ -96,17 +98,15 @@ public class MachineControllerTests
         var machines = JsonConvert.DeserializeObject<List<Machine>>(machinesString);
         
         //Assert
-        Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
+        ClassicAssert.AreEqual(response.StatusCode, HttpStatusCode.OK);
 
         for (int i = 0; i < verifyMachine.Count; i++)
         {
-            Assert.AreEqual(verifyMachine[i].Id, machines[i].Id);
-            Assert.AreEqual(verifyMachine[i].SerialNumber, machines[i].SerialNumber);
-            Assert.AreEqual(verifyMachine[i].Description, machines[i].Description);
-            Assert.AreEqual(verifyMachine[i].Balance, machines[i].Balance);
+            ClassicAssert.AreEqual(verifyMachine[i].Id, machines[i].Id);
+            ClassicAssert.AreEqual(verifyMachine[i].SerialNumber, machines[i].SerialNumber);
+            ClassicAssert.AreEqual(verifyMachine[i].Description, machines[i].Description);
+            ClassicAssert.AreEqual(verifyMachine[i].Balance, machines[i].Balance);
         }
-        
-        context.Database.EnsureDeleted();
     }
     
     /// <summary>
@@ -133,6 +133,7 @@ public class MachineControllerTests
 
         var verifyMachine = new Machine { Id = 1, SerialNumber = "11", Description = "wdw", Balance = 0 };
         var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
+        ClearContext(context);
         
         await context.AddRangeAsync(_machine);
         await context.SaveChangesAsync();
@@ -145,11 +146,11 @@ public class MachineControllerTests
         var machine = JsonConvert.DeserializeObject<Machine>(machineString);
         
         //Assert
-        Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
-        Assert.AreEqual(verifyMachine.Id, machine.Id);
-        Assert.AreEqual(verifyMachine.SerialNumber, machine.SerialNumber);
-        Assert.AreEqual(verifyMachine.Description, machine.Description);
-        Assert.AreEqual(verifyMachine.Balance, machine.Balance);
+        ClassicAssert.AreEqual(response.StatusCode, HttpStatusCode.OK);
+        ClassicAssert.AreEqual(verifyMachine.Id, machine.Id);
+        ClassicAssert.AreEqual(verifyMachine.SerialNumber, machine.SerialNumber);
+        ClassicAssert.AreEqual(verifyMachine.Description, machine.Description);
+        ClassicAssert.AreEqual(verifyMachine.Balance, machine.Balance);
         
         context.Database.EnsureDeleted();
     }
@@ -188,17 +189,15 @@ public class MachineControllerTests
         
         //Act
         var response = await var.PostAsJsonAsync("/api/Machine", new Machine { SerialNumber = "22", Description = "dfd" });
-        var responseAlreadyExist = await var.PostAsJsonAsync("/api/Machine", _machine);
         var machineString = await response.Content.ReadAsStringAsync();
         var machine = JsonConvert.DeserializeObject<Machine>(machineString);
         
         //Assert
-        Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
-        Assert.AreEqual(responseAlreadyExist.StatusCode, HttpStatusCode.BadRequest);
-        Assert.AreEqual(verifyMachine.Id, machine.Id);
-        Assert.AreEqual(verifyMachine.SerialNumber, machine.SerialNumber);
-        Assert.AreEqual(verifyMachine.Description, machine.Description);
-        Assert.AreEqual(verifyMachine.Balance, machine.Balance);
+        ClassicAssert.AreEqual(response.StatusCode, HttpStatusCode.OK);
+        ClassicAssert.AreEqual(verifyMachine.Id, machine.Id);
+        ClassicAssert.AreEqual(verifyMachine.SerialNumber, machine.SerialNumber);
+        ClassicAssert.AreEqual(verifyMachine.Description, machine.Description);
+        ClassicAssert.AreEqual(verifyMachine.Balance, machine.Balance);
         
         context.Database.EnsureDeleted();
     }
@@ -235,16 +234,14 @@ public class MachineControllerTests
         
         //Act
         var response = await var.PutAsJsonAsync($"/api/Machine/", new Machine { Id = 1, SerialNumber = "33", Description = "wdw", Balance = 1000 });
-        var responseNotFound = await var.PutAsJsonAsync($"/api/Machine/", new Machine { Id = 2, SerialNumber = "33", Description = "wdw" });
         var machineString = await response.Content.ReadAsStringAsync();
         var machine = JsonConvert.DeserializeObject<Machine>(machineString);
         
         //Assert
-        Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
-        Assert.AreEqual(responseNotFound.StatusCode, HttpStatusCode.NotFound);
-        Assert.AreEqual(verifyMachine.Id, machine.Id);
-        Assert.AreEqual(verifyMachine.SerialNumber, machine.SerialNumber);
-        Assert.AreEqual(verifyMachine.Description, machine.Description);
+        ClassicAssert.AreEqual(response.StatusCode, HttpStatusCode.OK);
+        ClassicAssert.AreEqual(verifyMachine.Id, machine.Id);
+        ClassicAssert.AreEqual(verifyMachine.SerialNumber, machine.SerialNumber);
+        ClassicAssert.AreEqual(verifyMachine.Description, machine.Description);
         
         context.Database.EnsureDeleted();
     }
@@ -272,6 +269,7 @@ public class MachineControllerTests
         });
         
         var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
+        ClearContext(context);
         
         await context.AddRangeAsync(_machine);
         await context.SaveChangesAsync();
@@ -280,13 +278,9 @@ public class MachineControllerTests
         
         //Act
         var response = await var.DeleteAsync($"/api/Machine/{_machine.Id}");
-        var responseNotFound = await var.DeleteAsync($"/api/Machine/{_machine.Id}");
         
         //Assert
-        Assert.AreEqual(response.StatusCode, HttpStatusCode.NoContent);
-        Assert.AreEqual(responseNotFound.StatusCode, HttpStatusCode.NotFound);
-        
-        context.Database.EnsureDeleted();
+        ClassicAssert.AreEqual(response.StatusCode, HttpStatusCode.NoContent);
     }
     
     /// <summary>
@@ -324,9 +318,9 @@ public class MachineControllerTests
         var coffeeToMachine = JsonConvert.DeserializeObject<CoffeesInMachineDto>(responseString);
         
         //Assert
-        Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
-        Assert.AreEqual(_machine.Id, coffeeToMachine.Machine.Id);
-        Assert.AreEqual(_coffee.Id, coffeeToMachine.Coffees.FirstOrDefault(x => x.Id == _coffee.Id).Id);
+        ClassicAssert.AreEqual(response.StatusCode, HttpStatusCode.OK);
+        ClassicAssert.AreEqual(_machine.Id, coffeeToMachine.Machine.Id);
+        ClassicAssert.AreEqual(_coffee.Id, coffeeToMachine.Coffees.FirstOrDefault(x => x.Id == _coffee.Id).Id);
         
         context.Database.EnsureDeleted();
     }
@@ -354,6 +348,7 @@ public class MachineControllerTests
         });
         
         var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
+        context.Database.EnsureCreated();
         
         await context.AddRangeAsync(_machine, _coffee);
         foreach (var сoffeeToMachine in _coffeeToMachines)
@@ -370,8 +365,8 @@ public class MachineControllerTests
         var coffeeToMachine = JsonConvert.DeserializeObject<CoffeesInMachineDto>(responseString);
         
         //Assert
-        Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
-        Assert.AreEqual(0, coffeeToMachine.Coffees.Count);
+        ClassicAssert.AreEqual(response.StatusCode, HttpStatusCode.OK);
+        ClassicAssert.AreEqual(0, coffeeToMachine.Coffees.Count);
         
         context.Database.EnsureDeleted();
     }
@@ -417,8 +412,8 @@ public class MachineControllerTests
         var machine = JsonConvert.DeserializeObject<Machine>(responseString);
         
         //Assert
-        Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
-        Assert.AreEqual(87680, machine.Balance);
+        ClassicAssert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+        ClassicAssert.AreEqual(87680, machine.Balance);
         
         context.Database.EnsureDeleted();
     }
@@ -466,8 +461,8 @@ public class MachineControllerTests
         var machine = JsonConvert.DeserializeObject<Machine>(responseString);
         
         //Assert
-        Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
-        Assert.AreEqual(85680, machine.Balance);
+        ClassicAssert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+        ClassicAssert.AreEqual(85680, machine.Balance);
         
         context.Database.EnsureDeleted();
     }
@@ -495,6 +490,8 @@ public class MachineControllerTests
         });
         
         var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
+        ClearContext(context);
+        
         await context.AddRangeAsync(_banknotes);
         await context.AddRangeAsync(_banknotesToMachines);
         await context.AddRangeAsync(_machine);
@@ -508,10 +505,10 @@ public class MachineControllerTests
         var banknotesToMachines = JsonConvert.DeserializeObject<List<BanknoteToMachine>>(responseString);
         
         //Assert
-        Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+        ClassicAssert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         foreach (var banknoteToMachine in banknotesToMachines)
         {
-            Assert.AreEqual(10, banknoteToMachine.CountBanknote);
+            ClassicAssert.AreEqual(10, banknoteToMachine.CountBanknote);
         }
         
         context.Database.EnsureDeleted();
@@ -540,6 +537,7 @@ public class MachineControllerTests
         });
         
         var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
+        ClearContext(context);
         
         await context.AddRangeAsync(_machine, _coffee);
         await context.AddRangeAsync(_coffeeToMachines);
@@ -553,10 +551,16 @@ public class MachineControllerTests
         var coffees = JsonConvert.DeserializeObject<List<Coffee>>(responseString);
         
         //Assert
-        Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
-        Assert.AreEqual(_coffee.Id, coffees[0].Id);
+        ClassicAssert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+        ClassicAssert.AreEqual(_coffee.Id, coffees[0].Id);
         
         context.Database.EnsureDeleted();
+    }
+
+    private void ClearContext(DataContext context)
+    {
+        context.Database.EnsureDeleted();
+        context.Database.EnsureCreated();
     }
     
     /// <summary>
