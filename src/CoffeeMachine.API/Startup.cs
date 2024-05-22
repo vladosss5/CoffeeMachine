@@ -1,7 +1,13 @@
-﻿using CoffeeMachine.API.Middlewares;
+﻿using System.Text;
+using CoffeeMachine.API.Middlewares;
 using CoffeeMachine.Application.Extensions;
 using CoffeeMachine.Persistence.Extentions;
-using Keycloak.AuthServices.Authentication;
+using Keycloak.AuthServices.Authorization;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
@@ -27,39 +33,36 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddControllers();
-        services.AddApplicationCore();
-        services.AddInfrastructure(Configuration);
-        services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen(options => 
-        {
-            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-            {
-                Name = "Authorization",
-                In = ParameterLocation.Header,
-                Scheme = "Bearer"
-            });
-            options.AddSecurityRequirement(new OpenApiSecurityRequirement()
-            {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        },
-                        Scheme = "oauth2",
-                        Name = "Bearer",
-                        In = ParameterLocation.Header
-                    },
-                    new List<string>()
-                }
-            });
-        });
-        services.AddKeycloakWebApiAuthentication(Configuration); 
-        services.AddAuthorization();
-    }
 
+        services.AddApplicationCore();
+
+        services.AddInfrastructure(Configuration);
+
+        services.AddEndpointsApiExplorer();
+
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true; 
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = Configuration.GetSection("GenerateTokenSettings:MyAuthServer").Value,
+                    ValidAudience = Configuration.GetSection("GenerateTokenSettings:MyAuthClient").Value,
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.ASCII.GetBytes(Configuration.GetSection("GenerateTokenSettings:Secret").Value))
+                };
+            });
+        
+        services.AddAuthorization();
+
+        services.AddSwaggerGen();
+    }
+    
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         app.UseSerilogRequestLogging();
@@ -70,12 +73,19 @@ public class Startup
             app.UseSwaggerUI();
         }
         
+        app.UseCustomExceptionHandler();
+        
         app.UseRouting();
+        
+        app.UseHttpsRedirection();
+
+        app.UseAuthentication();
+
+        app.UseAuthorization();
+
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
         });
-        app.UseAuthentication();
-        app.UseCustomExceptionHandler();
     }
 }

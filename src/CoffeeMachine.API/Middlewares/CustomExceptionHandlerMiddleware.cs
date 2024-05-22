@@ -81,6 +81,14 @@ public class CustomExceptionHandlerMiddleware
                     alreadyExistsException.Message, DateTime.UtcNow);
                 break;
             
+            case LoginException loginException:
+                code = HttpStatusCode.BadRequest;
+                result = JsonSerializer.Serialize(new { error = loginException.Message });
+                _logger.LogError(
+                    "Error Message: {exceptionMessage}, Time of occurrence {time}",
+                    loginException.Message, DateTime.UtcNow);
+                break;
+            
             default: 
                 code = HttpStatusCode.InternalServerError;
                 result = JsonSerializer.Serialize(new { error = exception.Message });

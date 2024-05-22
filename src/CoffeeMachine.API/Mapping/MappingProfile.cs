@@ -5,6 +5,7 @@ using CoffeeMachine.API.DTOs.Coffee;
 using CoffeeMachine.API.DTOs.Machine;
 using CoffeeMachine.API.DTOs.Order;
 using CoffeeMachine.API.DTOs.Transaction;
+using CoffeeMachine.API.DTOs.User;
 using CoffeeMachine.Core.Models;
 
 namespace CoffeeMachine.API.Mapping;
@@ -34,5 +35,7 @@ public class MappingProfile : Profile
         CreateMap<OrderResponseDto, Order>().ReverseMap();
         
         CreateMap<TransactionForOrderDto, Transaction>().ReverseMap();
+        
+        CreateMap<UserDto, User>().ReverseMap();
     }
 }

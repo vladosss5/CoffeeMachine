@@ -2,6 +2,7 @@ using AutoMapper;
 using CoffeeMachine.API.DTOs.Coffee;
 using CoffeeMachine.Application.Interfaces.IServices;
 using CoffeeMachine.Core.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -41,6 +42,7 @@ namespace CoffeeMachine.API.Controllers
         /// <param name="id">Идентификатор кофе.</param>
         /// <returns>Кофе.</returns>
         [HttpGet("{id}")]
+        [AllowAnonymous]
         [ProducesResponseType(200, Type = typeof(Coffee))]
         public async Task<IActionResult> GetCoffeeByIdAsync(long id)
         {
@@ -53,6 +55,7 @@ namespace CoffeeMachine.API.Controllers
         /// </summary>
         /// <returns>Список кофе.</returns>
         [HttpGet]
+        [Authorize]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Coffee>))]
         public async Task<IActionResult> GetAllCoffeesAsync()
         {

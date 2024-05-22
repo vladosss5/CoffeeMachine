@@ -31,4 +31,9 @@ public interface IUnitOfWork
     /// <inheritdoc cref="ITransactionRepository"/>
     /// </summary>
     public ITransactionRepository Transaction { get; }
+    
+    /// <summary>
+    /// <inheritdoc cref="IUserRepository"/>
+    /// </summary>
+    public IUserRepository User { get; }
 }

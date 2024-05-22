@@ -1,3 +1,4 @@
+using Keycloak.AuthServices.Authentication.Configuration;
 using Serilog;
 
 namespace CoffeeMachine.API;

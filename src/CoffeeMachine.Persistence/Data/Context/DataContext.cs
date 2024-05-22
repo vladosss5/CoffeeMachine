@@ -25,7 +25,7 @@ public partial class DataContext : DbContext
     { }
     
     // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    //     => optionsBuilder.UseNpgsql("Server=postgres-container;port=5432;user id=postgres;password=toor;database=CoffeeMachine;");
+    //     => optionsBuilder.UseNpgsql("Server=localhost;port=7654;user id=postgres;password=toor;database=CoffeeMachine;");
     
     /// <summary>
     /// Банкноты.
@@ -61,6 +61,11 @@ public partial class DataContext : DbContext
     /// Транзакция.
     /// </summary>
     public virtual DbSet<Transaction> Transactions { get; set; }
+    
+    /// <summary>
+    /// Пользователь.
+    /// </summary>
+    public virtual DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -144,6 +149,14 @@ public partial class DataContext : DbContext
                 .WithMany(e => e.Transactions)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("transaction_order_fk");
+        });
+        
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("user_pk");
+            entity.Property(e => e.Id).UseIdentityAlwaysColumn();
+            entity.Property(e => e.Login).IsRequired().HasMaxLength(30);
+            entity.Property(e => e.Password).IsRequired().HasMaxLength(30);
         });
     }
 
