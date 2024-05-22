@@ -55,40 +55,19 @@ namespace CoffeeMachine.API.Controllers
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
             var configuration = configurationBuilder.Build();
-
-            var issuer = configuration["GenerateTokenSettings:Issuer"];
-            var audience = configuration["GenerateTokenSettings:Audience"];
             var secret = configuration["GenerateTokenSettings:Secret"];
 
             var claims = new List<Claim> {new Claim(ClaimTypes.Name, loginRequest.Login) };
             var jwt = new JwtSecurityToken(
-                issuer: issuer,
-                audience: audience,
                 claims: claims,
                 expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(20)), 
                 signingCredentials: new SigningCredentials(
                     new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secret)), SecurityAlgorithms.HmacSha256));
-
-            var key = Encoding.ASCII.GetBytes(secret);
-            
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name,user.Id.ToString())
-                }),
-                Expires = DateTime.UtcNow.AddDays(3),
-                SigningCredentials = new(new SymmetricSecurityKey(key), 
-                    SecurityAlgorithms.HmacSha256Signature)
-            };
-            
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
             
             var loginResponse = new LoginResponseDto
             {
                 User = user,
-                Token = new JwtSecurityTokenHandler().WriteToken(token)
+                Token = new JwtSecurityTokenHandler().WriteToken(jwt)
             };
             
             return Ok(loginResponse);

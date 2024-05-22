@@ -33,15 +33,10 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddControllers();
-
         services.AddApplicationCore();
-
         services.AddInfrastructure(Configuration);
-
         services.AddEndpointsApiExplorer();
-        
         services.AddSwaggerGen();
-
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
@@ -53,7 +48,6 @@ public class Startup
                     ValidateAudience = false,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    // ValidIssuer = Configuration.GetSection("GenerateTokenSettings:MyAuthServer").Value,
                     IssuerSigningKey = new SymmetricSecurityKey(
                         Encoding.ASCII.GetBytes(Configuration.GetSection("GenerateTokenSettings:Secret").Value))
                 };
@@ -65,7 +59,7 @@ public class Startup
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         app.UseSerilogRequestLogging();
-
+        
         if (env.IsDevelopment())
         {
             app.UseSwagger();
@@ -73,15 +67,10 @@ public class Startup
         }
         
         app.UseCustomExceptionHandler();
-        
         app.UseRouting();
-        
         app.UseHttpsRedirection();
-
         app.UseAuthentication();
-
         app.UseAuthorization();
-
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
