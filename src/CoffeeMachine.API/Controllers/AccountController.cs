@@ -56,7 +56,6 @@ namespace CoffeeMachine.API.Controllers
 
             var configuration = configurationBuilder.Build();
 
-            // Get the values from the GenerateTokenSettings section
             var issuer = configuration["GenerateTokenSettings:Issuer"];
             var audience = configuration["GenerateTokenSettings:Audience"];
             var secret = configuration["GenerateTokenSettings:Secret"];
@@ -66,14 +65,30 @@ namespace CoffeeMachine.API.Controllers
                 issuer: issuer,
                 audience: audience,
                 claims: claims,
-                expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(20)), // время действия 2 минуты
+                expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(20)), 
                 signingCredentials: new SigningCredentials(
-                    new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secret)), SecurityAlgorithms.HmacSha256Signature));
+                    new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secret)), SecurityAlgorithms.HmacSha256));
 
+            var key = Encoding.ASCII.GetBytes(secret);
+            
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.Name,user.Id.ToString())
+                }),
+                Expires = DateTime.UtcNow.AddDays(3),
+                SigningCredentials = new(new SymmetricSecurityKey(key), 
+                    SecurityAlgorithms.HmacSha256Signature)
+            };
+            
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            
             var loginResponse = new LoginResponseDto
             {
-                Token = new JwtSecurityTokenHandler().WriteToken(jwt),
-                User = _mapper.Map<UserDto>(user)
+                User = user,
+                Token = new JwtSecurityTokenHandler().WriteToken(token)
             };
             
             return Ok(loginResponse);

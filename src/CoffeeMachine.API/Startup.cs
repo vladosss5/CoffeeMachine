@@ -39,6 +39,8 @@ public class Startup
         services.AddInfrastructure(Configuration);
 
         services.AddEndpointsApiExplorer();
+        
+        services.AddSwaggerGen();
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -47,20 +49,17 @@ public class Startup
                 options.SaveToken = true; 
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = Configuration.GetSection("GenerateTokenSettings:MyAuthServer").Value,
-                    ValidAudience = Configuration.GetSection("GenerateTokenSettings:MyAuthClient").Value,
+                    // ValidIssuer = Configuration.GetSection("GenerateTokenSettings:MyAuthServer").Value,
                     IssuerSigningKey = new SymmetricSecurityKey(
                         Encoding.ASCII.GetBytes(Configuration.GetSection("GenerateTokenSettings:Secret").Value))
                 };
             });
         
         services.AddAuthorization();
-
-        services.AddSwaggerGen();
     }
     
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
