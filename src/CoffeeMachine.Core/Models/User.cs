@@ -18,7 +18,7 @@ public class User : BaseModel
     public string Password { get; set; }
     
     /// <summary>
-    /// JWT.
+    /// <inheritdoc cref="Role"/>
     /// </summary>
-    [NotMapped] string Token { get; set; }
+    public Role Role { get; set; }
 }
