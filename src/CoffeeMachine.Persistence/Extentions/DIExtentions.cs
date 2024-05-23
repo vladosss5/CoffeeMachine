@@ -21,7 +21,7 @@ namespace CoffeeMachine.Persistence.Extentions;
 public static class DIExtentions
 {
     /// <summary>
-    /// Метод расширения добавляющий сервисы для подключения к БД и связывания интерфейсов с реализациейми
+    /// Натсройка подключения к БД, связывание интерфейсов с реализациейми.
     /// </summary>
     /// <param name="services"></param>
     /// <param name="configuration"></param>
@@ -48,6 +48,11 @@ public static class DIExtentions
         return services;
     }
     
+    /// <summary>
+    /// Настройка Swagger
+    /// </summary>
+    /// <param name="services">Серивисы.</param>
+    /// <returns>Сервисы с настройками Swagger</returns>
     public static IServiceCollection AddSwaggerGen(this IServiceCollection services)
     {
         services.AddSwaggerGen(options => 

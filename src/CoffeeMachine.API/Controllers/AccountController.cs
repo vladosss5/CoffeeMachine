@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json.Serialization;
 using AutoMapper;
 using CoffeeMachine.API.DTOs.Account;
 using CoffeeMachine.API.DTOs.User;
@@ -10,6 +11,7 @@ using CoffeeMachine.Persistence.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace CoffeeMachine.API.Controllers
 {
@@ -44,30 +46,31 @@ namespace CoffeeMachine.API.Controllers
         /// Авторизация.
         /// </summary>
         /// <param name="loginRequest">Модель авторизации.</param>
-        /// <returns></returns>
+        /// <returns>Токен и данные пользователя.</returns>
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequestDto loginRequest)
         {
             var user = await _accountService.Login(loginRequest.Login, loginRequest.Password);
-            
-            var configurationBuilder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            var client = new HttpClient();
+            string url = "http://localhost:8080/realms/TestRealm/protocol/openid-connect/token";
+            var content = new FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>("grant_type", "password"),
+                new KeyValuePair<string, string>("client_id", "test-client"),
+                new KeyValuePair<string, string>("username", "test"),
+                new KeyValuePair<string, string>("password", "test"),
+                new KeyValuePair<string, string>("client_secret", "NzVbv4eJ8ncga6cdunKFdl1HMXfvwrSz"),
+                new KeyValuePair<string, string>("scope", "roles")
+            });
 
-            var configuration = configurationBuilder.Build();
-            var secret = configuration["GenerateTokenSettings:Secret"];
-
-            var claims = new List<Claim> {new Claim(ClaimTypes.Name, loginRequest.Login) };
-            var jwt = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(20)), 
-                signingCredentials: new SigningCredentials(
-                    new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secret)), SecurityAlgorithms.HmacSha256));
+            var response = await client.PostAsync(url, content);
+            var stringResponse = await response.Content.ReadAsStringAsync();
+            var token = JsonConvert.DeserializeObject<Dictionary<string, string>>(stringResponse)["access_token"];
             
             var loginResponse = new LoginResponseDto
             {
                 User = user,
-                Token = new JwtSecurityTokenHandler().WriteToken(jwt)
+                Token = token
             };
             
             return Ok(loginResponse);

@@ -9,6 +9,11 @@
 
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="13.0.1" />
+        <PackageReference Include="Keycloak.AuthServices.Authentication" Version="2.4.1" />
+        <PackageReference Include="Keycloak.AuthServices.Authorization" Version="2.4.1" />
+        <PackageReference Include="Keycloak.AuthServices.Common" Version="2.4.1" />
+        <PackageReference Include="Keycloak.AuthServices.Sdk" Version="2.4.1" />
+        <PackageReference Include="Keycloak.AuthServices.Sdk.Kiota" Version="24.0.4" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.5" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.5" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />

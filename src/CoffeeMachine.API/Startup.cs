@@ -1,7 +1,9 @@
-﻿using System.Text;
+﻿using System.Security.Claims;
+using System.Text;
 using CoffeeMachine.API.Middlewares;
 using CoffeeMachine.Application.Extensions;
 using CoffeeMachine.Persistence.Extentions;
+using Keycloak.AuthServices.Authentication;
 using Keycloak.AuthServices.Authorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -37,22 +39,13 @@ public class Startup
         services.AddInfrastructure(Configuration);
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
+        services.AddKeycloakWebApiAuthentication(Configuration, (options) =>
             {
                 options.RequireHttpsMetadata = false;
-                options.SaveToken = true; 
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.ASCII.GetBytes(Configuration.GetSection("GenerateTokenSettings:Secret").Value))
-                };
-            });
-        
+                options.Audience = "test-client";
+                options.SaveToken = true;
+            }
+        );
         services.AddAuthorization();
     }
     
