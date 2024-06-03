@@ -1,19 +1,12 @@
-using System.Text;
 using CoffeeMachine.Application.Interfaces;
 using CoffeeMachine.Application.Interfaces.IRepositories;
 using CoffeeMachine.Application.Interfaces.IServices;
 using CoffeeMachine.Persistence.Data.Context;
 using CoffeeMachine.Persistence.Repositories;
 using CoffeeMachine.Persistence.Services;
-using Keycloak.AuthServices.Authentication;
-using Keycloak.AuthServices.Common;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 namespace CoffeeMachine.Persistence.Extentions;
@@ -37,6 +30,7 @@ public static class DIExtentions
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IAdminService, AdminService>();
         services.AddScoped<IAccountService, AccountService>();
+        services.AddScoped<IRoleService, RoleService>();
         
         services.AddScoped<IMachineRepository, MachineRepository>();
         services.AddScoped<ICoffeeRepository, CoffeeRepository>();
@@ -44,6 +38,7 @@ public static class DIExtentions
         services.AddScoped<ITransactionRepository, TransactionRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IRoleRepository, RoleRepository>();
         
         return services;
     }

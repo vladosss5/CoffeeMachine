@@ -36,4 +36,9 @@ public interface IUnitOfWork
     /// <inheritdoc cref="IUserRepository"/>
     /// </summary>
     public IUserRepository User { get; }
+    
+    /// <summary>
+    /// <inheritdoc cref="IRoleRepository"/>
+    /// </summary>
+    public IRoleRepository Role { get; }
 }

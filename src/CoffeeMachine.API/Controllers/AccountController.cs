@@ -75,5 +75,7 @@ namespace CoffeeMachine.API.Controllers
             
             return Ok(loginResponse);
         }
+        
+        
     }
 }

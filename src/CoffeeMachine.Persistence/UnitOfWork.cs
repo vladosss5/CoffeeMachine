@@ -44,6 +44,11 @@ public class UnitOfWork : IUnitOfWork
     /// <inheritdoc cref="IUserRepository"/>
     /// </summary>
     private readonly IUserRepository _userRepository;
+    
+    /// <summary>
+    /// <inheritdoc cref="IRoleRepository"/>
+    /// </summary>
+    private readonly IRoleRepository _roleRepository;
 
     /// <summary>
     /// Конструктор класса.
@@ -60,7 +65,8 @@ public class UnitOfWork : IUnitOfWork
         IMachineRepository machineRepository,
         IOrderRepository orderRepository,
         ITransactionRepository transactionRepository,
-        IUserRepository userRepository)
+        IUserRepository userRepository,
+        IRoleRepository roleRepository)
     {
         _dbContext = dbContext;
         _banknoteRepository = banknoteRepository;
@@ -69,6 +75,7 @@ public class UnitOfWork : IUnitOfWork
         _orderRepository = orderRepository;
         _transactionRepository = transactionRepository;
         _userRepository = userRepository;
+        _roleRepository = roleRepository;
     }
 
     /// <summary>
@@ -109,6 +116,11 @@ public class UnitOfWork : IUnitOfWork
     public IUserRepository User
     {
         get => _userRepository;
+    }
+
+    public IRoleRepository Role
+    {
+        get => _roleRepository;
     }
 
     /// <summary>
