@@ -25,7 +25,7 @@ namespace CoffeeMachine.API.Controllers
         /// <summary>
         /// Сервис аутентификации пользоваетля.
         /// </summary>
-        private readonly IAccountService _accountService;
+        private readonly IUserService _userService;
     
         /// <summary>
         /// Сервис автомаппера.
@@ -36,9 +36,9 @@ namespace CoffeeMachine.API.Controllers
         /// Конструктор класса.
         /// </summary>
         /// <param name="accountService">Сервис аутентификации пользоваетля.</param>
-        public AccountController(IAccountService accountService, IMapper mapper)
+        public AccountController(IUserService userService, IMapper mapper)
         {
-            _accountService = accountService;
+            _userService = userService;
             _mapper = mapper;
         }
         

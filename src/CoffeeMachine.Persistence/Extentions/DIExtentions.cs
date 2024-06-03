@@ -4,6 +4,7 @@ using CoffeeMachine.Application.Interfaces.IServices;
 using CoffeeMachine.Persistence.Data.Context;
 using CoffeeMachine.Persistence.Repositories;
 using CoffeeMachine.Persistence.Services;
+using Keycloak.AuthServices.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,7 +30,7 @@ public static class DIExtentions
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IAdminService, AdminService>();
-        services.AddScoped<IAccountService, AccountService>();
+        services.AddScoped<IUserService, UserService>();
         services.AddScoped<IRoleService, RoleService>();
         
         services.AddScoped<IMachineRepository, MachineRepository>();
@@ -77,6 +78,18 @@ public static class DIExtentions
             });
         });
         
+        return services;
+    }
+
+    public static IServiceCollection AddKeycloakAuthentication(
+        this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddKeycloakWebApiAuthentication(configuration, options =>
+        {
+            options.RequireHttpsMetadata = false;
+            options.Audience = "test-client";
+            options.SaveToken = true;  
+        });
         return services;
     }
 }

@@ -1,16 +1,6 @@
-﻿using System.Security.Claims;
-using System.Text;
-using CoffeeMachine.API.Middlewares;
+﻿using CoffeeMachine.API.Middlewares;
 using CoffeeMachine.Application.Extensions;
 using CoffeeMachine.Persistence.Extentions;
-using Keycloak.AuthServices.Authentication;
-using Keycloak.AuthServices.Authorization;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using Serilog;
 
 namespace CoffeeMachine.API;
@@ -39,13 +29,7 @@ public class Startup
         services.AddInfrastructure(Configuration);
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
-        services.AddKeycloakWebApiAuthentication(Configuration, (options) =>
-            {
-                options.RequireHttpsMetadata = false;
-                options.Audience = "test-client";
-                options.SaveToken = true;
-            }
-        );
+        services.AddKeycloakAuthentication(Configuration);
         services.AddAuthorization();
     }
     
