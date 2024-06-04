@@ -5,6 +5,7 @@ using CoffeeMachine.Persistence.Data.Context;
 using CoffeeMachine.Persistence.Repositories;
 using CoffeeMachine.Persistence.Services;
 using Keycloak.AuthServices.Authentication;
+using Keycloak.AuthServices.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,6 +29,8 @@ public static class DIExtentions
         services.AddDbContext<DataContext>(options => options.UseNpgsql(connectionString));
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
+        
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IAdminService, AdminService>();
         services.AddScoped<IUserService, UserService>();
@@ -88,8 +91,19 @@ public static class DIExtentions
         {
             options.RequireHttpsMetadata = false;
             options.Audience = "test-client";
-            options.SaveToken = true;  
+            options.SaveToken = true;
         });
+        return services;
+    }
+
+    public static IServiceCollection AddCustomAuthorization(this IServiceCollection services)
+    {
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("AdminPolicy", policy => policy.RequireClaim("Role", "Admin"));
+            options.AddPolicy("UserPolicy", policy => policy.RequireClaim("Role", "Default"));
+        });
+
         return services;
     }
 }

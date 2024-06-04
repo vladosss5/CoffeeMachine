@@ -15,7 +15,7 @@ public class User : BaseModel
     /// <summary>
     /// Пароль.
     /// </summary>
-    public string Password { get; set; }
+    public string PasswordHash { get; set; }
     
     /// <summary>
     /// <inheritdoc cref="Role"/>

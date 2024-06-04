@@ -24,6 +24,9 @@ public partial class DataContext : DbContext
         : base(options)
     { }
     
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        => optionsBuilder.UseNpgsql("Server=localhost;port=7654;user id=postgres;password=toor;database=CoffeeMachine;");
+    
     /// <summary>
     /// Банкноты.
     /// </summary>
@@ -158,7 +161,7 @@ public partial class DataContext : DbContext
             entity.HasKey(e => e.Id).HasName("user_pk");
             entity.Property(e => e.Id).UseIdentityAlwaysColumn();
             entity.Property(e => e.Login).IsRequired().HasMaxLength(30);
-            entity.Property(e => e.Password).IsRequired().HasMaxLength(30);
+            entity.Property(e => e.PasswordHash).IsRequired().HasMaxLength(100);
             entity.HasOne(e => e.Role)
                 .WithMany(e => e.Users)
                 .OnDelete(DeleteBehavior.Cascade)

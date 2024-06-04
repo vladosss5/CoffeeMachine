@@ -2,7 +2,7 @@
 
 namespace CoffeeMachine.Application.Interfaces.IRepositories;
 
-public interface IUserRepository
+public interface IUserRepository : IBaseRepository<User>
 {
-    public Task<User> GetByLoginAndPasswordAsync(string login, string password);
+    public Task<User> GetByLoginAsync(string login);
 }

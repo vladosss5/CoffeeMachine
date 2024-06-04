@@ -7,6 +7,7 @@ using AutoMapper;
 using CoffeeMachine.API.DTOs.Account;
 using CoffeeMachine.API.DTOs.User;
 using CoffeeMachine.Application.Interfaces.IServices;
+using CoffeeMachine.Core.Models;
 using CoffeeMachine.Persistence.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -47,35 +48,28 @@ namespace CoffeeMachine.API.Controllers
         /// </summary>
         /// <param name="loginRequest">Модель авторизации.</param>
         /// <returns>Токен и данные пользователя.</returns>
-        [HttpPost("login")]
+        [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginRequestDto loginRequest)
         {
-            var user = await _accountService.Login(loginRequest.Login, loginRequest.Password);
-            var client = new HttpClient();
-            string url = "http://localhost:8080/realms/TestRealm/protocol/openid-connect/token";
-            var content = new FormUrlEncodedContent(new[]
-            {
-                new KeyValuePair<string, string>("grant_type", "password"),
-                new KeyValuePair<string, string>("client_id", "test-client"),
-                new KeyValuePair<string, string>("username", "test"),
-                new KeyValuePair<string, string>("password", "test"),
-                new KeyValuePair<string, string>("client_secret", "NzVbv4eJ8ncga6cdunKFdl1HMXfvwrSz"),
-                new KeyValuePair<string, string>("scope", "roles")
-            });
-
-            var response = await client.PostAsync(url, content);
-            var stringResponse = await response.Content.ReadAsStringAsync();
-            var token = JsonConvert.DeserializeObject<Dictionary<string, string>>(stringResponse)["access_token"];
+            var token = await _userService.Login(loginRequest.Login, loginRequest.Password);
             
-            var loginResponse = new LoginResponseDto
-            {
-                User = user,
-                Token = token
-            };
-            
-            return Ok(loginResponse);
+            return Ok(token);
         }
         
-        
+        [Authorize(Policy = "AdminPolicy")]
+        [HttpPost("Register")]
+        public async Task<IActionResult> Register(UserCreateRequestDto registerRequest)
+        {
+            var user = new User
+            {
+                Login = registerRequest.Login,
+                PasswordHash = registerRequest.Password,
+                Role = new Role { Id = registerRequest.RoleId }
+            };
+            
+            var createdUser = await _userService.CreateUserAsync(user);
+            
+            return Ok(createdUser);
+        }
     }
 }

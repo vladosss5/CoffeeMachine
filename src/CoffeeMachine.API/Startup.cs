@@ -30,7 +30,7 @@ public class Startup
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         services.AddKeycloakAuthentication(Configuration);
-        services.AddAuthorization();
+        services.AddCustomAuthorization();
     }
     
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

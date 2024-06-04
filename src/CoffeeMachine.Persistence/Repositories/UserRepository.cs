@@ -27,8 +27,8 @@ public class UserRepository : GenericRepository<User>, IUserRepository
     /// <param name="login">Логин.</param>
     /// <param name="password">Пароль.</param>
     /// <returns>User.</returns>
-    public async Task<User> GetByLoginAndPasswordAsync(string login, string password)
+    public async Task<User> GetByLoginAsync(string login)
     {
-        return await _dataContext.Users.FirstOrDefaultAsync(u => u.Login == login && u.Password == password);
+        return await _dataContext.Users.Include(x => x.Role).FirstOrDefaultAsync(u => u.Login == login);
     }
 }
