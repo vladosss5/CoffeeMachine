@@ -6,6 +6,7 @@ using CoffeeMachine.API.DTOs.CoffeesInMachine;
 using CoffeeMachine.API.DTOs.Machine;
 using CoffeeMachine.Application.Interfaces.IServices;
 using CoffeeMachine.Core.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -44,6 +45,7 @@ namespace CoffeeMachine.API.Controllers
         /// </summary>
         /// <returns>Список кофемашин.</returns>
         [HttpGet]
+        [Authorize(Policy = "AdminPolicy")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Machine>))]
         public async Task<IActionResult> GetAllMachinesAsync()
         {
@@ -58,6 +60,7 @@ namespace CoffeeMachine.API.Controllers
         /// <param name="id">Идентификатор кофемашины.</param>
         /// <returns>Кофемашина.</returns>
         [HttpGet("{id}")]
+        [Authorize(Policy = "AdminPolicy")]
         [ProducesResponseType(200, Type = typeof(Machine))]
         public async Task<IActionResult> GetMachineByIdAsync(long id)
         {
@@ -72,6 +75,7 @@ namespace CoffeeMachine.API.Controllers
         /// <param name="machineRequest">Кофемашина.</param>
         /// <returns>Кофемашина.</returns>
         [HttpPost]
+        [Authorize(Policy = "AdminPolicy")]
         [ProducesResponseType(200, Type = typeof(Machine))]
         public async Task<IActionResult> CreateNewMachineAsync([FromBody] MachineCreateDto machineRequest)
         {
@@ -87,6 +91,7 @@ namespace CoffeeMachine.API.Controllers
         /// <param name="machineRequest">Кофемашина.</param>
         /// <returns>Кофемашина.</returns>
         [HttpPut]
+        [Authorize(Policy = "AdminPolicy")]
         [ProducesResponseType(200, Type = typeof(Machine))]
         public async Task<IActionResult> UpdateMachineAsync([FromBody] MachineDto machineRequest)
         {
@@ -101,6 +106,7 @@ namespace CoffeeMachine.API.Controllers
         /// </summary>
         /// <param name="id">Идентификатор кофемашины.</param>
         [HttpDelete("{id}")]
+        [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> DeleteMachineAsync(long id)
         {
             await _adminService.DeleteMachineAsync(id);
@@ -114,6 +120,7 @@ namespace CoffeeMachine.API.Controllers
         /// <param name="coffeeId">Идентификатор кофе.</param>
         /// <returns>Кофе в кофемашине.</returns>
         [HttpPost("AddCoffeeToMachines/{machineId}")]
+        [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> AddCoffeeToMachinesAsync(long machineId, [FromBody] long coffeeId)
         {
             var machine = await _adminService.AddCoffeeInMachineAsync(coffeeId, machineId);
@@ -133,6 +140,7 @@ namespace CoffeeMachine.API.Controllers
         /// <param name="coffeeId">Идентификатор кофе.</param>
         /// <returns>Кофе в кофемашине.</returns>
         [HttpPost("DeleteCoffeeFromMachines/{machineId}")]
+        [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> DeleteCoffeeFromMachinesAsync(
             [FromRoute] long machineId, [FromBody] long coffeeId)
         {
@@ -153,6 +161,7 @@ namespace CoffeeMachine.API.Controllers
         /// <param name="banknotesRequest">Список банкнот.</param>
         /// <returns>Кофемашина.</returns>
         [HttpPost("AddBanknotesToMachines/{machineId}")]
+        [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> AddBanknoteToMachinesAsync(
             [FromRoute] long machineId, [FromBody] IEnumerable<BanknoteDto> banknotesRequest)
         {
@@ -170,6 +179,7 @@ namespace CoffeeMachine.API.Controllers
         /// <param name="banknotesRequest">Список банкнот.</param>
         /// <returns>Кофемашина.</returns>
         [HttpPost("DeleteBanknotesFromMachines/{machineId}")]
+        [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> SubtractBanknotesFromMachinesAsync(
             [FromRoute] long machineId, [FromBody] IEnumerable<BanknoteDto> banknotesRequest)
         {
@@ -186,6 +196,7 @@ namespace CoffeeMachine.API.Controllers
         /// <param name="machineId">Идентификатор кофемашины.</param>
         /// <returns>Список банкнот в кофемашине.</returns>
         [HttpGet("GetBanknotesByMachine/{machineId}")]
+        [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> GetBanknotesByMachineAsync([FromRoute] long machineId)
         {
             var banknotesToMachines = await _adminService.GetBanknotesByMachineAsync(machineId);
@@ -200,6 +211,7 @@ namespace CoffeeMachine.API.Controllers
         /// <param name="machineId">Идентификатор кофемашины.</param>
         /// <returns>Список кофе.</returns>
         [HttpGet("GetCoffeesFromMachine/{machineId}")]
+        [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> GetCoffeesFromMachineAsync(long machineId)
         {
             var response = await _adminService.GetCoffeesFromMachineAsync(machineId);

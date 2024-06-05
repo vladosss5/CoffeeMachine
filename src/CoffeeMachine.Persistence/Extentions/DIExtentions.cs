@@ -6,6 +6,8 @@ using CoffeeMachine.Persistence.Repositories;
 using CoffeeMachine.Persistence.Services;
 using Keycloak.AuthServices.Authentication;
 using Keycloak.AuthServices.Authorization;
+using Keycloak.AuthServices.Common;
+using Keycloak.AuthServices.Sdk.Kiota;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,16 +35,12 @@ public static class DIExtentions
         
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IAdminService, AdminService>();
-        services.AddScoped<IUserService, UserService>();
-        services.AddScoped<IRoleService, RoleService>();
         
         services.AddScoped<IMachineRepository, MachineRepository>();
         services.AddScoped<ICoffeeRepository, CoffeeRepository>();
         services.AddScoped<IBanknoteRepository, BanknoteRepository>();
         services.AddScoped<ITransactionRepository, TransactionRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
-        services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IRoleRepository, RoleRepository>();
         
         return services;
     }
@@ -87,22 +85,51 @@ public static class DIExtentions
     public static IServiceCollection AddKeycloakAuthentication(
         this IServiceCollection services, IConfiguration configuration)
     {
+       
         services.AddKeycloakWebApiAuthentication(configuration, options =>
         {
             options.RequireHttpsMetadata = false;
-            options.Audience = "test-client";
-            options.SaveToken = true;
         });
+
+        // services
+        //     .AddAuthorization(o =>
+        //         o.AddPolicy(
+        //             "IsAdmin",
+        //             b =>
+        //             {
+        //                 b.RequireRealmRoles("admin");
+        //                 b.RequireResourceRoles("r-admin");
+        //                 // TokenValidationParameters.RoleClaimType is overridden
+        //                 // by KeycloakRolesClaimsTransformation
+        //                 b.RequireRole("r-admin");
+        //             }
+        //         )
+        //     )
+        //     .AddKeycloakAuthorization(configuration)
+        //     .AddAuthorizationServer(configuration);
+        //
+        // services.AddKeycloakAdminHttpClient(configuration);
+        
         return services;
     }
 
     public static IServiceCollection AddCustomAuthorization(this IServiceCollection services)
     {
-        services.AddAuthorization(options =>
-        {
-            options.AddPolicy("AdminPolicy", policy => policy.RequireClaim("Role", "Admin"));
-            options.AddPolicy("UserPolicy", policy => policy.RequireClaim("Role", "Default"));
-        });
+        services
+            .AddAuthorization()
+            .AddKeycloakAuthorization(options =>
+            {
+                options.EnableRolesMapping = RolesClaimTransformationSource.Realm;
+                options.RoleClaimType = KeycloakConstants.RoleClaimType;
+            })
+            .AddAuthorizationBuilder()
+            .AddPolicy(
+                "AdminPolicy",
+                policy => policy.RequireRole("Admin")
+            )
+            .AddPolicy(
+                "DefaultPolicy", 
+                policy => policy.RequireRole("Default"));
 
         return services;
     }

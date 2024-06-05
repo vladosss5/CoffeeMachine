@@ -12,13 +12,11 @@ public class Startup
     public Startup(IConfiguration configuration)
     {
         Configuration = configuration;
-        
         var logger = Log.Logger = new LoggerConfiguration()
             .Enrich.FromLogContext()
             .WriteTo.Console()
             .WriteTo.File($"{Environment.CurrentDirectory}/Logs/{DateTime.UtcNow:yyyy/dd/MM}.txt")
             .CreateLogger();
-
         logger.Information("Starting web host");
     }
     

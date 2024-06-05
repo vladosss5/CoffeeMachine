@@ -17,7 +17,7 @@ services:
     depends_on:
       - coffeemachine_db
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:5000
       - ConnectionString=host=postgres-container;port=5432;database=CoffeeMachine;Username=postgres;Password=toor;
         
@@ -27,19 +27,18 @@ services:
     command:
       - start --auto-build --db postgres --hostname-strict-https false --hostname-strict false --proxy edge --http-enabled true --import-realm --spi-user-profile-legacy-user-profile-read-only-attributes *_RES_ACCESS_MODE
     environment:
-      KC_DB_URL: jdbc:postgresql://coffeemachine_db:5432/Keycloak
+      KC_DB_URL: jdbc:postgresql://keycloak-postgres:5432/postgres
       KC_DB_USERNAME: postgres
       KC_DB_PASSWORD: toor
       KC_DB_SCHEMA: public
       KC_FEATURES: preview
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
-    networks:
-      - coffeemachine_net
     ports:
       - 8282:8080
     depends_on:
-      - coffeemachine_db
+      keycloak-postgres:
+        condition: service_healthy
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://0.0.0.0:8080/realms/master" ]
       start_period: 10s
@@ -56,16 +55,31 @@ services:
       POSTGRES_DB: CoffeeMachine
     ports:
       - "7654:5432"
+    networks:
+      coffeemachine_net:
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+        
+  keycloak-postgres:
+    image: postgres:16.2
+    container_name: keycloak-db-postgres
+    restart: on-failure
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: toor
+      POSTGRES_DB: postgres
     healthcheck:
       test: pg_isready -d postgres
       interval: 10s
       timeout: 5s
       retries: 3
       start_period: 5s
-    networks:
-      coffeemachine_net:
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - ${KC_POSTGRES_PORT_MAPPING:-5435}:5432
+    deploy:
+      resources:
+        limits:
+          memory: 256M
         
 volumes:
   postgres-data:

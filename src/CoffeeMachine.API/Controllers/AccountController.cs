@@ -1,18 +1,6 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Net;
-using System.Security.Claims;
-using System.Text;
-using System.Text.Json.Serialization;
-using AutoMapper;
 using CoffeeMachine.API.DTOs.Account;
-using CoffeeMachine.API.DTOs.User;
-using CoffeeMachine.Application.Interfaces.IServices;
-using CoffeeMachine.Core.Models;
-using CoffeeMachine.Persistence.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace CoffeeMachine.API.Controllers
 {
@@ -23,24 +11,14 @@ namespace CoffeeMachine.API.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        /// <summary>
-        /// Сервис аутентификации пользоваетля.
-        /// </summary>
-        private readonly IUserService _userService;
-    
-        /// <summary>
-        /// Сервис автомаппера.
-        /// </summary>
-        private readonly IMapper _mapper;
+        static HttpClient client = new HttpClient();
         
         /// <summary>
         /// Конструктор класса.
         /// </summary>
         /// <param name="accountService">Сервис аутентификации пользоваетля.</param>
-        public AccountController(IUserService userService, IMapper mapper)
+        public AccountController()
         {
-            _userService = userService;
-            _mapper = mapper;
         }
         
         /// <summary>
@@ -51,25 +29,22 @@ namespace CoffeeMachine.API.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginRequestDto loginRequest)
         {
-            var token = await _userService.Login(loginRequest.Login, loginRequest.Password);
-            
-            return Ok(token);
-        }
-        
-        [Authorize(Policy = "AdminPolicy")]
-        [HttpPost("Register")]
-        public async Task<IActionResult> Register(UserCreateRequestDto registerRequest)
-        {
-            var user = new User
+            var reqestKeycloak = new Dictionary<string, string>
             {
-                Login = registerRequest.Login,
-                PasswordHash = registerRequest.Password,
-                Role = new Role { Id = registerRequest.RoleId }
+                {"grant_type", "password"},
+                {"client_id", "backend"},
+                {"username", loginRequest.Login},
+                {"password", loginRequest.Password},
+                {"client_secret", "DaC67CWcTHYU8b73BGgt7gfU0OA9YUSn"},
+                {"scope", "roles"}
             };
             
-            var createdUser = await _userService.CreateUserAsync(user);
+            var response = await client.PostAsync("http://localhost:8282/realms/MyRealm/protocol/openid-connect/token",
+                new FormUrlEncodedContent(reqestKeycloak));
+            var responseString = JObject.Parse(await response.Content.ReadAsStringAsync());
+            var token = (string)responseString["access_token"];
             
-            return Ok(createdUser);
+            return Ok(token);
         }
     }
 }
