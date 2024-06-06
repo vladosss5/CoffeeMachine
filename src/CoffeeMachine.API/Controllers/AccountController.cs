@@ -14,14 +14,6 @@ namespace CoffeeMachine.API.Controllers
         static HttpClient client = new HttpClient();
         
         /// <summary>
-        /// Конструктор класса.
-        /// </summary>
-        /// <param name="accountService">Сервис аутентификации пользоваетля.</param>
-        public AccountController()
-        {
-        }
-        
-        /// <summary>
         /// Авторизация.
         /// </summary>
         /// <param name="loginRequest">Модель авторизации.</param>

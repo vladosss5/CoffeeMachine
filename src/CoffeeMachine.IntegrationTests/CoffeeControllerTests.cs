@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
 using NUnit.Framework.Legacy;
 
@@ -17,35 +18,8 @@ namespace CoffeeMachine.IntegrationTests;
 /// Тестирование CoffeeController.
 /// </summary>
 [TestFixture]
-public class CoffeeControllerTests
+public class CoffeeControllerTests : BaseTest
 {
-    /// <summary>
-    /// Кофе.
-    /// </summary>
-    private Coffee _coffee;
-    
-    /// <summary>
-    /// Кофемашина.
-    /// </summary>
-    private Machine _machine;
-    
-    /// <summary>
-    /// Банкноты.
-    /// </summary>
-    private List<Banknote> _banknotes;
-    
-    /// <summary>
-    /// Заказ.
-    /// </summary>
-    private Order _order;
-
-    /// <summary>
-    /// Конструктор класса.
-    /// </summary>
-    public CoffeeControllerTests()
-    {
-        FillingData();
-    }
     /// <summary>
     /// Тест для получения списка кофе.
     /// </summary>
@@ -53,37 +27,19 @@ public class CoffeeControllerTests
     public async Task GetCoffeeList_SendRequest_StatusCodeOk()
     {
         //Arrange
-        WebApplicationFactory<Startup> webHost = new WebApplicationFactory<Startup>().WithWebHostBuilder(builder =>
+        _dataContext.Database.EnsureCreated();
+        var verifyCoffees = new List<Coffee>
         {
-            builder.ConfigureTestServices(services =>
-            {
-                var dbContextDescriptor = services.FirstOrDefault(d =>
-                    d.ServiceType == typeof(DbContextOptions<DataContext>));
-
-                services.Remove(dbContextDescriptor);
-                services.AddDbContext<DataContext>(options =>
-                {
-                    options.UseInMemoryDatabase("CoffeeMachine");
-                });
-            });
-        });
-
-        var verifyCoffees = new List<Coffee> { _coffee };
-        
-        var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
-        
-        await context.AddRangeAsync(_coffee);
-        await context.SaveChangesAsync();
-        
-        HttpClient httpClient = webHost.CreateClient();
+            new Coffee{ Id = 1, Name = "Cappuccino", Price = 836}
+        };
         
         //Act
-        HttpResponseMessage response = await httpClient.GetAsync("/api/coffee");
+        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _adminToken);
+        var response = await _client.GetAsync("/api/coffee");
         var responseString = await response.Content.ReadAsStringAsync();
         var coffees = JsonConvert.DeserializeObject<List<Coffee>>(responseString);
         
         //Assert
-        ClassicAssert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         ClassicAssert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 
         for (int i = 0; i < verifyCoffees.Count; i++)
@@ -92,7 +48,7 @@ public class CoffeeControllerTests
             ClassicAssert.AreEqual(verifyCoffees[i].Price, coffees[i].Price);
         }
         
-        context.Database.EnsureDeleted();
+        _dataContext.Database.EnsureDeleted();
     }
     
     /// <summary>
@@ -102,38 +58,20 @@ public class CoffeeControllerTests
     public async Task GetCoffeeById_SendRequest_StatusCodeOk()
     {
         //Arrange
-        WebApplicationFactory<Startup> webHost = new WebApplicationFactory<Startup>().WithWebHostBuilder(builder =>
-        {
-            builder.ConfigureTestServices(services =>
-            {
-                var dbContextDescriptor = services.FirstOrDefault(d =>
-                    d.ServiceType == typeof(DbContextOptions<DataContext>));
-
-                services.Remove(dbContextDescriptor);
-                services.AddDbContext<DataContext>(options =>
-                {
-                    options.UseInMemoryDatabase("CoffeeMachine");
-                });
-            });
-        });
-        
-        var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
-        
-        await context.AddRangeAsync(_coffee);
-        await context.SaveChangesAsync();
-        
-        var httpClient = webHost.CreateClient();
-        
+        _dataContext.Database.EnsureCreated();
+        var verifyCoffee = new Coffee { Id = 1, Name = "Cappuccino", Price = 836 };
+            
         //Act
-        var response = await httpClient.GetAsync("/api/coffee/1");
+        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _adminToken);
+        var response = await _client.GetAsync("/api/coffee/1");
         var responseString = await response.Content.ReadAsStringAsync();
         var coffee = JsonConvert.DeserializeObject<Coffee>(responseString);
         
         //Assert
         ClassicAssert.AreEqual(HttpStatusCode.OK, response.StatusCode);
-        ClassicAssert.AreEqual(_coffee.Id, coffee.Id);
+        ClassicAssert.AreEqual(verifyCoffee.Id, coffee.Id);
         
-        context.Database.EnsureDeleted();
+        _dataContext.Database.EnsureDeleted();
     }
 
     /// <summary>
@@ -143,32 +81,12 @@ public class CoffeeControllerTests
     public async Task CreateCoffee_SendRequest_StatusCodeOk()
     {
         //Arrange
-        WebApplicationFactory<Startup> webHost = new WebApplicationFactory<Startup>().WithWebHostBuilder(builder =>
-        {
-            builder.ConfigureTestServices(services =>
-            {
-                var dbContextDescriptor = services.FirstOrDefault(d =>
-                    d.ServiceType == typeof(DbContextOptions<DataContext>));
-
-                services.Remove(dbContextDescriptor);
-                services.AddDbContext<DataContext>(options =>
-                {
-                    options.UseInMemoryDatabase("CoffeeMachine");
-                });
-            });
-        });
-        
+        _dataContext.Database.EnsureCreated();
         var verifyCoffee = new Coffee{Id = 2, Name = "Latte", Price = 900};
         
-        var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
-        
-        await context.AddRangeAsync(_coffee);
-        await context.SaveChangesAsync();
-        
-        var httpClient = webHost.CreateClient();
-        
         //Act
-        var responseOk = await httpClient.PostAsJsonAsync("/api/coffee", verifyCoffee);
+        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _adminToken);
+        var responseOk = await _client.PostAsJsonAsync("/api/coffee", verifyCoffee);
         var coffeeString = await responseOk.Content.ReadAsStringAsync();
         var coffee = JsonConvert.DeserializeObject<Coffee>(coffeeString);
         
@@ -177,8 +95,8 @@ public class CoffeeControllerTests
         ClassicAssert.AreEqual(verifyCoffee.Id, coffee.Id);
         ClassicAssert.AreEqual(verifyCoffee.Name, coffee.Name);
         ClassicAssert.AreEqual(verifyCoffee.Price, coffee.Price);
-        
-        context.Database.EnsureDeleted();
+
+        _dataContext.Database.EnsureDeleted();
     }
 
     /// <summary>
@@ -188,32 +106,12 @@ public class CoffeeControllerTests
     public async Task UpdateCoffee_SendRequest_StatusCodeOk()
     {
         //Arrange
-        WebApplicationFactory<Startup> webHost = new WebApplicationFactory<Startup>().WithWebHostBuilder(builder =>
-        {
-            builder.ConfigureTestServices(services =>
-            {
-                var dbContextDescriptor = services.FirstOrDefault(d =>
-                    d.ServiceType == typeof(DbContextOptions<DataContext>));
-
-                services.Remove(dbContextDescriptor);
-                services.AddDbContext<DataContext>(options =>
-                {
-                    options.UseInMemoryDatabase("CoffeeMachine");
-                });
-            });
-        });
-        
+        _dataContext.Database.EnsureCreated();
         var verifyCoffee = new Coffee{Id = 1, Name = "Latte", Price = 800};
         
-        var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
-        
-        await context.AddRangeAsync(_coffee);
-        await context.SaveChangesAsync();
-        
-        var httpClient = webHost.CreateClient();
-        
         //Act
-        var response = await httpClient.PutAsJsonAsync("/api/coffee/1", verifyCoffee);
+        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _adminToken);
+        var response = await _client.PutAsJsonAsync("/api/coffee/1", verifyCoffee);
         var coffeeString = await response.Content.ReadAsStringAsync();
         var coffee = JsonConvert.DeserializeObject<Coffee>(coffeeString);
         
@@ -223,7 +121,7 @@ public class CoffeeControllerTests
         ClassicAssert.AreEqual(verifyCoffee.Name, coffee.Name);
         ClassicAssert.AreEqual(verifyCoffee.Price, coffee.Price);
         
-        context.Database.EnsureDeleted();
+        _dataContext.Database.EnsureDeleted();
     }
     
     /// <summary>
@@ -233,69 +131,14 @@ public class CoffeeControllerTests
     public async Task DeleteCoffee_SendRequest_StatusCodeOk()
     {
         //Arrange
-        WebApplicationFactory<Startup> webHost = new WebApplicationFactory<Startup>().WithWebHostBuilder(builder =>
-        {
-            builder.ConfigureTestServices(services =>
-            {
-                var dbContextDescriptor = services.FirstOrDefault(d =>
-                    d.ServiceType == typeof(DbContextOptions<DataContext>));
-
-                services.Remove(dbContextDescriptor);
-                services.AddDbContext<DataContext>(options =>
-                {
-                    options.UseInMemoryDatabase("CoffeeMachine");
-                });
-            });
-        });
-        
-        var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
-        
-        await context.AddRangeAsync(_coffee);
-        await context.SaveChangesAsync();
-        
-        var httpClient = webHost.CreateClient();
-        
+        _dataContext.Database.EnsureCreated();
         //Act
-        var response = await httpClient.DeleteAsync("/api/coffee/1");
+        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _adminToken);
+        var response = await _client.DeleteAsync("/api/coffee/1");
         
         //Assert
         ClassicAssert.AreEqual(response.StatusCode, HttpStatusCode.NoContent);
         
-        context.Database.EnsureDeleted();
-    }
-
-    /// <summary>
-    /// Заполнение данных.
-    /// </summary>
-    private void FillingData()
-    {
-        _coffee = new Coffee
-        {
-            Id = 1,
-            Name = "Cappuccino",
-            Price = 836
-        };
-
-        _machine = new Machine
-        {
-            Id = 1,
-            SerialNumber = "11",
-            Description = "wdw",
-            Balance = 0
-        };
-
-        _banknotes = new List<Banknote>
-        {
-            new Banknote{Id = 1, Nominal = 5000},
-            new Banknote{Id = 2, Nominal = 2000},
-            new Banknote{Id = 3, Nominal = 1000},
-            new Banknote{Id = 4, Nominal = 500},
-            new Banknote{Id = 5, Nominal = 100},
-            new Banknote{Id = 6, Nominal = 50},
-            new Banknote{Id = 7, Nominal = 10},
-            new Banknote{Id = 8, Nominal = 5},
-            new Banknote{Id = 9, Nominal = 2},
-            new Banknote{Id = 10, Nominal = 1}
-        };
+        _dataContext.Database.EnsureDeleted();
     }
 }

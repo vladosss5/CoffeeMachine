@@ -24,9 +24,6 @@ public partial class DataContext : DbContext
         : base(options)
     { }
     
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseNpgsql("Server=localhost;port=7654;user id=postgres;password=toor;database=CoffeeMachine;");
-    
     /// <summary>
     /// Банкноты.
     /// </summary>
