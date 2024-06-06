@@ -1,3 +1,4 @@
+using CoffeeMachine.API.DTOs;
 using CoffeeMachine.API.DTOs.Account;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
@@ -12,6 +13,13 @@ namespace CoffeeMachine.API.Controllers
     public class AccountController : ControllerBase
     {
         static HttpClient client = new HttpClient();
+
+        private readonly IConfiguration _configuration;
+
+        public AccountController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
         
         /// <summary>
         /// Авторизация.
@@ -21,18 +29,15 @@ namespace CoffeeMachine.API.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginRequestDto loginRequest)
         {
-            var reqestKeycloak = new Dictionary<string, string>
-            {
-                {"grant_type", "password"},
-                {"client_id", "backend"},
-                {"username", loginRequest.Login},
-                {"password", loginRequest.Password},
-                {"client_secret", "DaC67CWcTHYU8b73BGgt7gfU0OA9YUSn"},
-                {"scope", "roles"}
-            };
+            var conf = _configuration.GetSection("KeycloakLoginRequest").Get<KeycloakLoginRequest>();
             
-            var response = await client.PostAsync("http://localhost:8282/realms/MyRealm/protocol/openid-connect/token",
-                new FormUrlEncodedContent(reqestKeycloak));
+            var reqestKeycloak = JObject.Parse(conf.ToString());
+            reqestKeycloak["username"] = loginRequest.Login;
+            reqestKeycloak["password"] = loginRequest.Password;
+            
+            var response = await client.PostAsync("http://localhost:8282/realms/MyRealm/protocol/openid-connect/token", 
+                new StringContent(reqestKeycloak.ToString(), System.Text.Encoding.UTF8, "application/json"));
+            
             var responseString = JObject.Parse(await response.Content.ReadAsStringAsync());
             var token = (string)responseString["access_token"];
             
