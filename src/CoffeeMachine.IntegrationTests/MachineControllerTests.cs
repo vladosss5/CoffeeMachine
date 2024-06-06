@@ -17,46 +17,8 @@ namespace CoffeeMachine.IntegrationTests;
 /// Тестирование MachineController.
 /// </summary>
 [TestFixture]
-public class MachineControllerTests
+public class MachineControllerTests  : BaseTest
 {
-    /// <summary>
-    /// Кофе.
-    /// </summary>
-    private Coffee _coffee;
-    
-    /// <summary>
-    /// Кофемашина.
-    /// </summary>
-    private Machine _machine;
-    
-    /// <summary>
-    /// Банкноты.
-    /// </summary>
-    private List<Banknote> _banknotes;
-    
-    /// <summary>
-    /// Банкноты в кофемашине.
-    /// </summary>
-    private List<BanknoteToMachine> _banknotesToMachines;
-    
-    /// <summary>
-    /// Кофе в кофемашине.
-    /// </summary>
-    private List<CoffeeToMachine> _coffeeToMachines;
-    
-    /// <summary>
-    /// Заказ.
-    /// </summary>
-    private Order _order;
-
-    /// <summary>
-    /// Конструктор класса.
-    /// </summary>
-    public MachineControllerTests()
-    {
-        FillingData();
-    }
-
     /// <summary>
     /// Тест получения всех кофемашин.
     /// </summary>
@@ -64,36 +26,15 @@ public class MachineControllerTests
     public async Task GetAllMachines_SendRequest_StatusCodeOk()
     {
         //Arrange
-        WebApplicationFactory<Startup> webHost = new WebApplicationFactory<Startup>().WithWebHostBuilder(builder =>
-        {
-            builder.ConfigureTestServices(services =>
-            {
-                var dbContextDescriptor = services.FirstOrDefault(d =>
-                    d.ServiceType == typeof(DbContextOptions<DataContext>));
-
-                services.Remove(dbContextDescriptor);
-                services.AddDbContext<DataContext>(options =>
-                {
-                    options.UseInMemoryDatabase("CoffeeMachine");
-                });
-            });
-        });
-
+        _dataContext.Database.EnsureCreated();
         var verifyMachine = new List<Machine>
         {
             new Machine { Id = 1, SerialNumber = "11", Description = "wdw", Balance = 0 }
         };
         
-        var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
-        ClearContext(context);
-        
-        await context.AddRangeAsync(_machine);
-        await context.SaveChangesAsync();
-        
-        var var = webHost.CreateClient();
-        
         //Act
-        var response = await var.GetAsync("/api/Machine");
+        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _adminToken);
+        var response = await _client.GetAsync("/api/Machine");
         var machinesString = await response.Content.ReadAsStringAsync();
         var machines = JsonConvert.DeserializeObject<List<Machine>>(machinesString);
         
@@ -107,6 +48,8 @@ public class MachineControllerTests
             ClassicAssert.AreEqual(verifyMachine[i].Description, machines[i].Description);
             ClassicAssert.AreEqual(verifyMachine[i].Balance, machines[i].Balance);
         }
+        
+        _dataContext.Database.EnsureDeleted();
     }
     
     /// <summary>
@@ -116,32 +59,12 @@ public class MachineControllerTests
     public async Task GetMachineById_SendRequest_StatusCodeOk()
     {
         //Arrange
-        WebApplicationFactory<Startup> webHost = new WebApplicationFactory<Startup>().WithWebHostBuilder(builder =>
-        {
-            builder.ConfigureTestServices(services =>
-            {
-                var dbContextDescriptor = services.FirstOrDefault(d =>
-                    d.ServiceType == typeof(DbContextOptions<DataContext>));
-
-                services.Remove(dbContextDescriptor);
-                services.AddDbContext<DataContext>(options =>
-                {
-                    options.UseInMemoryDatabase("CoffeeMachine");
-                });
-            });
-        });
-
+        _dataContext.Database.EnsureCreated();
         var verifyMachine = new Machine { Id = 1, SerialNumber = "11", Description = "wdw", Balance = 0 };
-        var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
-        ClearContext(context);
-        
-        await context.AddRangeAsync(_machine);
-        await context.SaveChangesAsync();
-        
-        var var = webHost.CreateClient();
         
         //Act
-        var response = await var.GetAsync($"/api/Machine/{_machine.Id}");
+        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _adminToken);
+        var response = await _client.GetAsync($"/api/Machine/{verifyMachine.Id}");
         var machineString = await response.Content.ReadAsStringAsync();
         var machine = JsonConvert.DeserializeObject<Machine>(machineString);
         
@@ -152,7 +75,7 @@ public class MachineControllerTests
         ClassicAssert.AreEqual(verifyMachine.Description, machine.Description);
         ClassicAssert.AreEqual(verifyMachine.Balance, machine.Balance);
         
-        context.Database.EnsureDeleted();
+        _dataContext.Database.EnsureDeleted();
     }
     
     /// <summary>
@@ -162,33 +85,12 @@ public class MachineControllerTests
     public async Task CreateMachine_SendRequest_StatusCodeOk()
     {
         //Arrange
-        FillingData();
-        
-        WebApplicationFactory<Startup> webHost = new WebApplicationFactory<Startup>().WithWebHostBuilder(builder =>
-        {
-            builder.ConfigureTestServices(services =>
-            {
-                var dbContextDescriptor = services.FirstOrDefault(d =>
-                    d.ServiceType == typeof(DbContextOptions<DataContext>));
-
-                services.Remove(dbContextDescriptor);
-                services.AddDbContext<DataContext>(options =>
-                {
-                    options.UseInMemoryDatabase("CoffeeMachine");
-                });
-            });
-        });
-        
+        _dataContext.Database.EnsureCreated();
         var verifyMachine = new Machine { Id = 2, SerialNumber = "22", Description = "dfd", Balance = 0 };
-        var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
-        
-        await context.AddRangeAsync(_machine);
-        await context.SaveChangesAsync();
-        
-        var var = webHost.CreateClient();
         
         //Act
-        var response = await var.PostAsJsonAsync("/api/Machine", new Machine { SerialNumber = "22", Description = "dfd" });
+        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _adminToken);
+        var response = await _client.PostAsJsonAsync("/api/Machine", new Machine { SerialNumber = "22", Description = "dfd" });
         var machineString = await response.Content.ReadAsStringAsync();
         var machine = JsonConvert.DeserializeObject<Machine>(machineString);
         
@@ -199,7 +101,7 @@ public class MachineControllerTests
         ClassicAssert.AreEqual(verifyMachine.Description, machine.Description);
         ClassicAssert.AreEqual(verifyMachine.Balance, machine.Balance);
         
-        context.Database.EnsureDeleted();
+        _dataContext.Database.EnsureDeleted();
     }
     
     /// <summary>
@@ -209,31 +111,12 @@ public class MachineControllerTests
     public async Task UpdateMachine_SendRequest_StatusCodeOk()
     {
         //Arrange
-        WebApplicationFactory<Startup> webHost = new WebApplicationFactory<Startup>().WithWebHostBuilder(builder =>
-        {
-            builder.ConfigureTestServices(services =>
-            {
-                var dbContextDescriptor = services.FirstOrDefault(d =>
-                    d.ServiceType == typeof(DbContextOptions<DataContext>));
-
-                services.Remove(dbContextDescriptor);
-                services.AddDbContext<DataContext>(options =>
-                {
-                    options.UseInMemoryDatabase("CoffeeMachine");
-                });
-            });
-        });
-        
+        _dataContext.Database.EnsureCreated();
         var verifyMachine = new Machine { Id = 1, SerialNumber = "33", Description = "wdw", Balance = 1000 };
-        var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
-        
-        await context.AddRangeAsync(_machine);
-        await context.SaveChangesAsync();
-        
-        var var = webHost.CreateClient();
         
         //Act
-        var response = await var.PutAsJsonAsync($"/api/Machine/", new Machine { Id = 1, SerialNumber = "33", Description = "wdw", Balance = 1000 });
+        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _adminToken);
+        var response = await _client.PutAsJsonAsync($"/api/Machine/", new Machine { Id = 1, SerialNumber = "33", Description = "wdw", Balance = 1000 });
         var machineString = await response.Content.ReadAsStringAsync();
         var machine = JsonConvert.DeserializeObject<Machine>(machineString);
         
@@ -243,7 +126,7 @@ public class MachineControllerTests
         ClassicAssert.AreEqual(verifyMachine.SerialNumber, machine.SerialNumber);
         ClassicAssert.AreEqual(verifyMachine.Description, machine.Description);
         
-        context.Database.EnsureDeleted();
+        _dataContext.Database.EnsureDeleted();
     }
     
     /// <summary>
@@ -253,34 +136,16 @@ public class MachineControllerTests
     public async Task DeleteMachine_SendRequest_StatusCodeOk()
     {
         //Arrange
-        WebApplicationFactory<Startup> webHost = new WebApplicationFactory<Startup>().WithWebHostBuilder(builder =>
-        {
-            builder.ConfigureTestServices(services =>
-            {
-                var dbContextDescriptor = services.FirstOrDefault(d =>
-                    d.ServiceType == typeof(DbContextOptions<DataContext>));
-
-                services.Remove(dbContextDescriptor);
-                services.AddDbContext<DataContext>(options =>
-                {
-                    options.UseInMemoryDatabase("CoffeeMachine");
-                });
-            });
-        });
-        
-        var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
-        ClearContext(context);
-        
-        await context.AddRangeAsync(_machine);
-        await context.SaveChangesAsync();
-        
-        var var = webHost.CreateClient();
+        _dataContext.Database.EnsureCreated();
         
         //Act
-        var response = await var.DeleteAsync($"/api/Machine/{_machine.Id}");
+        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _adminToken);
+        var response = await _client.DeleteAsync($"/api/Machine/1");
         
         //Assert
         ClassicAssert.AreEqual(response.StatusCode, HttpStatusCode.NoContent);
+        
+        _dataContext.Database.EnsureDeleted();
     }
     
     /// <summary>
@@ -290,39 +155,20 @@ public class MachineControllerTests
     public async Task AddCoffeeToMachines_SendRequest_StatusCodeOk()
     {
         //Arrange
-        WebApplicationFactory<Startup> webHost = new WebApplicationFactory<Startup>().WithWebHostBuilder(builder =>
-        {
-            builder.ConfigureTestServices(services =>
-            {
-                var dbContextDescriptor = services.FirstOrDefault(d =>
-                    d.ServiceType == typeof(DbContextOptions<DataContext>));
-
-                services.Remove(dbContextDescriptor);
-                services.AddDbContext<DataContext>(options =>
-                {
-                    options.UseInMemoryDatabase("CoffeeMachine");
-                });
-            });
-        });
-        
-        var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
-        
-        await context.AddRangeAsync(_machine, _coffee);
-        await context.SaveChangesAsync();
-        
-        var var = webHost.CreateClient();
+        _dataContext.Database.EnsureCreated();
         
         //Act
-        var response = await var.PostAsJsonAsync($"/api/Machine/AddCoffeeToMachines/{_machine.Id}", _coffee.Id);
+        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _adminToken);
+        var response = await _client.PostAsJsonAsync($"/api/Machine/AddCoffeeToMachines/1", 1);
         var responseString = await response.Content.ReadAsStringAsync();
         var coffeeToMachine = JsonConvert.DeserializeObject<CoffeesInMachineDto>(responseString);
         
         //Assert
         ClassicAssert.AreEqual(response.StatusCode, HttpStatusCode.OK);
-        ClassicAssert.AreEqual(_machine.Id, coffeeToMachine.Machine.Id);
-        ClassicAssert.AreEqual(_coffee.Id, coffeeToMachine.Coffees.FirstOrDefault(x => x.Id == _coffee.Id).Id);
+        ClassicAssert.AreEqual(1, coffeeToMachine.Machine.Id);
+        ClassicAssert.AreEqual(1, coffeeToMachine.Coffees.FirstOrDefault(x => x.Id == 1).Id);
         
-        context.Database.EnsureDeleted();
+        _dataContext.Database.EnsureDeleted();
     }
     
     /// <summary>
@@ -332,35 +178,11 @@ public class MachineControllerTests
     public async Task DeleteCoffeeFromMachines_SendRequest_StatusCodeOk()
     {
         //Arrange
-        WebApplicationFactory<Startup> webHost = new WebApplicationFactory<Startup>().WithWebHostBuilder(builder =>
-        {
-            builder.ConfigureTestServices(services =>
-            {
-                var dbContextDescriptor = services.FirstOrDefault(d =>
-                    d.ServiceType == typeof(DbContextOptions<DataContext>));
-
-                services.Remove(dbContextDescriptor);
-                services.AddDbContext<DataContext>(options =>
-                {
-                    options.UseInMemoryDatabase("CoffeeMachine");
-                });
-            });
-        });
-        
-        var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
-        context.Database.EnsureCreated();
-        
-        await context.AddRangeAsync(_machine, _coffee);
-        foreach (var сoffeeToMachine in _coffeeToMachines)
-        {
-            await context.AddAsync(сoffeeToMachine);
-        }
-        await context.SaveChangesAsync();
-        
-        var var = webHost.CreateClient();
+        _dataContext.Database.EnsureCreated();
         
         //Act
-        var response = await var.PostAsJsonAsync($"/api/Machine/DeleteCoffeeFromMachines/{_machine.Id}", _coffee.Id);
+        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _adminToken);
+        var response = await _client.PostAsJsonAsync($"/api/Machine/DeleteCoffeeFromMachines/1", 1);
         var responseString = await response.Content.ReadAsStringAsync();
         var coffeeToMachine = JsonConvert.DeserializeObject<CoffeesInMachineDto>(responseString);
         
@@ -368,7 +190,7 @@ public class MachineControllerTests
         ClassicAssert.AreEqual(response.StatusCode, HttpStatusCode.OK);
         ClassicAssert.AreEqual(0, coffeeToMachine.Coffees.Count);
         
-        context.Database.EnsureDeleted();
+        _dataContext.Database.EnsureDeleted();
     }
 
     /// <summary>
@@ -378,31 +200,11 @@ public class MachineControllerTests
     public async Task AddBanknotesToMachines_SendRequest_StatusCodeOk()
     {
         //Arrange
-        WebApplicationFactory<Startup> webHost = new WebApplicationFactory<Startup>().WithWebHostBuilder(builder =>
-        {
-            builder.ConfigureTestServices(services =>
-            {
-                var dbContextDescriptor = services.FirstOrDefault(d =>
-                    d.ServiceType == typeof(DbContextOptions<DataContext>));
-
-                services.Remove(dbContextDescriptor);
-                services.AddDbContext<DataContext>(options =>
-                {
-                    options.UseInMemoryDatabase("CoffeeMachine");
-                });
-            });
-        });
-        
-        var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
-        await context.AddRangeAsync(_banknotes);
-        await context.AddRangeAsync(_banknotesToMachines);
-        await context.AddRangeAsync(_machine);
-        await context.SaveChangesAsync();
-        
-        var var = webHost.CreateClient();
+        _dataContext.Database.EnsureCreated();
         
         //Act
-        var response = await var.PostAsJsonAsync($"/api/Machine/AddBanknotesToMachines/{_machine.Id}", 
+        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _adminToken);
+        var response = await _client.PostAsJsonAsync($"/api/Machine/AddBanknotesToMachines/1", 
             new List<Banknote>
             {
                 new Banknote{Nominal = 500},
@@ -415,7 +217,7 @@ public class MachineControllerTests
         ClassicAssert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         ClassicAssert.AreEqual(87680, machine.Balance);
         
-        context.Database.EnsureDeleted();
+        _dataContext.Database.EnsureDeleted();
     }
 
     /// <summary>
@@ -425,33 +227,11 @@ public class MachineControllerTests
     public async Task SubtractBanknotesFromMachines_SendRequest_StatusCodeOk()
     {
         //Arrange
-        WebApplicationFactory<Startup> webHost = new WebApplicationFactory<Startup>().WithWebHostBuilder(builder =>
-        {
-            builder.ConfigureTestServices(services =>
-            {
-                var dbContextDescriptor = services.FirstOrDefault(d =>
-                    d.ServiceType == typeof(DbContextOptions<DataContext>));
-
-                services.Remove(dbContextDescriptor);
-                services.AddDbContext<DataContext>(options =>
-                {
-                    options.UseInMemoryDatabase("CoffeeMachine");
-                });
-            });
-        });
-        
-        var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
-        
-        await context.AddRangeAsync(_banknotes);
-        await context.AddRangeAsync(_banknotesToMachines);
-        await context.AddRangeAsync(_machine);
-        
-        await context.SaveChangesAsync();
-        
-        var var = webHost.CreateClient();
+        _dataContext.Database.EnsureCreated();
         
         //Act
-        var response = await var.PostAsJsonAsync($"/api/Machine/DeleteBanknotesFromMachines/{_machine.Id}", 
+        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _adminToken);
+        var response = await _client.PostAsJsonAsync($"/api/Machine/DeleteBanknotesFromMachines/1", 
             new List<Banknote>
             {
                 new Banknote{Nominal = 500},
@@ -464,7 +244,7 @@ public class MachineControllerTests
         ClassicAssert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         ClassicAssert.AreEqual(85680, machine.Balance);
         
-        context.Database.EnsureDeleted();
+        _dataContext.Database.EnsureDeleted();
     }
 
     /// <summary>
@@ -474,33 +254,11 @@ public class MachineControllerTests
     public async Task GetBanknotesByMachine_SendRequest_StatusCodeOk()
     {
         //Arrange
-        WebApplicationFactory<Startup> webHost = new WebApplicationFactory<Startup>().WithWebHostBuilder(builder =>
-        {
-            builder.ConfigureTestServices(services =>
-            {
-                var dbContextDescriptor = services.FirstOrDefault(d =>
-                    d.ServiceType == typeof(DbContextOptions<DataContext>));
-
-                services.Remove(dbContextDescriptor);
-                services.AddDbContext<DataContext>(options =>
-                {
-                    options.UseInMemoryDatabase("CoffeeMachine");
-                });
-            });
-        });
-        
-        var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
-        ClearContext(context);
-        
-        await context.AddRangeAsync(_banknotes);
-        await context.AddRangeAsync(_banknotesToMachines);
-        await context.AddRangeAsync(_machine);
-        await context.SaveChangesAsync();
-        
-        var var = webHost.CreateClient();
+        _dataContext.Database.EnsureCreated();
         
         //Act
-        var response = await var.GetAsync($"/api/Machine/GetBanknotesByMachine/{_machine.Id}");
+        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _adminToken);
+        var response = await _client.GetAsync($"/api/Machine/GetBanknotesByMachine/1");
         var responseString = await response.Content.ReadAsStringAsync();
         var banknotesToMachines = JsonConvert.DeserializeObject<List<BanknoteToMachine>>(responseString);
         
@@ -511,7 +269,7 @@ public class MachineControllerTests
             ClassicAssert.AreEqual(10, banknoteToMachine.CountBanknote);
         }
         
-        context.Database.EnsureDeleted();
+        _dataContext.Database.EnsureDeleted();
     }
 
     /// <summary>
@@ -521,104 +279,18 @@ public class MachineControllerTests
     public async Task GetCoffeesFromMachine_SendRequest_StatusCodeOk()
     {
         //Arrange
-        WebApplicationFactory<Startup> webHost = new WebApplicationFactory<Startup>().WithWebHostBuilder(builder =>
-        {
-            builder.ConfigureTestServices(services =>
-            {
-                var dbContextDescriptor = services.FirstOrDefault(d =>
-                    d.ServiceType == typeof(DbContextOptions<DataContext>));
-
-                services.Remove(dbContextDescriptor);
-                services.AddDbContext<DataContext>(options =>
-                {
-                    options.UseInMemoryDatabase("CoffeeMachine");
-                });
-            });
-        });
-        
-        var context = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
-        ClearContext(context);
-        
-        await context.AddRangeAsync(_machine, _coffee);
-        await context.AddRangeAsync(_coffeeToMachines);
-        await context.SaveChangesAsync();
-        
-        var var = webHost.CreateClient();
+        _dataContext.Database.EnsureCreated();
         
         //Act
-        var response = await var.GetAsync($"/api/Machine/GetCoffeesFromMachine/{_machine.Id}");
+        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _adminToken);
+        var response = await _client.GetAsync($"/api/Machine/GetCoffeesFromMachine/1");
         var responseString = await response.Content.ReadAsStringAsync();
         var coffees = JsonConvert.DeserializeObject<List<Coffee>>(responseString);
         
         //Assert
         ClassicAssert.AreEqual(HttpStatusCode.OK, response.StatusCode);
-        ClassicAssert.AreEqual(_coffee.Id, coffees[0].Id);
+        ClassicAssert.AreEqual(1, coffees[0].Id);
         
-        context.Database.EnsureDeleted();
-    }
-
-    private void ClearContext(DataContext context)
-    {
-        context.Database.EnsureDeleted();
-        context.Database.EnsureCreated();
-    }
-    
-    /// <summary>
-    /// Заполнение данных для тестирования.
-    /// </summary>
-    private void FillingData()
-    {
-        _coffee = new Coffee
-        {
-            Id = 1,
-            Name = "Cappuccino",
-            Price = 836
-        };
-
-        _machine = new Machine
-        {
-            Id = 1,
-            SerialNumber = "11",
-            Description = "wdw",
-            Balance = 0
-        };
-
-        _banknotes = new List<Banknote>
-        {
-            new Banknote{Id = 1, Nominal = 5000},
-            new Banknote{Id = 2, Nominal = 2000},
-            new Banknote{Id = 3, Nominal = 1000},
-            new Banknote{Id = 4, Nominal = 500},
-            new Banknote{Id = 5, Nominal = 100},
-            new Banknote{Id = 6, Nominal = 50},
-            new Banknote{Id = 7, Nominal = 10},
-            new Banknote{Id = 8, Nominal = 5},
-            new Banknote{Id = 9, Nominal = 2},
-            new Banknote{Id = 10, Nominal = 1}
-        };
-
-        _banknotesToMachines = new List<BanknoteToMachine>
-        {
-            new BanknoteToMachine{Id = 1,  Machine = _machine, Banknote = _banknotes[0], CountBanknote = 10},
-            new BanknoteToMachine{Id = 2,  Machine = _machine, Banknote = _banknotes[1], CountBanknote = 10},
-            new BanknoteToMachine{Id = 3,  Machine = _machine, Banknote = _banknotes[2], CountBanknote = 10},
-            new BanknoteToMachine{Id = 4,  Machine = _machine, Banknote = _banknotes[3], CountBanknote = 10},
-            new BanknoteToMachine{Id = 5,  Machine = _machine, Banknote = _banknotes[4], CountBanknote = 10},
-            new BanknoteToMachine{Id = 6,  Machine = _machine, Banknote = _banknotes[5], CountBanknote = 10},
-            new BanknoteToMachine{Id = 7,  Machine = _machine, Banknote = _banknotes[6], CountBanknote = 10},
-            new BanknoteToMachine{Id = 8,  Machine = _machine, Banknote = _banknotes[7], CountBanknote = 10},
-            new BanknoteToMachine{Id = 9,  Machine = _machine, Banknote = _banknotes[8], CountBanknote = 10},
-            new BanknoteToMachine{Id = 10, Machine = _machine, Banknote = _banknotes[9], CountBanknote = 10}
-        };
-
-        _coffeeToMachines = new List<CoffeeToMachine>
-        {
-            new CoffeeToMachine{Id = 1,  Machine = _machine, Coffee = _coffee}
-        };
-
-        _order = new Order
-        {
-            Id = 1, Machine = _machine, Coffee = _coffee, DateTimeCreate = DateTime.UtcNow, Status = "Принято"
-        };
+        _dataContext.Database.EnsureDeleted();
     }
 }
