@@ -71,7 +71,6 @@ public class AdminServiceTest
         ClassicAssert.AreEqual(result.Id, _machine.Id);
         ClassicAssert.AreEqual(result.SerialNumber, _machine.SerialNumber);
         ClassicAssert.AreEqual(result.Description, _machine.Description);
-        // ClassicAssert.AreEqual(result.Balance, _machine.Balance);
     }
 
     [Test]

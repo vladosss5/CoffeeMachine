@@ -1,3 +1,4 @@
+using CoffeeMachine.API.DTOs;
 using CoffeeMachine.API.DTOs.Account;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
@@ -11,7 +12,24 @@ namespace CoffeeMachine.API.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
+        /// <summary>
+        /// Http клиент.
+        /// </summary>
         static HttpClient client = new HttpClient();
+        
+        /// <summary>
+        /// Конфигурация проекта.
+        /// </summary>
+        private readonly IConfiguration _configuration;
+
+        /// <summary>
+        /// Конструктор класса.
+        /// </summary>
+        /// <param name="configuration">Конфигурация проекта.</param>
+        public AccountController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
         
         /// <summary>
         /// Авторизация.
@@ -23,16 +41,17 @@ namespace CoffeeMachine.API.Controllers
         {
             var reqestKeycloak = new Dictionary<string, string>
             {
-                {"grant_type", "password"},
-                {"client_id", "backend"},
+                {"grant_type", _configuration["KeycloakLoginRequest:grant_type"]},
+                {"client_id", _configuration["KeycloakLoginRequest:client_id"]},
                 {"username", loginRequest.Login},
                 {"password", loginRequest.Password},
-                {"client_secret", "DaC67CWcTHYU8b73BGgt7gfU0OA9YUSn"},
-                {"scope", "roles"}
+                {"client_secret", _configuration["KeycloakLoginRequest:client_secret"]},
+                {"scope", _configuration["KeycloakLoginRequest:scope"]}
             };
             
             var response = await client.PostAsync("http://localhost:8282/realms/MyRealm/protocol/openid-connect/token",
                 new FormUrlEncodedContent(reqestKeycloak));
+            
             var responseString = JObject.Parse(await response.Content.ReadAsStringAsync());
             var token = (string)responseString["access_token"];
             
