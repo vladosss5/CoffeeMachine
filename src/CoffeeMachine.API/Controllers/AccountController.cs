@@ -12,10 +12,20 @@ namespace CoffeeMachine.API.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
+        /// <summary>
+        /// Http клиент.
+        /// </summary>
         static HttpClient client = new HttpClient();
-
+        
+        /// <summary>
+        /// Конфигурация проекта.
+        /// </summary>
         private readonly IConfiguration _configuration;
 
+        /// <summary>
+        /// Конструктор класса.
+        /// </summary>
+        /// <param name="configuration">Конфигурация проекта.</param>
         public AccountController(IConfiguration configuration)
         {
             _configuration = configuration;
@@ -29,14 +39,18 @@ namespace CoffeeMachine.API.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginRequestDto loginRequest)
         {
-            var conf = _configuration.GetSection("KeycloakLoginRequest").Get<KeycloakLoginRequest>();
+            var reqestKeycloak = new Dictionary<string, string>
+            {
+                {"grant_type", _configuration["KeycloakLoginRequest:grant_type"]},
+                {"client_id", _configuration["KeycloakLoginRequest:client_id"]},
+                {"username", loginRequest.Login},
+                {"password", loginRequest.Password},
+                {"client_secret", _configuration["KeycloakLoginRequest:client_secret"]},
+                {"scope", _configuration["KeycloakLoginRequest:scope"]}
+            };
             
-            var reqestKeycloak = JObject.Parse(conf.ToString());
-            reqestKeycloak["username"] = loginRequest.Login;
-            reqestKeycloak["password"] = loginRequest.Password;
-            
-            var response = await client.PostAsync("http://localhost:8282/realms/MyRealm/protocol/openid-connect/token", 
-                new StringContent(reqestKeycloak.ToString(), System.Text.Encoding.UTF8, "application/json"));
+            var response = await client.PostAsync("http://localhost:8282/realms/MyRealm/protocol/openid-connect/token",
+                new FormUrlEncodedContent(reqestKeycloak));
             
             var responseString = JObject.Parse(await response.Content.ReadAsStringAsync());
             var token = (string)responseString["access_token"];
