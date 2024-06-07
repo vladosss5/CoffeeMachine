@@ -49,7 +49,7 @@ namespace CoffeeMachine.API.Controllers
                 {"scope", _configuration["KeycloakLoginRequest:scope"]}
             };
             
-            var response = await client.PostAsync("http://localhost:8282/realms/MyRealm/protocol/openid-connect/token",
+            var response = await client.PostAsync(_configuration["KeycloakLoginRequest:url"],
                 new FormUrlEncodedContent(reqestKeycloak));
             
             var responseString = JObject.Parse(await response.Content.ReadAsStringAsync());
