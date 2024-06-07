@@ -55,6 +55,19 @@ namespace CoffeeMachine.Persistence.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Roles",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
+                    Name = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("role_pk", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "BanknotesToMachines",
                 columns: table => new
                 {
@@ -136,6 +149,27 @@ namespace CoffeeMachine.Persistence.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
+                    Login = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
+                    PasswordHash = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    RoleId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("user_pk", x => x.Id);
+                    table.ForeignKey(
+                        name: "user_role_fk",
+                        column: x => x.RoleId,
+                        principalTable: "Roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Transactions",
                 columns: table => new
                 {
@@ -201,6 +235,11 @@ namespace CoffeeMachine.Persistence.Data.Migrations
                 name: "IX_Transactions_OrderId",
                 table: "Transactions",
                 column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_RoleId",
+                table: "Users",
+                column: "RoleId");
         }
 
         /// <inheritdoc />
@@ -216,10 +255,16 @@ namespace CoffeeMachine.Persistence.Data.Migrations
                 name: "Transactions");
 
             migrationBuilder.DropTable(
+                name: "Users");
+
+            migrationBuilder.DropTable(
                 name: "Banknotes");
 
             migrationBuilder.DropTable(
                 name: "Orders");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "Coffees");

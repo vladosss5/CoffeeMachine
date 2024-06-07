@@ -1,3 +1,4 @@
+using Keycloak.AuthServices.Authentication.Configuration;
 using Serilog;
 
 namespace CoffeeMachine.API;
@@ -12,7 +13,7 @@ public static class Program
 
     public static IHostBuilder CreateHostBuilder(string[] args) =>
         Host.CreateDefaultBuilder(args)
-            .UseSerilog() // Use Serilog for logging
+            .UseSerilog()
             .ConfigureAppConfiguration((hostingContext, config) =>
             {
                 config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);

@@ -12,13 +12,11 @@ public class Startup
     public Startup(IConfiguration configuration)
     {
         Configuration = configuration;
-        
         var logger = Log.Logger = new LoggerConfiguration()
             .Enrich.FromLogContext()
             .WriteTo.Console()
             .WriteTo.File($"{Environment.CurrentDirectory}/Logs/{DateTime.UtcNow:yyyy/dd/MM}.txt")
             .CreateLogger();
-
         logger.Information("Starting web host");
     }
     
@@ -29,20 +27,25 @@ public class Startup
         services.AddInfrastructure(Configuration);
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
+        services.AddKeycloakAuthentication(Configuration);
+        services.AddCustomAuthorization();
     }
-
+    
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         app.UseSerilogRequestLogging();
-
+        
         if (env.IsDevelopment())
         {
             app.UseSwagger();
             app.UseSwaggerUI();
         }
-
+        
         app.UseCustomExceptionHandler();
         app.UseRouting();
+        app.UseHttpsRedirection();
+        app.UseAuthentication();
+        app.UseAuthorization();
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();

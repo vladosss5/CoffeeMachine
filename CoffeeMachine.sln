@@ -13,6 +13,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A79347D2-848A-4D5E-A13D-130D52D9D418}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yml = docker-compose.yml
+		DockerfileApi = src\CoffeeMachine.API\Dockerfile
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoffeeMachine.UnitTests", "src\CoffeeMachine.UnitTests\CoffeeMachine.UnitTests.csproj", "{C8DFC20C-84BC-40EF-AFE2-B3DDB14E5514}"

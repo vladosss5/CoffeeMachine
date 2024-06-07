@@ -3,6 +3,7 @@ using CoffeeMachine.Application.Interfaces.IServices;
 using CoffeeMachine.Core.Models;
 using CoffeeMachine.Persistence.Services;
 using Moq;
+using NUnit.Framework.Legacy;
 
 namespace CoffeeMachine.UnitTests.Services;
 
@@ -66,14 +67,14 @@ public class OrderServiceTest
             .Select(x => x.Banknote)
             .ToList();
         
-        Assert.AreEqual(result.Status, "Готово");
+        ClassicAssert.AreEqual(result.Status, "Готово");
 
         for (int i = 0; i < result.Transactions.Count(); i++)
         {
-            Assert.AreEqual(result.Transactions.ToList()[i].Banknote.Nominal, delivery[i].Nominal);
+            ClassicAssert.AreEqual(result.Transactions.ToList()[i].Banknote.Nominal, delivery[i].Nominal);
         }
         
-        Assert.AreEqual(result.Coffee, _coffee);
+        ClassicAssert.AreEqual(result.Coffee, _coffee);
     }
     
     private void FillingData()

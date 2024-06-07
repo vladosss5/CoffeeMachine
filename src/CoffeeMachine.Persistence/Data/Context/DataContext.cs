@@ -24,9 +24,6 @@ public partial class DataContext : DbContext
         : base(options)
     { }
     
-    // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    //     => optionsBuilder.UseNpgsql("Server=postgres-container;port=5432;user id=postgres;password=toor;database=CoffeeMachine;");
-    
     /// <summary>
     /// Банкноты.
     /// </summary>
@@ -58,7 +55,7 @@ public partial class DataContext : DbContext
     public virtual DbSet<Order> Orders { get; set; }
     
     /// <summary>
-    /// Транзакция.
+    /// <inheritdoc cref="Transactions"/>
     /// </summary>
     public virtual DbSet<Transaction> Transactions { get; set; }
 

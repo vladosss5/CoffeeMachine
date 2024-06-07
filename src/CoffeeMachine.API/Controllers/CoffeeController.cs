@@ -2,6 +2,8 @@ using AutoMapper;
 using CoffeeMachine.API.DTOs.Coffee;
 using CoffeeMachine.Application.Interfaces.IServices;
 using CoffeeMachine.Core.Models;
+using Keycloak.AuthServices.Sdk.Protection.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -41,6 +43,7 @@ namespace CoffeeMachine.API.Controllers
         /// <param name="id">Идентификатор кофе.</param>
         /// <returns>Кофе.</returns>
         [HttpGet("{id}")]
+        [Authorize(Policy = "AdminPolicy")]
         [ProducesResponseType(200, Type = typeof(Coffee))]
         public async Task<IActionResult> GetCoffeeByIdAsync(long id)
         {
@@ -53,6 +56,7 @@ namespace CoffeeMachine.API.Controllers
         /// </summary>
         /// <returns>Список кофе.</returns>
         [HttpGet]
+        [Authorize]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Coffee>))]
         public async Task<IActionResult> GetAllCoffeesAsync()
         {
@@ -66,6 +70,7 @@ namespace CoffeeMachine.API.Controllers
         /// <param name="coffeeRequest"></param>
         /// <returns>Кофе.</returns>
         [HttpPost]
+        [Authorize(Policy = "AdminPolicy")]
         [ProducesResponseType(200, Type = typeof(Coffee))]
         public async Task<IActionResult> CreateNewCoffeeAsync([FromBody] CoffeeCreateRequestDto coffeeRequest)
         {
@@ -82,6 +87,7 @@ namespace CoffeeMachine.API.Controllers
         /// <param name="coffeeRequest">Изменяемый кофе.</param>
         /// <returns>Кофе.</returns>
         [HttpPut("{id}")]
+        [Authorize(Policy = "AdminPolicy")]
         [ProducesResponseType(200, Type = typeof(Coffee))]
         public async Task<IActionResult> UpdateCoffeeAsync(CoffeeDto coffeeRequest)
         {
@@ -97,6 +103,7 @@ namespace CoffeeMachine.API.Controllers
         /// </summary>
         /// <param name="id">Идентификатор кофе.</param>
         [HttpDelete("{id}")]
+        [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> DeleteCoffeeAsync(long id)
         {
             await _adminService.DeleteCoffeeAsync(id);

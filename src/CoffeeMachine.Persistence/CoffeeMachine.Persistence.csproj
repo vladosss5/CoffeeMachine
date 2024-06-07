@@ -12,24 +12,28 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Keycloak.AuthServices.Authentication" Version="2.4.0" />
-      <PackageReference Include="Keycloak.AuthServices.Authorization" Version="2.4.0" />
-      <PackageReference Include="Keycloak.AuthServices.Sdk" Version="2.4.0" />
-      <PackageReference Include="Keycloak.AuthServices.Sdk.Kiota" Version="24.0.1" />
+      <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+      <PackageReference Include="Keycloak.AuthServices.Authentication" Version="2.4.1" />
+      <PackageReference Include="Keycloak.AuthServices.Authorization" Version="2.4.1" />
+      <PackageReference Include="Keycloak.AuthServices.Common" Version="2.4.1" />
+      <PackageReference Include="Keycloak.AuthServices.Sdk" Version="2.4.1" />
+      <PackageReference Include="Keycloak.AuthServices.Sdk.Kiota" Version="24.0.4" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.4" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.4">
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.5" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.5">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.4" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.4" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.4">
+      <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.5" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.5" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.5">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="Npgsql" Version="8.0.2" />
-      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+      <PackageReference Include="Npgsql" Version="8.0.3" />
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
+      <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.1" />
     </ItemGroup>
 
     <ItemGroup>

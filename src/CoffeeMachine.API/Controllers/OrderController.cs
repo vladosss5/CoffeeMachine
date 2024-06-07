@@ -3,6 +3,7 @@ using CoffeeMachine.API.DTOs;
 using CoffeeMachine.API.DTOs.Order;
 using CoffeeMachine.Application.Interfaces.IServices;
 using CoffeeMachine.Core.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoffeeMachine.API.Controllers
@@ -48,6 +49,7 @@ namespace CoffeeMachine.API.Controllers
         /// <param name="id">Идентификатор заказа.</param>
         /// <returns>Заказ.</returns>
         [HttpGet("{id}")]
+        [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> GetOrderByIdAsync(long id)
         {
             var result = await _adminService.GetOrderByIdAsync(id);
@@ -61,6 +63,7 @@ namespace CoffeeMachine.API.Controllers
         /// <param name="orderRequest">Запрос заказа.</param>
         /// <returns>Заказ.</returns>
         [HttpPost]
+        [Authorize(Policy = "DefaultPolicy")]
         public async Task<IActionResult> CreateOrderAsync([FromBody] OrderAddRequestDto orderRequest)
         {
             var order = _mapper.Map<OrderAddResponseDto>(await _orderService.CreateOrderAsync(_mapper.Map<Order>(orderRequest)));

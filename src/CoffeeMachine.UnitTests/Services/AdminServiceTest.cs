@@ -3,6 +3,7 @@ using CoffeeMachine.Application.Interfaces.IServices;
 using CoffeeMachine.Core.Models;
 using CoffeeMachine.Persistence.Services;
 using Moq;
+using NUnit.Framework.Legacy;
 
 namespace CoffeeMachine.UnitTests.Services;
 
@@ -35,7 +36,7 @@ public class AdminServiceTest
         
         var result = await adminService.GetMachineByIdAsync(1);
         
-        Assert.AreEqual(result, _machine);
+        ClassicAssert.AreEqual(result, _machine);
     }
 
     [Test]
@@ -51,7 +52,7 @@ public class AdminServiceTest
 
         foreach (var res in result)
         {
-            Assert.AreEqual(_machine, res);
+            ClassicAssert.AreEqual(_machine, res);
         }
     }
 
@@ -67,10 +68,9 @@ public class AdminServiceTest
         
         var result = await adminService.CreateNewMachineAsync(_machine);
         
-        Assert.AreEqual(result.Id, _machine.Id);
-        Assert.AreEqual(result.SerialNumber, _machine.SerialNumber);
-        Assert.AreEqual(result.Description, _machine.Description);
-        // Assert.AreEqual(result.Balance, _machine.Balance);
+        ClassicAssert.AreEqual(result.Id, _machine.Id);
+        ClassicAssert.AreEqual(result.SerialNumber, _machine.SerialNumber);
+        ClassicAssert.AreEqual(result.Description, _machine.Description);
     }
 
     [Test]
@@ -82,8 +82,8 @@ public class AdminServiceTest
         _machine.SerialNumber = "123321";
         moqUnitOfWork.Setup(x => x.Machine.UpdateAsync(It.IsAny<Machine>())).ReturnsAsync(_machine);
         
-        Assert.AreEqual("test", _machine.Description);
-        Assert.AreEqual("123321", _machine.SerialNumber);
+        ClassicAssert.AreEqual("test", _machine.Description);
+        ClassicAssert.AreEqual("123321", _machine.SerialNumber);
     }
 
     [Test]
@@ -96,7 +96,7 @@ public class AdminServiceTest
         
         var result = await adminService.GetMachineBySerialNumberAsync("11");
         
-        Assert.AreEqual(result, _machine);
+        ClassicAssert.AreEqual(result, _machine);
     }
 
     [Test]
@@ -112,7 +112,7 @@ public class AdminServiceTest
         
         var result = await adminService.UpdateBalanceAsync(1);
         
-        Assert.AreEqual(result, _machine.Balance);
+        ClassicAssert.AreEqual(result, _machine.Balance);
     }
 
     [Test]
@@ -129,7 +129,7 @@ public class AdminServiceTest
         
         var result = await adminService.AddCoffeeInMachineAsync(1, 1);
         
-        Assert.AreEqual(result.CoffeesToMachines, _machine.CoffeesToMachines);
+        ClassicAssert.AreEqual(result.CoffeesToMachines, _machine.CoffeesToMachines);
     }
     
     [Test]
@@ -146,7 +146,7 @@ public class AdminServiceTest
         
         var result = await adminService.DeleteCoffeeFromMachineAsync(1, 1);
         
-        Assert.AreEqual(result.CoffeesToMachines.Count(), 0);
+        ClassicAssert.AreEqual(result.CoffeesToMachines.Count(), 0);
     }
     
     [Test]
@@ -172,7 +172,7 @@ public class AdminServiceTest
         };
         var result = await adminService.AddBanknotesToMachineAsync(addBanknotes, 1);
         
-        Assert.AreEqual(93680, result.Balance);
+        ClassicAssert.AreEqual(93680, result.Balance);
         
         FillingData();
     }
@@ -201,7 +201,7 @@ public class AdminServiceTest
         
         var result = await adminService.SubtractBanknotesFromMachineAsync(deleteBanknotes, 1);
         
-        Assert.AreEqual(79680, result.Balance);
+        ClassicAssert.AreEqual(79680, result.Balance);
         
         FillingData();
     }
@@ -218,7 +218,7 @@ public class AdminServiceTest
         
         var result = await adminService.GetBanknotesByMachineAsync(1);
 
-        Assert.AreEqual(_banknotesToMachines, result);
+        ClassicAssert.AreEqual(_banknotesToMachines, result);
     }
 
     [Test]
@@ -231,7 +231,7 @@ public class AdminServiceTest
         
         var result = await adminService.GetCoffeeByIdAsync(1);
         
-        Assert.AreEqual(_coffee, result);
+        ClassicAssert.AreEqual(_coffee, result);
     }
 
     [Test]
@@ -247,7 +247,7 @@ public class AdminServiceTest
 
         foreach (var res in result)
         {
-            Assert.AreEqual(_coffee, res);
+            ClassicAssert.AreEqual(_coffee, res);
         }
     }
 
@@ -262,7 +262,7 @@ public class AdminServiceTest
         
         var result = await adminService.CreateNewCoffeeAsync(_coffee);
         
-        Assert.AreEqual(_coffee, result);
+        ClassicAssert.AreEqual(_coffee, result);
     }
     
     [Test]
@@ -276,7 +276,7 @@ public class AdminServiceTest
         
         var result = await adminService.UpdateCoffeeAsync(_coffee);
         
-        Assert.AreEqual(_coffee, result);
+        ClassicAssert.AreEqual(_coffee, result);
     }
 
     [Test]
@@ -289,7 +289,7 @@ public class AdminServiceTest
         
         var result = await adminService.GetByNameAsync(_coffee.Name);
         
-        Assert.AreEqual(_coffee, result);
+        ClassicAssert.AreEqual(_coffee, result);
     }
 
     [Test]
@@ -305,7 +305,7 @@ public class AdminServiceTest
         
         var result = await adminService.GetCoffeesFromMachineAsync(1);
         
-        Assert.AreEqual(_coffee, result.First());
+        ClassicAssert.AreEqual(_coffee, result.First());
     }
 
     [Test]
@@ -318,7 +318,7 @@ public class AdminServiceTest
         
         var result = await adminService.GetOrderByIdAsync(1);
         
-        Assert.AreEqual(_order, result);
+        ClassicAssert.AreEqual(_order, result);
     }
 
     [Test]
@@ -333,7 +333,7 @@ public class AdminServiceTest
 
         foreach (var res in result)
         {
-            Assert.AreEqual(res, _order);
+            ClassicAssert.AreEqual(res, _order);
         }
     }
     
@@ -347,7 +347,7 @@ public class AdminServiceTest
         
         var result = await adminService.GetAllTransactionsAsync();
         
-        Assert.AreEqual(_transactions, result);
+        ClassicAssert.AreEqual(_transactions, result);
     }
     
     [Test]
@@ -360,7 +360,7 @@ public class AdminServiceTest
         
         var result = await adminService.GetTransactionByIdAsync(1);
         
-        Assert.AreEqual(_transactions[0], result);
+        ClassicAssert.AreEqual(_transactions[0], result);
     }
     
     [Test]
@@ -374,7 +374,7 @@ public class AdminServiceTest
         
         var result = await adminService.GetTransactionsByTypeAsync(true);
         
-        Assert.AreEqual(_transactions.Where(x => x.IsPayment == true), result);
+        ClassicAssert.AreEqual(_transactions.Where(x => x.IsPayment == true), result);
     }
     
     [Test]
@@ -389,7 +389,7 @@ public class AdminServiceTest
         
         var result = await adminService.GetTransactionsByOrderAsync(1);
         
-        Assert.AreEqual(_transactions.Where(x => x.Order == _order), result);
+        ClassicAssert.AreEqual(_transactions.Where(x => x.Order == _order), result);
     }
     
     private void FillingData()

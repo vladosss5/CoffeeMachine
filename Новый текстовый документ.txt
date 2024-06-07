@@ -1,0 +1,4 @@
+curl --location --request POST 'http://localhost:8282/realms/demo/protocol/openid-connect/token' \ 
+--header 'Content-Type: application/x-www-form-urlencoded' \ --data-urlencode 'client_id=backend' \ 
+--data-urlencode 'client_secret=lF5ofyLLi9kpcLaVmKj3dPuCW4Iw8718' \
+--data-urlencode 'grant_type=client_credentials'
