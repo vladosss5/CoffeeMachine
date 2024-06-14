@@ -16,10 +16,12 @@ services:
       - coffeemachine_net
     depends_on:
       - coffeemachine_db
+      - keycloak
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:5000
       - ConnectionString=host=postgres-container;port=5432;database=CoffeeMachine;Username=postgres;Password=toor;
+      - KeycloakUrl=http://keycloak:8080
         
   keycloak:
     image: quay.io/keycloak/keycloak:20.0.2

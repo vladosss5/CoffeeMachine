@@ -129,7 +129,7 @@ public abstract class BaseTest
             {"client_id", "backend"},
             {"username", login},
             {"password", password},
-            {"client_secret", "5iyCL6q6bceg3CWfEKJEdp9NC4TMDS6N"},
+            {"client_secret", "kRXuEEcKD54WZGvOC0X3Di8ObhMUrFnl"},
             {"scope", "roles"}
         };
             
