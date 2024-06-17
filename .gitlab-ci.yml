@@ -9,7 +9,7 @@ variables:
 
 before_script:
   - "cd src"
-  - "dotnet --version"
+  - "dotnet --list-sdks"
   - "dotnet restore"
 
 build:
