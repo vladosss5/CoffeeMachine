@@ -7,9 +7,6 @@ stages:
 variables:
   test: "CoffeeMachine.IntegrationTest"
 
-before_script:
-  - "ls"
-
 build:
   stage: build
   script:
