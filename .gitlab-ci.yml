@@ -15,11 +15,11 @@ stages:
   
 before_script:
   - ls
-  - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
 
 build:
   stage: build
   script:
     - 'cd src'
+    - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
     - 'dotnet restore'
     - 'dotnet build'
