@@ -2,9 +2,6 @@ image: docker:latest
 
 stages:
   - build
-
-variables:
-  test: "CoffeeMachine.IntegrationTest"
   
 before_script:
   - docker info
