@@ -90,25 +90,6 @@ public static class DIExtentions
         {
             options.RequireHttpsMetadata = false;
         });
-
-        // services
-        //     .AddAuthorization(o =>
-        //         o.AddPolicy(
-        //             "IsAdmin",
-        //             b =>
-        //             {
-        //                 b.RequireRealmRoles("admin");
-        //                 b.RequireResourceRoles("r-admin");
-        //                 // TokenValidationParameters.RoleClaimType is overridden
-        //                 // by KeycloakRolesClaimsTransformation
-        //                 b.RequireRole("r-admin");
-        //             }
-        //         )
-        //     )
-        //     .AddKeycloakAuthorization(configuration)
-        //     .AddAuthorizationServer(configuration);
-        //
-        // services.AddKeycloakAdminHttpClient(configuration);
         
         return services;
     }

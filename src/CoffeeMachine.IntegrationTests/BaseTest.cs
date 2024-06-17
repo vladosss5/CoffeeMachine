@@ -1,4 +1,6 @@
-﻿using CoffeeMachine.API;
+﻿using System.Net.Http.Json;
+using CoffeeMachine.API;
+using CoffeeMachine.API.DTOs.Account;
 using CoffeeMachine.Core.Models;
 using CoffeeMachine.Persistence.Data.Context;
 using CoffeeMachine.Persistence.Data.Migrations;
@@ -108,11 +110,11 @@ public abstract class BaseTest
         await _dataContext.AddRangeAsync(_coffeeToMachines);
         await _dataContext.AddRangeAsync(_order);
         await _dataContext.SaveChangesAsync();
-
-        _adminToken = await GetToken("testuseradmin", "root");
-        _defafultUserToken = await GetToken("defaultuser", "toor");
         
         _client = webHost.CreateClient();
+
+        _adminToken = await GetToken("admin", "root");
+        _defafultUserToken = await GetToken("defuser", "toor");
     }
 
     /// <summary>
@@ -123,21 +125,9 @@ public abstract class BaseTest
     /// <returns>JWT токен.</returns>
     public async Task<string> GetToken(string login, string password)
     {
-        var reqestKeycloak = new Dictionary<string, string>
-        {
-            {"grant_type", "password"},
-            {"client_id", "backend"},
-            {"username", login},
-            {"password", password},
-            {"client_secret", "kRXuEEcKD54WZGvOC0X3Di8ObhMUrFnl"},
-            {"scope", "roles"}
-        };
-            
-        var response = await _client.PostAsync("http://localhost:8282/realms/MyRealm/protocol/openid-connect/token",
-            new FormUrlEncodedContent(reqestKeycloak));
-        var responseString = JObject.Parse(await response.Content.ReadAsStringAsync());
-        var token = (string)responseString["access_token"];
-        
+        var authRequest = new LoginRequestDto{Login = login, Password = password};
+        var response = await _client.PostAsJsonAsync("/api/Account/Login", authRequest);
+        var token = await response.Content.ReadAsStringAsync();
         return token;
     }
 

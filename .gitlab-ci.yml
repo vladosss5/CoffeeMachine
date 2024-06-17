@@ -15,11 +15,7 @@ before_script:
 build:
   stage: build
   script:
-    - "cd CoffeeMachine.API"
-    - "dotnet build"
-
-test:
-  stage: test
-  script:
-    - "cd $CoffeeMachine.IntegrationTest"
-    - "dotnet test"
+    - "docker compose up"
+  artifacts: 
+    paths:
+      - /built-output
