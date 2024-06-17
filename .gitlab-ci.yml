@@ -8,9 +8,7 @@ variables:
   test: "CoffeeMachine.IntegrationTest"
 
 before_script:
-  - "cd src"
-  - "dotnet --list-sdks"
-  - "dotnet restore"
+  - "cd ls"
 
 build:
   stage: build
