@@ -8,7 +8,6 @@ stages:
   - build
   
 before_script:
-  - docker info
   - docker-compose --version
 
 build:
