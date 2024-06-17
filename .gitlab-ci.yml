@@ -1,16 +1,21 @@
+image: docker:latest
+
 stages:
   - build
-  - test
 
 variables:
   test: "CoffeeMachine.IntegrationTest"
+  
+before_script:
+  - docker info
+  - docker-compose --version
 
 build:
   stage: build
   script:
-    - docker compose down
-    - docker compose build
-    - docker compose up --abort-on-container-exit
+    - docker-compose down
+    - docker-compose build
+    - docker-compose up --abort-on-container-exit
   artifacts: 
     paths:
       - /built-output
