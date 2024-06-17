@@ -8,7 +8,7 @@ variables:
   test: "CoffeeMachine.IntegrationTest"
 
 before_script:
-  - "cd ls"
+  - "ls"
 
 build:
   stage: build
