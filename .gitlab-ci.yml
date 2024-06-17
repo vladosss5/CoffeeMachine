@@ -1,15 +1,25 @@
 image: mcr.microsoft.com/dotnet/sdk:8.0
 
+variables:
+  # 1) Name of directory where restore and build objects are stored.
+  OBJECTS_DIRECTORY: 'obj'
+  # 2) Name of directory used for keeping restored dependencies.
+  NUGET_PACKAGES_DIRECTORY: '.nuget'
+  # 3) A relative path to the source code from project repository root.
+  # NOTE: Please edit this path so it matches the structure of your project!
+  SOURCE_CODE_PATH: 'src/CoffeeMachine.API'
+
+
 stages:
   - build
   
 before_script:
   - ls
+  - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
 
 build:
   stage: build
-  image: mcr.microsoft.com/dotnet/aspnet:8.0
   script:
-    - cd src
-    - dotnet restore
-    - dotnet build
+    - 'cd src'
+    - 'dotnet restore'
+    - 'dotnet build'
