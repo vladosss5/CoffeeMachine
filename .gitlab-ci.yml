@@ -1,21 +1,14 @@
-image: docker:latest
 
-services:
-  - docker:dind
-  
-variables:
-  DOCKER_HOST: tcp://docker:2375/
-  DOCKER_DRIVER: overlay2
-  DOCKER_TLS_CERTDIR: ""
-  
 stages:
   - build
   
 before_script:
-  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - ls
 
 build:
   stage: build
+  image: mcr.microsoft.com/dotnet/aspnet:8.0
   script:
-    - docker-compose build
-    - docker-compose up
+    - cd src
+    - dotnet restore
+    - dotnet build
