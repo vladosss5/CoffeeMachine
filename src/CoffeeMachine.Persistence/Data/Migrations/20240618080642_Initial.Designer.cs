@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CoffeeMachine.Persistence.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240604074643_Initial")]
+    [Migration("20240618080642_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -173,25 +173,6 @@ namespace CoffeeMachine.Persistence.Data.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("CoffeeMachine.Core.Models.Role", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)");
-
-                    b.HasKey("Id")
-                        .HasName("role_pk");
-
-                    b.ToTable("Roles");
-                });
-
             modelBuilder.Entity("CoffeeMachine.Core.Models.Transaction", b =>
                 {
                     b.Property<long>("Id")
@@ -217,35 +198,6 @@ namespace CoffeeMachine.Persistence.Data.Migrations
                     b.HasIndex("OrderId");
 
                     b.ToTable("Transactions");
-                });
-
-            modelBuilder.Entity("CoffeeMachine.Core.Models.User", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("Login")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)");
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<long>("RoleId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id")
-                        .HasName("user_pk");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("CoffeeMachine.Core.Models.BanknoteToMachine", b =>
@@ -332,18 +284,6 @@ namespace CoffeeMachine.Persistence.Data.Migrations
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("CoffeeMachine.Core.Models.User", b =>
-                {
-                    b.HasOne("CoffeeMachine.Core.Models.Role", "Role")
-                        .WithMany("Users")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("user_role_fk");
-
-                    b.Navigation("Role");
-                });
-
             modelBuilder.Entity("CoffeeMachine.Core.Models.Banknote", b =>
                 {
                     b.Navigation("BanknotesToMachines");
@@ -370,11 +310,6 @@ namespace CoffeeMachine.Persistence.Data.Migrations
             modelBuilder.Entity("CoffeeMachine.Core.Models.Order", b =>
                 {
                     b.Navigation("Transactions");
-                });
-
-            modelBuilder.Entity("CoffeeMachine.Core.Models.Role", b =>
-                {
-                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

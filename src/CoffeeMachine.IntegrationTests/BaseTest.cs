@@ -3,12 +3,10 @@ using CoffeeMachine.API;
 using CoffeeMachine.API.DTOs.Account;
 using CoffeeMachine.Core.Models;
 using CoffeeMachine.Persistence.Data.Context;
-using CoffeeMachine.Persistence.Data.Migrations;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json.Linq;
 
 namespace CoffeeMachine.IntegrationTests;
 

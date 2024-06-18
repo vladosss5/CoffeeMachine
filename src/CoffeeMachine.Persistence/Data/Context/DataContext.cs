@@ -2,6 +2,7 @@ using CoffeeMachine.Application.Exceptions;
 using CoffeeMachine.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.Extensions.Configuration;
 
 namespace CoffeeMachine.Persistence.Data.Context;
 
@@ -10,6 +11,7 @@ namespace CoffeeMachine.Persistence.Data.Context;
 /// </summary>
 public partial class DataContext : DbContext
 {
+    
     /// <summary>
     /// Конструктор класса.
     /// </summary>
@@ -23,6 +25,9 @@ public partial class DataContext : DbContext
     public DataContext(DbContextOptions<DataContext> options)
         : base(options)
     { }
+    
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        => optionsBuilder.UseNpgsql("Server=localhost;port=7654;user id=postgres;password=toor;database=CoffeeMachine;");
     
     /// <summary>
     /// Банкноты.
