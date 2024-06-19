@@ -30,3 +30,7 @@ test:
     - ls
     - 'dotnet restore'
     - 'dotnet test'
+    - 'cd ../CoffeeMachine.IntegrationTests'
+    - ls
+    - 'dotnet restore'
+    - 'dotnet test'
