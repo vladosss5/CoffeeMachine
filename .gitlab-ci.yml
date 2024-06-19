@@ -16,6 +16,7 @@ build:
   stage: build
   script:
     - 'cd src/CoffeeMachine.API'
+    - 'dotnet run'
     - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
     - 'dotnet restore'
     - 'dotnet build'
