@@ -15,7 +15,7 @@ before_script:
 
 build:
   stage: build
-
+  image: registry.tomskasu.ru/devops/dockerify/dotnetsdk:8.0
   script:
     - 'cd src/CoffeeMachine.UnitTests'
     - ls
