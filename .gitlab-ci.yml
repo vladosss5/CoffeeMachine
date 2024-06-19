@@ -16,7 +16,7 @@ build:
   stage: build
   script:
     - 'cd src'
-    - docker ps -a
+    - help
     - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
     - 'dotnet restore'
     - 'dotnet build'
