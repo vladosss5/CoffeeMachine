@@ -19,11 +19,10 @@ build:
   script:
     - 'cd src/CoffeeMachine.API'
     - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
-    - 'dotnet restore'
     - 'dotnet build'
 
 test:
   stage: test
   script:
-    - 'cd ../src/CoffeeMachine.UnitTests'
+    - 'cd src/CoffeeMachine.UnitTests'
     - 'dotnet test'
