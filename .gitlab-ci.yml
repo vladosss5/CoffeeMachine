@@ -18,9 +18,8 @@ build:
   image: registry.tomskasu.ru/devops/dockerify/dotnetsdk:8.0
   script:
     - 'cd src/CoffeeMachine.API'
-    - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
-    - 'dotnet restore'
-    - 'dotnet build'
+#    - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
+#    - 'dotnet build'
 
 test:
   stage: test
@@ -28,9 +27,9 @@ test:
   script:
     - 'cd src/CoffeeMachine.UnitTests'
     - ls
-    - 'dotnet restore'
+    - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
     - 'dotnet test'
     - 'cd ../CoffeeMachine.IntegrationTests'
     - ls
-    - 'dotnet restore'
+    - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
     - 'dotnet test'
