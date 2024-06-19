@@ -1,0 +1,157 @@
+stages:
+  - restore
+  - build
+  - publish
+  - deploy
+
+variables:
+  NUGET_PACKAGES: ${CI_PROJECT_DIR}/packages
+  PROJECT_PATH: src/WebApi/WebApi.csproj
+  OUTPUT_FOLDER: /publish_artefacts/$CI_COMMIT_BRANCH/$CI_PROJECT_NAME
+  CONFIG_FOLDER: /publish_artefacts/configs/$CI_PROJECT_NAME
+  PUBLISH_FOLDER: /inetpub/wwwroot/$CI_PROJECT_NAME
+
+default:
+  image: nexus.tomskasu.ru/mcr.microsoft.com/dotnet/sdk:6.0
+  tags:
+    - linux
+    - docker
+
+restore:
+  stage: restore
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  script:
+    - dotnet restore $PROJECT_PATH
+    - dotnet tool restore
+    - ls -l $NUGET_PACKAGES
+  cache:
+    - key: build-cache
+      paths:
+        - ./packages
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+
+build:
+  stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  script:
+    - dotnet publish $PROJECT_PATH -r win-x64 --self-contained false -c RELEASE -o app
+  dependencies:
+    - restore
+  needs:
+    - restore
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - ./app/
+  cache:
+    key: build-cache
+    policy: pull
+    paths:
+      - ./packages
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+publish:
+  stage: publish
+  variables:
+    GIT_STRATEGY: none
+    STAND_NAME: preprod
+  script:
+    - if (Test-Path $OUTPUT_FOLDER) { Remove-Item $OUTPUT_FOLDER/* -Recurse -Force }
+    - cp -r ./app/* $OUTPUT_FOLDER
+    - cp -r -force $CONFIG_FOLDER/* $OUTPUT_FOLDER
+  dependencies:
+    - build
+  needs:
+    - build
+  extends:
+    - .publish-rules
+  tags:
+    - deploy
+    - shell
+    - windows
+    - yung
+
+publish_dev:
+  stage: publish
+  variables:
+    GIT_STRATEGY: none
+    STAND_NAME: dev
+  script:
+    - if (Test-Path $OUTPUT_FOLDER) { Remove-Item $OUTPUT_FOLDER/* -Recurse -Force }
+    - cp -r ./app/* $OUTPUT_FOLDER
+    - cp -r -force $CONFIG_FOLDER/* $OUTPUT_FOLDER
+  dependencies:
+    - build
+  needs:
+    - build
+  extends:
+    - .publish-rules
+  tags:
+    - dev
+    - shell
+    - windows
+    - yung
+
+deploy:
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+    STAND_NAME: preprod
+  before_script:
+    - appcmd stop site /site.name:$CI_PROJECT_NAME
+    - appcmd stop apppool /apppool.name:$CI_PROJECT_NAME
+  script:
+    - if (Test-Path $PUBLISH_FOLDER) { Remove-Item $PUBLISH_FOLDER -Recurse -Force }
+    - robocopy $OUTPUT_FOLDER $PUBLISH_FOLDER /E /COPYALL; if ($lastexitcode -lt 2) { $global:LASTEXITCODE = $null }
+  after_script:
+    - appcmd start apppool /apppool.name:$CI_PROJECT_NAME
+    - appcmd start site /site.name:$CI_PROJECT_NAME
+  dependencies:
+    - publish
+  needs:
+    - publish
+  extends:
+    - .publish-rules
+  tags:
+    - deploy
+    - shell
+    - windows
+    - yung
+
+deploy_dev:
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+    STAND_NAME: dev
+  before_script:
+    - appcmd stop site /site.name:$CI_PROJECT_NAME
+    - appcmd stop apppool /apppool.name:$CI_PROJECT_NAME
+  script:
+    - if (Test-Path $PUBLISH_FOLDER) { Remove-Item $PUBLISH_FOLDER -Recurse -Force }
+    - robocopy $OUTPUT_FOLDER $PUBLISH_FOLDER /E /COPYALL; if ($lastexitcode -lt 2) { $global:LASTEXITCODE = $null }
+  after_script:
+    - appcmd start apppool /apppool.name:$CI_PROJECT_NAME
+    - appcmd start site /site.name:$CI_PROJECT_NAME
+  dependencies:
+    - publish_dev
+  needs:
+    - publish_dev
+  extends:
+    - .publish-rules
+  tags:
+    - dev
+    - shell
+    - windows
+    - yung
+
+.publish-rules:
+  rules:
+    - if: $STAND == $STAND_NAME && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: on_success
+      allow_failure: false
+    - when: never

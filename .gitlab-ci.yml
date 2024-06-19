@@ -17,17 +17,14 @@ build:
   stage: build
   image: registry.tomskasu.ru/devops/dockerify/dotnetsdk:8.0
   script:
-    - 'cd src/CoffeeMachine.UnitTests'
-    - ls
+    - 'cd src/CoffeeMachine.API'
+    - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
     - 'dotnet restore'
-    - 'dotnet test'
-#    - 'cd src/CoffeeMachine.API'
-#    - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
-#    - 'dotnet restore'
-#    - 'dotnet build'
+    - 'dotnet build'
 
 test:
   stage: test
+  image: registry.tomskasu.ru/devops/dockerify/dotnetsdk:8.0
   script:
     - 'cd src/CoffeeMachine.UnitTests'
     - ls
