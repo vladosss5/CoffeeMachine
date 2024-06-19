@@ -48,7 +48,7 @@ public class AdminService : IAdminService
     /// Создать новую кофемашину.
     /// </summary>
     /// <param name="machine">Кофемашина.</param>
-    /// <returns>Созданная кофемашина.</returns>
+    /// <returns>Созданная кофемашина.</returns\>|
     public async Task<Machine> CreateNewMachineAsync(Machine machine)
     {
         var identity = await _unitOfWork.Machine.GetBySerialNumberAsync(machine.SerialNumber);
