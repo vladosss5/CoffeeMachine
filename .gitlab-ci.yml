@@ -7,7 +7,7 @@ variables:
 
 
 stages:
-#  - build
+  - build
   - test
   
 before_script:
@@ -15,12 +15,16 @@ before_script:
 
 build:
   stage: build
-  
+
   script:
-    - 'cd src/CoffeeMachine.API'
-    - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
+    - 'cd src/CoffeeMachine.UnitTests'
+    - ls
     - 'dotnet restore'
-    - 'dotnet build'
+    - 'dotnet test'
+#    - 'cd src/CoffeeMachine.API'
+#    - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
+#    - 'dotnet restore'
+#    - 'dotnet build'
 
 test:
   stage: test
