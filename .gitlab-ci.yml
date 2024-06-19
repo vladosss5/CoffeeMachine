@@ -7,7 +7,7 @@ variables:
 
 
 stages:
-  - build
+#  - build
   - test
   
 before_script:
@@ -15,15 +15,17 @@ before_script:
 
 build:
   stage: build
-  image: registry.tomskasu.ru/devops/dockerify/dotnetsdk:8.0
+  
   script:
     - 'cd src/CoffeeMachine.API'
-    - 'dotnet restore' 
+    - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
+    - 'dotnet restore'
     - 'dotnet build'
 
 test:
   stage: test
   script:
     - 'cd src/CoffeeMachine.UnitTests'
+    - ls
     - 'dotnet restore'
     - 'dotnet test'
