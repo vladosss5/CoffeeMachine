@@ -25,4 +25,5 @@ test:
   stage: test
   script:
     - 'cd src/CoffeeMachine.UnitTests'
+    - 'dotnet restore'
     - 'dotnet test'
