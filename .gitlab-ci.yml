@@ -1,4 +1,4 @@
-image: registry.tomskasu.ru/devops/dockerify/dotnetsdk:8.0
+image: registry.tomskasu.ru/devops/dockerify/aspnet:8.0
 
 variables:
   OBJECTS_DIRECTORY: 'obj'
