@@ -1,4 +1,4 @@
-image: mcr.microsoft.com/dotnet/sdk:8.0
+image: registry.tomskasu.ru/devops/dockerify/dotnetsdk:8.0
 
 variables:
   OBJECTS_DIRECTORY: 'obj'
@@ -8,6 +8,7 @@ variables:
 
 stages:
   - build
+  - test
   
 before_script:
   - ls
@@ -17,6 +18,12 @@ build:
   script:
     - 'cd src/CoffeeMachine.API'
     - 'dotnet run'
-    - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
-    - 'dotnet restore'
-    - 'dotnet build'
+#    - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
+#    - 'dotnet restore'
+#    - 'dotnet build'
+
+test:
+  stage: test
+  script:
+    - 'cd ../src/CoffeeMachine.UnitTests'
+    - 'dotnet test'
