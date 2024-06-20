@@ -21,6 +21,7 @@ before_script:
 #    - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
 #    - 'dotnet build'
 
+
 build:
   stage: build
   image: docker/compose:latest
