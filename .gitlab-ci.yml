@@ -31,6 +31,8 @@ build:
     - docker-compose -f docker-compose.yml up
 
 
+
+
 #test:
 #  stage: test
 #  image: registry.tomskasu.ru/devops/dockerify/dotnetsdk:8.0
