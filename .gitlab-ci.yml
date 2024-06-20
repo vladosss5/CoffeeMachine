@@ -27,12 +27,7 @@ build:
   image: docker/compose:latest
   services:
     - docker:24.0.5-dind
-  variables:
-    DOCKER_HOST: tcp://thedockerhost:2375/
-    DOCKER_DRIVER: overlay2
-    DOCKER_TLS_CERTDIR: ""
   script:
-    - export DOCKER_HOST=tcp://127.0.0.1:2375 && docker build --pull -t ${CI_REGISTRY_IMAGE}
     - docker-compose -f docker-compose.yml up
 
 
