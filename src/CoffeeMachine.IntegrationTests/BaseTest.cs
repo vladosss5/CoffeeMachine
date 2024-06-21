@@ -1,19 +1,28 @@
-﻿using System.Net.Http.Json;
+﻿using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using CoffeeMachine.API;
 using CoffeeMachine.API.DTOs.Account;
 using CoffeeMachine.Core.Models;
+using CoffeeMachine.IntegrationTests.AuthorizationMoq;
 using CoffeeMachine.Persistence.Data.Context;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Policy;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Newtonsoft.Json.Linq;
 
 namespace CoffeeMachine.IntegrationTests;
 
 /// <summary>
 /// Базовый тест. Служит для настройки DI тестируемого проета.
 /// </summary>
-public abstract class BaseTest
+public abstract class BaseTest : WebApplicationFactory<Startup>
 {
     /// <summary>
     /// HTTP клиент.
@@ -29,11 +38,6 @@ public abstract class BaseTest
     /// Токен авторизаии администратора.
     /// </summary>
     protected string _adminToken;
-    
-    /// <summary>
-    /// Токен авторизации пользователя.
-    /// </summary>
-    protected string _defafultUserToken;    
     
     /// <summary>
     /// Кофе.
@@ -81,11 +85,14 @@ public abstract class BaseTest
     [SetUp]
     public async Task Init()
     {
-        _client = new HttpClient();
+        
+        // _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
+
         var webHost = new WebApplicationFactory<Startup>().WithWebHostBuilder(builder =>
         {
             builder.ConfigureTestServices(services =>
             {
+                services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
                 var dbContextDescriptor = services.FirstOrDefault(d =>
                     d.ServiceType == typeof(DbContextOptions<DataContext>));
 
@@ -96,6 +103,7 @@ public abstract class BaseTest
                 });
             });
         });
+        _client = webHost.CreateClient();
         
         FillingData();
         
@@ -109,11 +117,34 @@ public abstract class BaseTest
         await _dataContext.AddRangeAsync(_order);
         await _dataContext.SaveChangesAsync();
         
-        _client = webHost.CreateClient();
+        //_client = webHost.CreateClient();
 
-        _adminToken = await GetToken("admin", "root");
-        _defafultUserToken = await GetToken("defuser", "toor");
+        // _adminToken = await GetToken("admin", "admin");
     }
+    
+    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    {
+        //builder.ConfigureTestServices(ConfigureServices);
+        builder.ConfigureLogging((WebHostBuilderContext context, ILoggingBuilder loggingBuilder) =>
+        {
+            loggingBuilder.ClearProviders();
+            loggingBuilder.AddConsole(options => options.IncludeScopes = true);
+        });
+    }
+
+    //protected virtual void ConfigureServices(IServiceCollection services)
+    //{
+    //    services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
+    //    {
+    //        var config = new OpenIdConnectConfiguration()
+    //        {
+    //            Issuer = MockJwtTokens.Issuer
+    //        };
+//
+    //        config.SigningKeys.Add(MockJwtTokens.SecurityKey);
+    //        options.Configuration = config;
+    //    });
+    //}
 
     /// <summary>
     /// Получение JWT токена от keycloak.
@@ -123,9 +154,21 @@ public abstract class BaseTest
     /// <returns>JWT токен.</returns>
     public async Task<string> GetToken(string login, string password)
     {
-        var authRequest = new LoginRequestDto{Login = login, Password = password};
-        var response = await _client.PostAsJsonAsync("/api/Account/Login", authRequest);
-        var token = await response.Content.ReadAsStringAsync();
+        var reqestKeycloak = new Dictionary<string, string>
+        {
+            {"grant_type", "password"},
+            {"client_id", "admin-cli"},
+            {"username", login},
+            {"password", password},
+            {"scope", "roles"}
+        };
+            
+        var response = await _client.PostAsync("http://keycloak:8282/realms/master/protocol/openid-connect/token",
+            new FormUrlEncodedContent(reqestKeycloak));
+            
+        var responseString = JObject.Parse(await response.Content.ReadAsStringAsync());
+        var token = (string)responseString["access_token"];
+        
         return token;
     }
 

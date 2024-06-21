@@ -43,7 +43,7 @@ namespace CoffeeMachine.API.Controllers
         /// <param name="id">Идентификатор кофе.</param>
         /// <returns>Кофе.</returns>
         [HttpGet("{id}")]
-        [Authorize(Policy = "AdminPolicy")]
+        [Authorize]
         [ProducesResponseType(200, Type = typeof(Coffee))]
         public async Task<IActionResult> GetCoffeeByIdAsync(long id)
         {

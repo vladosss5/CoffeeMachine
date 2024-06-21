@@ -48,7 +48,7 @@ public class OrderControllerTests : BaseTest
         var sumDelivery = 0;
         
         //Act
-        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _defafultUserToken);
+        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _adminToken);
         var response = await _client.PostAsJsonAsync("/api/order", requestOrder);
         var responseString = await response.Content.ReadAsStringAsync();
         var responseOrder = JsonConvert.DeserializeObject<OrderAddResponseDto>(responseString);

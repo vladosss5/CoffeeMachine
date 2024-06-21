@@ -1,17 +1,50 @@
-image: registry.tomskasu.ru/devops/dockerify/aspnet:8.0
-
-variables:
-  OBJECTS_DIRECTORY: 'obj'
-  NUGET_PACKAGES_DIRECTORY: '.nuget'
-  SOURCE_CODE_PATH: 'src/CoffeeMachine.API'
-
-
 stages:
   - build
-#  - test
-  
-before_script:
-  - ls
+  - test
+    
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+
+build_job:
+  stage: build
+  image: registry.tomskasu.ru/devops/dockerify/dotnetsdk:8.0
+  script:
+    - 'cd src/CoffeeMachine.API'
+    - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
+    - 'dotnet build --no-restore'
+  artifacts: 
+    paths:
+      - ./bin/
+
+
+test_job:
+  stage: test
+  image: docker:latest
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_DRIVER: overlay2
+  script:
+    - docker-compose -f docker-compose.test.yml up -d
+    - docker-compose -f docker-compose.test.yml run --rm app-test
+    - docker-compose -f docker-compose.test.yml down
+      
+#image: registry.tomskasu.ru/devops/dockerify/aspnet:8.0
+#
+#variables:
+#  OBJECTS_DIRECTORY: 'obj'
+#  NUGET_PACKAGES_DIRECTORY: '.nuget'
+#  SOURCE_CODE_PATH: 'src/CoffeeMachine.API'
+#
+#
+#stages:
+#  - build
+##  - test
+#  
+#before_script:
+#  - ls
 
 #build:
 #  stage: build
@@ -22,14 +55,14 @@ before_script:
 #    - 'dotnet build'
 
 
-build:
-  stage: build
-  image: docker/compose:latest
-  services:
-    - docker:24.0.5-dind
-  script:
-    - docker-compose -f docker-compose.yml up
-
+#build:
+#  stage: build
+#  image: docker/compose:latest
+#  services:
+#    - docker:24.0.5-dind
+#  script:
+#    - docker-compose -f docker-compose.yml up
+#
 
 
 

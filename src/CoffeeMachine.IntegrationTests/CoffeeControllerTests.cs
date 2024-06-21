@@ -62,7 +62,7 @@ public class CoffeeControllerTests : BaseTest
         var verifyCoffee = new Coffee { Id = 1, Name = "Cappuccino", Price = 836 };
             
         //Act
-        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _adminToken);
+        //_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _adminToken);
         var response = await _client.GetAsync("/api/coffee/1");
         var responseString = await response.Content.ReadAsStringAsync();
         var coffee = JsonConvert.DeserializeObject<Coffee>(responseString);
@@ -110,7 +110,7 @@ public class CoffeeControllerTests : BaseTest
         var verifyCoffee = new Coffee{Id = 1, Name = "Latte", Price = 800};
         
         //Act
-        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _adminToken);
+        // _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _adminToken);
         var response = await _client.PutAsJsonAsync("/api/coffee/1", verifyCoffee);
         var coffeeString = await response.Content.ReadAsStringAsync();
         var coffee = JsonConvert.DeserializeObject<Coffee>(coffeeString);

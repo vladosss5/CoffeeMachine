@@ -63,7 +63,7 @@ namespace CoffeeMachine.API.Controllers
         /// <param name="orderRequest">Запрос заказа.</param>
         /// <returns>Заказ.</returns>
         [HttpPost]
-        [Authorize(Policy = "DefaultPolicy")]
+        [Authorize]
         public async Task<IActionResult> CreateOrderAsync([FromBody] OrderAddRequestDto orderRequest)
         {
             var order = _mapper.Map<OrderAddResponseDto>(await _orderService.CreateOrderAsync(_mapper.Map<Order>(orderRequest)));

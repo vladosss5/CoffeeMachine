@@ -26,7 +26,7 @@ public static class DIExtentions
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, 
         IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("PostgresContainer");
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
 
         services.AddDbContext<DataContext>(options => options.UseNpgsql(connectionString));
 

@@ -8,8 +8,9 @@ namespace CoffeeMachine.API;
 public class Startup
 {
     public IConfiguration Configuration { get; }
+    public IWebHostEnvironment _env { get; set; }
 
-    public Startup(IConfiguration configuration)
+    public Startup(IConfiguration configuration, IWebHostEnvironment env)
     {
         Configuration = configuration;
         var logger = Log.Logger = new LoggerConfiguration()
@@ -28,11 +29,12 @@ public class Startup
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         services.AddKeycloakAuthentication(Configuration);
-        services.AddCustomAuthorization();
+        services.AddCustomAuthorization();   
     }
     
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
+
         app.UseSerilogRequestLogging();
         
         if (env.IsDevelopment())
