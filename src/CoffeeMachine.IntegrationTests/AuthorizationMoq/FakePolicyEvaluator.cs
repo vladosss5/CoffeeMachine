@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Http;
 
 namespace CoffeeMachine.IntegrationTests.AuthorizationMoq;
 
+/// <summary>
+/// Класс создания фейковой политики авторизации.
+/// </summary>
 public class FakePolicyEvaluator : IPolicyEvaluator
 {
     public virtual async Task<AuthenticateResult> AuthenticateAsync(AuthorizationPolicy policy, HttpContext context)

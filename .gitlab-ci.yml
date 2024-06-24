@@ -12,9 +12,6 @@ build_job:
   script:
     - 'cd src/CoffeeMachine.API'
     - 'dotnet build'
-  artifacts: 
-    paths:
-      - ./bin/
 
 test_job:
   stage: test

@@ -85,14 +85,12 @@ public abstract class BaseTest : WebApplicationFactory<Startup>
     [SetUp]
     public async Task Init()
     {
-        
-        // _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
-
         var webHost = new WebApplicationFactory<Startup>().WithWebHostBuilder(builder =>
         {
             builder.ConfigureTestServices(services =>
             {
                 services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                
                 var dbContextDescriptor = services.FirstOrDefault(d =>
                     d.ServiceType == typeof(DbContextOptions<DataContext>));
 
@@ -103,28 +101,15 @@ public abstract class BaseTest : WebApplicationFactory<Startup>
                 });
             });
         });
+        
         _client = webHost.CreateClient();
-        
-        FillingData();
-        
         _dataContext = webHost.Services.CreateScope().ServiceProvider.GetService<DataContext>();
         
-        await _dataContext.AddRangeAsync(_coffee);
-        await _dataContext.AddRangeAsync(_machine);
-        await _dataContext.AddRangeAsync(_banknotes);
-        await _dataContext.AddRangeAsync(_banknotesToMachines);
-        await _dataContext.AddRangeAsync(_coffeeToMachines);
-        await _dataContext.AddRangeAsync(_order);
-        await _dataContext.SaveChangesAsync();
-        
-        //_client = webHost.CreateClient();
-
-        // _adminToken = await GetToken("admin", "admin");
+        FillingData();
     }
     
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        //builder.ConfigureTestServices(ConfigureServices);
         builder.ConfigureLogging((WebHostBuilderContext context, ILoggingBuilder loggingBuilder) =>
         {
             loggingBuilder.ClearProviders();
@@ -132,50 +117,10 @@ public abstract class BaseTest : WebApplicationFactory<Startup>
         });
     }
 
-    //protected virtual void ConfigureServices(IServiceCollection services)
-    //{
-    //    services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
-    //    {
-    //        var config = new OpenIdConnectConfiguration()
-    //        {
-    //            Issuer = MockJwtTokens.Issuer
-    //        };
-//
-    //        config.SigningKeys.Add(MockJwtTokens.SecurityKey);
-    //        options.Configuration = config;
-    //    });
-    //}
-
-    /// <summary>
-    /// Получение JWT токена от keycloak.
-    /// </summary>
-    /// <param name="login">Имя пользователя.</param>
-    /// <param name="password">Пароль.</param>
-    /// <returns>JWT токен.</returns>
-    public async Task<string> GetToken(string login, string password)
-    {
-        var reqestKeycloak = new Dictionary<string, string>
-        {
-            {"grant_type", "password"},
-            {"client_id", "admin-cli"},
-            {"username", login},
-            {"password", password},
-            {"scope", "roles"}
-        };
-            
-        var response = await _client.PostAsync("http://keycloak:8282/realms/master/protocol/openid-connect/token",
-            new FormUrlEncodedContent(reqestKeycloak));
-            
-        var responseString = JObject.Parse(await response.Content.ReadAsStringAsync());
-        var token = (string)responseString["access_token"];
-        
-        return token;
-    }
-
     /// <summary>
     /// Заполнение данных.
     /// </summary>
-    private void FillingData()
+    private async void FillingData()
     {
         _coffee = new Coffee
         {
@@ -229,5 +174,12 @@ public abstract class BaseTest : WebApplicationFactory<Startup>
         {
             Id = 1, Machine = _machine, Coffee = _coffee, DateTimeCreate = DateTime.UtcNow, Status = "Принято"
         };
+        
+        await _dataContext.AddRangeAsync(_coffee, _machine);
+        await _dataContext.AddRangeAsync(_banknotes);
+        await _dataContext.AddRangeAsync(_banknotesToMachines);
+        await _dataContext.AddRangeAsync(_coffeeToMachines);
+        await _dataContext.AddRangeAsync(_order);
+        await _dataContext.SaveChangesAsync();
     }
 }
