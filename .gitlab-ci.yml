@@ -11,12 +11,10 @@ build_job:
   image: registry.tomskasu.ru/devops/dockerify/dotnetsdk:8.0
   script:
     - 'cd src/CoffeeMachine.API'
-    - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
-    - 'dotnet build --no-restore'
+    - 'dotnet build'
   artifacts: 
     paths:
       - ./bin/
-
 
 test_job:
   stage: test
