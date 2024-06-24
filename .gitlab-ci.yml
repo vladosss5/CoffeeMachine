@@ -1,6 +1,7 @@
 stages:
-  - build
   - test
+  - build
+  
     
 variables:
   DOCKER_DRIVER: overlay2
@@ -16,8 +17,6 @@ build_job:
 test_job:
   stage: test
   image: registry.tomskasu.ru/devops/dockerify/dotnetsdk:8.0
-  services:
-    - docker:dind
   script:
     - 'cd src/CoffeeMachine.UnitTests'
     - 'dotnet test --no-restore'
