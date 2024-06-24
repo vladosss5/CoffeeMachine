@@ -1,7 +1,7 @@
 stages:
-  - test
+  - deploy
   - build
-  
+  - test  
     
 variables:
   DOCKER_DRIVER: overlay2
@@ -22,7 +22,17 @@ test_job:
     - 'dotnet test'
     - 'cd ../CoffeeMachine.UnitTests'
     - 'dotnet test'
-      
+    
+deploy_job:
+  stage: deploy
+  image: docker:24.0.5
+  services:
+    - docker:24.0.5-dind
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker build -t $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:latest
+
 #image: registry.tomskasu.ru/devops/dockerify/aspnet:8.0
 #
 #variables:
