@@ -20,16 +20,14 @@ build_job:
 
 test_job:
   stage: test
-  image: docker:latest
+  image: registry.tomskasu.ru/devops/dockerify/dotnetsdk:8.0
   services:
     - docker:dind
-  variables:
-    DOCKER_HOST: tcp://docker:2375
-    DOCKER_DRIVER: overlay2
   script:
-    - docker-compose -f docker-compose.test.yml up -d
-    - docker-compose -f docker-compose.test.yml run --rm app-test
-    - docker-compose -f docker-compose.test.yml down
+    - 'cd src/CoffeeMachine.UnitTests'
+    - 'dotnet test --no-restore'
+    - 'cd ../CoffeeMachine.IntegrationTests'
+    - 'dotnet test --no-restore'
       
 #image: registry.tomskasu.ru/devops/dockerify/aspnet:8.0
 #
