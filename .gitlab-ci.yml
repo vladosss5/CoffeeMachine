@@ -18,9 +18,9 @@ test_job:
   stage: test
   image: registry.tomskasu.ru/devops/dockerify/dotnetsdk:8.0
   script:
-    - 'cd src/CoffeeMachine.UnitTests'
+    - 'cd src/CoffeeMachine.IntegrationTests'
     - 'dotnet test'
-    - 'cd ../CoffeeMachine.IntegrationTests'
+    - 'cd ../CoffeeMachine.UnitTests'
     - 'dotnet test'
       
 #image: registry.tomskasu.ru/devops/dockerify/aspnet:8.0
