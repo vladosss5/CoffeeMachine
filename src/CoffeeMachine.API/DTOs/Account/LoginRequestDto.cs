@@ -8,10 +8,10 @@ public class LoginRequestDto
     /// <summary>
     /// Логин.
     /// </summary>
-    public string Login { get; set; }
+    public string? Login { get; set; }
     
     /// <summary>
     /// Пароль.
     /// </summary>
-    public string Password { get; set; }
+    public string? Password { get; set; }
 }

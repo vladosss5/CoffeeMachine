@@ -1,12 +1,16 @@
-﻿using CoffeeMachine.API.Middlewares;
+﻿namespace CoffeeMachine.API;
+
+using CoffeeMachine.API.Middlewares;
 using CoffeeMachine.Application.Extensions;
 using CoffeeMachine.Persistence.Extentions;
 using Serilog;
 
-namespace CoffeeMachine.API;
-
+/// <summary>
+/// Класс для конфигурации приложения.
+/// </summary>
 public class Startup
 {
+    
     public IConfiguration Configuration { get; }
     public IWebHostEnvironment _env { get; set; }
 

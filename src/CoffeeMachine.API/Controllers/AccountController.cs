@@ -1,4 +1,3 @@
-using CoffeeMachine.API.DTOs;
 using CoffeeMachine.API.DTOs.Account;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
@@ -39,18 +38,18 @@ namespace CoffeeMachine.API.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginRequestDto loginRequest)
         {
-            var reqestKeycloak = new Dictionary<string, string>
+            var reqestKeycloak = new Dictionary<string, string?>
             {
-                {"grant_type", _configuration["KeycloakLoginRequest:grant_type"]},
-                {"client_id", _configuration["KeycloakLoginRequest:client_id"]},
+                {"grant_type", _configuration["KeycloakLoginRequest:grant_type"] },
+                {"client_id", _configuration["KeycloakLoginRequest:client_id"] },
                 {"username", loginRequest.Login},
                 {"password", loginRequest.Password},
-                {"client_secret", _configuration["KeycloakLoginRequest:client_secret"]},
-                {"scope", _configuration["KeycloakLoginRequest:scope"]}
+                {"client_secret", _configuration["KeycloakLoginRequest:client_secret"] },
+                {"scope", _configuration ["KeycloakLoginRequest:scope"] },
             };
             
-            var response = await client.PostAsync(_configuration["KeycloakLoginRequest:url"],
-                new FormUrlEncodedContent(reqestKeycloak));
+            var response = 
+                await client.PostAsync(_configuration["KeycloakLoginRequest:url"], new FormUrlEncodedContent(reqestKeycloak));
             
             var responseString = JObject.Parse(await response.Content.ReadAsStringAsync());
             var token = (string)responseString["access_token"];

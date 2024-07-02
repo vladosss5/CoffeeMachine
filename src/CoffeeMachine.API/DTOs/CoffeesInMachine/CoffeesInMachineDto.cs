@@ -1,7 +1,7 @@
-﻿using CoffeeMachine.API.DTOs.Coffee;
-using CoffeeMachine.API.DTOs.Machine;
+﻿namespace CoffeeMachine.API.DTOs.CoffeesInMachine;
 
-namespace CoffeeMachine.API.DTOs.CoffeesInMachine;
+using CoffeeMachine.API.DTOs.Coffee;
+using CoffeeMachine.API.DTOs.Machine;
 
 /// <summary>
 /// Передаваемый объект "кофе в машине".
