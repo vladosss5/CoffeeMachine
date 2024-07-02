@@ -1,10 +1,16 @@
 namespace CoffeeMachine.API;
 
-using Keycloak.AuthServices.Authentication.Configuration;
 using Serilog;
 
+/// <summary>
+/// Основной класс проекта.
+/// </summary>
 public static class Program
 {
+    /// <summary>
+    /// Основной метод.
+    /// </summary>
+    /// <param name="args"></param>
     public static async Task Main(string[] args)
     {
         var host = CreateHostBuilder(args).Build();

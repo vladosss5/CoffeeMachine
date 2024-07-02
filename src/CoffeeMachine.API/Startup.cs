@@ -11,18 +11,17 @@ using Serilog;
 public class Startup
 {
     /// <summary>
-    /// конфигурация проекта.
+    /// Конфигурация проекта.
     /// </summary>
-    public IConfiguration Configuration { get; }
-    
-    /// <summary>
-    /// 
-    /// </summary>
-    public IWebHostEnvironment _env { get; set; }
+    private IConfiguration _configuration { get; }
 
-    public Startup(IConfiguration configuration, IWebHostEnvironment env)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Startup"/> class.
+    /// </summary>
+    /// <param name="_configuration">Конфигурация проекта.</param>
+    public Startup(IConfiguration configuration)
     {
-        Configuration = configuration;
+        _configuration = configuration;
         var logger = Log.Logger = new LoggerConfiguration()
             .Enrich.FromLogContext()
             .WriteTo.Console()
@@ -30,29 +29,37 @@ public class Startup
             .CreateLogger();
         logger.Information("Starting web host");
     }
-    
+
+    /// <summary>
+    /// Конфигурация сервисов.
+    /// </summary>
+    /// <param name="services">Сервисы проекта.</param>
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddControllers();
         services.AddApplicationCore();
-        services.AddInfrastructure(Configuration);
+        services.AddInfrastructure(_configuration);
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
-        services.AddKeycloakAuthentication(Configuration);
-        services.AddCustomAuthorization();   
+        services.AddKeycloakAuthentication(_configuration);
+        services.AddCustomAuthorization();
     }
-    
+
+    /// <summary>
+    /// Конфигурация проекта.
+    /// </summary>
+    /// <param name="app">Приложение.</param>
+    /// <param name="env">Окружение.</param>
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-
         app.UseSerilogRequestLogging();
-        
+
         if (env.IsDevelopment())
         {
             app.UseSwagger();
             app.UseSwaggerUI();
         }
-        
+
         app.UseCustomExceptionHandler();
         app.UseRouting();
         app.UseHttpsRedirection();
