@@ -10,8 +10,14 @@ using Serilog;
 /// </summary>
 public class Startup
 {
-    
+    /// <summary>
+    /// конфигурация проекта.
+    /// </summary>
     public IConfiguration Configuration { get; }
+    
+    /// <summary>
+    /// 
+    /// </summary>
     public IWebHostEnvironment _env { get; set; }
 
     public Startup(IConfiguration configuration, IWebHostEnvironment env)
