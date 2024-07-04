@@ -1,7 +1,9 @@
 namespace CoffeeMachine.API.Controllers;
 
 using CoffeeMachine.API.DTOs.Account;
+
 using Microsoft.AspNetCore.Mvc;
+
 using Newtonsoft.Json.Linq;
 
 /// <summary>
@@ -14,7 +16,7 @@ public class AccountController : ControllerBase
     /// <summary>
     /// Http клиент.
     /// </summary>
-    static HttpClient client = new HttpClient();
+    private static readonly HttpClient client = new HttpClient();
 
     /// <summary>
     /// Конфигурация проекта.
@@ -22,9 +24,9 @@ public class AccountController : ControllerBase
     private readonly IConfiguration _configuration;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AccountController"/> class.
+    /// Initializes a new instance of the <see cref="AccountController" /> class.
     /// </summary>
-    /// <param name="configuration">Конфигурация проекта.</param>
+    /// <param name="configuration"> Конфигурация проекта. </param>
     public AccountController(IConfiguration configuration)
     {
         _configuration = configuration;
@@ -33,8 +35,8 @@ public class AccountController : ControllerBase
     /// <summary>
     /// Авторизация.
     /// </summary>
-    /// <param name="loginRequest">Модель авторизации.</param>
-    /// <returns>Токен и данные пользователя.</returns>
+    /// <param name="loginRequest"> Модель авторизации. </param>
+    /// <returns> Токен и данные пользователя. </returns>
     [HttpPost("Login")]
     public async Task<IActionResult> Login(LoginRequestDto loginRequest)
     {
@@ -45,7 +47,7 @@ public class AccountController : ControllerBase
             { "username", loginRequest.Login },
             { "password", loginRequest.Password },
             { "client_secret", _configuration["KeycloakLoginRequest:client_secret"] },
-            { "scope", _configuration ["KeycloakLoginRequest:scope"] },
+            { "scope", _configuration["KeycloakLoginRequest:scope"] },
         };
 
         var response = await client.PostAsync(

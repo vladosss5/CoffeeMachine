@@ -29,11 +29,11 @@ namespace CoffeeMachine.API.Controllers
         /// <summary>
         /// Конструктор класса.
         /// </summary>
-        /// <param name="adminService">Cервис администратора.</param>
+        /// <param name="adminService">Сервис администратора.</param>
         /// <param name="mapper">Сервис автомаппера.</param>
         public CoffeeController(IAdminService adminService, IMapper mapper)
         {
-            _adminService = adminService;   
+            _adminService = adminService;
             _mapper = mapper;
         }
 
