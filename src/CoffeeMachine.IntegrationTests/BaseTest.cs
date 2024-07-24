@@ -16,7 +16,7 @@ using Microsoft.Extensions.Logging;
 /// <summary>
 /// Базовый тест. Служит для настройки DI тестируемого проета.
 /// </summary>
-public abstract class BaseTest : WebApplicationFactory<Startup>
+public abstract class BaseTest : WebApplicationFactory<Program>
 {
     /// <summary>
     /// Токен авторизаии администратора.
@@ -79,7 +79,7 @@ public abstract class BaseTest : WebApplicationFactory<Startup>
     [SetUp]
     public async Task Init()
     {
-        var webHost = new WebApplicationFactory<Startup>().WithWebHostBuilder(builder =>
+        var webHost = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
         {
             builder.ConfigureTestServices(services =>
             {
