@@ -29,11 +29,11 @@ deploy_job:
   services:
     - docker:dind
   variables:
-    DOCKER_HOST: tcp://127.0.0.1:2375/
+    DOCKER_HOST: tcp://[::1]:2375
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
   script:
-    - echo $CI_REGISTRY_PASSWORD | docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - cd deploy
-    - docker-compose build $CI_REGISTRY_IMAGE .
-    - docker-compose push $CI_REGISTRY_IMAGE:latest
+    - 'echo $CI_REGISTRY_PASSWORD | docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY'
+    - 'cd src/CoffeeMachine.API'
+    - 'docker build -t $CI_REGISTRY_IMAGE  .'
+    - 'docker push $CI_REGISTRY_IMAGE:latest'
