@@ -34,6 +34,6 @@ deploy_job:
     DOCKER_TLS_CERTDIR: ""
   script:
     - echo $CI_REGISTRY_PASSWORD | docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - cd src/CoffeeMachine.API
-    - docker build -t $CI_REGISTRY_IMAGE  .
-    - docker push $CI_REGISTRY_IMAGE:latest
+    - cd deploy
+    - docker-compose build -t $CI_REGISTRY_IMAGE .
+    - docker-compose push $CI_REGISTRY_IMAGE:latest
