@@ -8,8 +8,6 @@ services:
   coffeemachine.api:
     image: coffeemachine.api:latest
     container_name: coffeemachine.api
-    extra_hosts:
-      - "localhost:8080"
     build:
       context: .
       dockerfile: ../src/CoffeeMachine.API/Dockerfile

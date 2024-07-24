@@ -1,81 +1,107 @@
+image: mcr.microsoft.com/dotnet/sdk:8.0
+
 stages:
-  - deploy
   - build
   - test
-    
+
 variables:
-  DOCKER_DRIVER: overlay2
-  DOCKER_TLS_CERTDIR: ""
+  ASPNETCORE_ENVIRONMENT: "Test"
 
-build_job:
+before_script:
+  - apt-get update -qq
+  - apt-get install -y curl
+  - curl -sL https://deb.nodesource.com/setup_14.x | bash -
+  - apt-get install -y nodejs
+
+build:
   stage: build
-  image: registry.tomskasu.ru/devops/dockerify/dotnetsdk:8.0
   script:
-    - 'cd src/CoffeeMachine.API'
-    - 'dotnet build'
+    - dotnet restore
+    - dotnet build
 
-test_job:
+test:
   stage: test
-  image: registry.tomskasu.ru/devops/dockerify/dotnetsdk:8.0
   script:
-    - 'cd src/CoffeeMachine.IntegrationTests'
-    - 'dotnet test'
-    - 'cd ../CoffeeMachine.UnitTests'
-    - 'dotnet test'
-    
-deploy_job:
-  stage: deploy
-  image: docker
-  services:
-    - docker:dind
-  variables:
-    DOCKER_HOST: tcp://127.0.0.1:2375/
-    DOCKER_DRIVER: overlay2
-    DOCKER_TLS_CERTDIR: ""
-  script:
-    - echo $CI_REGISTRY_PASSWORD | docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - cd src/CoffeeMachine.API
-    - docker build -t $CI_REGISTRY_IMAGE  .
-    - docker push $CI_REGISTRY_IMAGE:latest
-
-#image: registry.tomskasu.ru/devops/dockerify/aspnet:8.0
-#
-#variables:
-#  OBJECTS_DIRECTORY: 'obj'
-#  NUGET_PACKAGES_DIRECTORY: '.nuget'
-#  SOURCE_CODE_PATH: 'src/CoffeeMachine.API'
+    - dotnet test
 
 #stages:
+#  - deploy
 #  - build
 #  - test
-  
-#before_script:
-#  - ls
-
-#build:
+#    
+#variables:
+#  DOCKER_DRIVER: overlay2
+#  DOCKER_TLS_CERTDIR: ""
+#
+#build_job:
 #  stage: build
 #  image: registry.tomskasu.ru/devops/dockerify/dotnetsdk:8.0
 #  script:
 #    - 'cd src/CoffeeMachine.API'
-#    - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
 #    - 'dotnet build'
-
-#build:
-#  stage: build
-#  image: docker/compose:latest
-#  services:
-#    - docker:24.0.5-dind
-#  script:
-#    - docker-compose -f docker-compose.yml up
 #
-
-#test:
+#test_job:
 #  stage: test
 #  image: registry.tomskasu.ru/devops/dockerify/dotnetsdk:8.0
 #  script:
-#    - 'cd src/CoffeeMachine.UnitTests'
-#    - ls
+#    - 'cd src/CoffeeMachine.IntegrationTests'
 #    - 'dotnet test'
-#    - 'cd ../CoffeeMachine.IntegrationTests'
-#    - ls
+#    - 'cd ../CoffeeMachine.UnitTests'
 #    - 'dotnet test'
+#    
+#deploy_job:
+#  stage: deploy
+#  image: docker
+#  services:
+#    - docker:dind
+#  variables:
+#    DOCKER_HOST: tcp://127.0.0.1:2375/
+#    DOCKER_DRIVER: overlay2
+#    DOCKER_TLS_CERTDIR: ""
+#  script:
+#    - echo $CI_REGISTRY_PASSWORD | docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+#    - cd src/CoffeeMachine.API
+#    - docker build -t $CI_REGISTRY_IMAGE  .
+#    - docker push $CI_REGISTRY_IMAGE:latest
+#
+##image: registry.tomskasu.ru/devops/dockerify/aspnet:8.0
+##
+##variables:
+##  OBJECTS_DIRECTORY: 'obj'
+##  NUGET_PACKAGES_DIRECTORY: '.nuget'
+##  SOURCE_CODE_PATH: 'src/CoffeeMachine.API'
+#
+##stages:
+##  - build
+##  - test
+#  
+##before_script:
+##  - ls
+#
+##build:
+##  stage: build
+##  image: registry.tomskasu.ru/devops/dockerify/dotnetsdk:8.0
+##  script:
+##    - 'cd src/CoffeeMachine.API'
+##    - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
+##    - 'dotnet build'
+#
+##build:
+##  stage: build
+##  image: docker/compose:latest
+##  services:
+##    - docker:24.0.5-dind
+##  script:
+##    - docker-compose -f docker-compose.yml up
+##
+#
+##test:
+##  stage: test
+##  image: registry.tomskasu.ru/devops/dockerify/dotnetsdk:8.0
+##  script:
+##    - 'cd src/CoffeeMachine.UnitTests'
+##    - ls
+##    - 'dotnet test'
+##    - 'cd ../CoffeeMachine.IntegrationTests'
+##    - ls
+##    - 'dotnet test'
