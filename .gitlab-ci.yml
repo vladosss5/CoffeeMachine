@@ -35,5 +35,5 @@ deploy_job:
   script:
     - echo $CI_REGISTRY_PASSWORD | docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - cd deploy
-    - docker-compose build -t $CI_REGISTRY_IMAGE .
+    - docker-compose build $CI_REGISTRY_IMAGE .
     - docker-compose push $CI_REGISTRY_IMAGE:latest
