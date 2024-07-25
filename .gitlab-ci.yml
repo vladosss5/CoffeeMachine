@@ -25,9 +25,9 @@ test_job:
 
 deploy_job:
   stage: deploy
-  image: docker:19
+  image: docker:alpine-dind
   services:
-    - name: docker:19-dind
+    - name: docker:dind
       alias: docker
   variables:
     DOCKER_HOST: tcp://localhost:2375
