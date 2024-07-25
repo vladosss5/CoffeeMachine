@@ -11,15 +11,12 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 # Копируем и восстанавливаем зависимости
-COPY ["src/CoffeeMachine.API/CoffeeMachine.API.csproj", "src/CoffeeMachine.API/"]
-COPY ["src/CoffeeMachine.Application/CoffeeMachine.Application.csproj", "src/CoffeeMachine.Application/"]
-COPY ["src/CoffeeMachine.Persistence/CoffeeMachine.Persistence.csproj", "src/CoffeeMachine.Persistence/"]
-COPY ["src/CoffeeMachine.Core/CoffeeMachine.Core.csproj", "src/CoffeeMachine.Core/"]
+COPY src/ .
 RUN dotnet restore "src/CoffeeMachine.API/CoffeeMachine.API.csproj"
 
 # Копируем все файлы и собираем проект
-COPY . .
-WORKDIR "/src/src/CoffeeMachine.API"
+#COPY . .
+WORKDIR "CoffeeMachine.API"
 RUN dotnet build "CoffeeMachine.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # Публикуем проект
