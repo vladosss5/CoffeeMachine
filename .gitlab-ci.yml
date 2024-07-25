@@ -25,13 +25,14 @@ test_job:
 
 deploy_job:
   stage: deploy
-  image: docker:latest
+  image: docker:19
   services:
-    - name: docker:dind
+    - name: docker:19-dind
       alias: docker
   variables:
-    DOCKER_HOST: tcp://192.168.65.0:24  
+    DOCKER_HOST: tcp://localhost:2375
     DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
   script:
     - 'echo $CI_REGISTRY_PASSWORD | docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY'
     - 'docker ps'
