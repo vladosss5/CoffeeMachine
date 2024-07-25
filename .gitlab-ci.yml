@@ -1,7 +1,13 @@
 stages:
-  - test
-  - build
   - deploy
+  - build
+  - test
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .cache/
+    - node_modules/
 
 build_job:
   stage: build
@@ -9,6 +15,9 @@ build_job:
   script:
     - 'cd src/CoffeeMachine.API'
     - 'dotnet build'
+  artifacts: 
+    paths:
+      - dist/
 
 test_job:
   stage: test
