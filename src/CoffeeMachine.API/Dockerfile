@@ -12,6 +12,7 @@ WORKDIR /src
 
 # Копируем и восстанавливаем зависимости
 COPY ../ .
+WORKDIR "CoffeeMachine.API"
 RUN dotnet restore "CoffeeMachine.API/CoffeeMachine.API.csproj"
 
 # Копируем все файлы и собираем проект
