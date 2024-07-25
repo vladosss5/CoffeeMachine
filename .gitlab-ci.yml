@@ -37,7 +37,6 @@ deploy_job:
     DOCKER_TLS_CERTDIR: "/certs"
   script:
     - 'echo $CI_REGISTRY_PASSWORD | docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY'
-    - 'cd deploy'
     - 'docker-compose down'
     - 'docker-compose -f docker-compose.yml up --build'
     - 'docker-compose ps'
