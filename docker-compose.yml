@@ -19,7 +19,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:5000
-      - ConnectionString=host=localhost;port=7654;database=CoffeeMachine;Username=postgres;Password=toor;
+      - ConnectionString=host=localhost;port=7654;database=CoffeeMachine;Username=root;Password=toor;
       - KeycloakUrl=http://keycloak:8080/
         
   keycloak:
@@ -29,7 +29,7 @@ services:
       - start --auto-build --db postgres --hostname-strict-https false --hostname-strict false --proxy edge --http-enabled true --import-realm --spi-user-profile-legacy-user-profile-read-only-attributes *_RES_ACCESS_MODE
     environment:
       KC_DB_URL: jdbc:postgresql://coffeemachine_db:5432/Keycloak
-      KC_DB_USERNAME: postgres
+      KC_DB_USERNAME: root
       KC_DB_PASSWORD: toor
       KC_DB_SCHEMA: public
       KC_FEATURES: preview
@@ -52,7 +52,7 @@ services:
     container_name: postgres-container
     image: postgres:16.2
     environment:
-      POSTGRES_USER: postgres
+      POSTGRES_USER: root
       POSTGRES_PASSWORD: toor
       POSTGRES_DB: Keycloak
     ports:
