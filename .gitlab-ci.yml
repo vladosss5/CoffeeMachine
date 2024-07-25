@@ -3,10 +3,6 @@ stages:
   - build
   - test
 
-variables:
-  DOCKER_DRIVER: overlay2
-  DOCKER_TLS_CERTDIR: ""
-
 build_job:
   stage: build
   image: registry.tomskasu.ru/devops/dockerify/dotnetsdk:8.0
@@ -32,8 +28,7 @@ deploy_job:
     DOCKER_TLS_CERTDIR: "/certs"
   script:
     - 'echo $CI_REGISTRY_PASSWORD | docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY'
-    - 'docker ps'
     - 'cd deploy'
-    - 'docker-compose up $CI_REGISTRY_IMAGE:latest .'
+    - 'docker-compose up $CI_REGISTRY_IMAGE .'
     - 'docker-compose ps'
-    - 'docker-compose down $CI_REGISTRY_IMAGE:latest'
+    - 'docker-compose down $CI_REGISTRY_IMAGE'
