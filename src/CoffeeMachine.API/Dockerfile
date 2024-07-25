@@ -7,9 +7,10 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 COPY . ./
+WORKDIR "/src"
 RUN dotnet restore "src/CoffeeMachine.API/CoffeeMachine.API.csproj"
 COPY . .
-WORKDIR "/src/src/CoffeeMachine.API"
+WORKDIR "/src/CoffeeMachine.API"
 RUN dotnet build "CoffeeMachine.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
