@@ -25,14 +25,13 @@ test_job:
 
 deploy_job:
   stage: deploy
-  image: docker:27-dind
+  image: docker:27
   services:
-    - name: docker:27-dind
-      alias: docker
+    - docker:27-dind
+  before_script:
+    - 'docker info'
   variables:
-    DOCKER_HOST: tcp://localhost:2375
-    DOCKER_DRIVER: overlay2
-    DOCKER_TLS_CERTDIR: ""
+    DOCKER_TLS_CERTDIR: "/certs"
   script:
     - 'echo $CI_REGISTRY_PASSWORD | docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY'
     - 'docker ps'
