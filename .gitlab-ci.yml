@@ -29,6 +29,7 @@ deploy_job:
   script:
     - 'echo $CI_REGISTRY_PASSWORD | docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY'
     - 'cd deploy'
+    - 'ls'
     - 'docker-compose up $CI_REGISTRY_IMAGE .'
     - 'docker-compose ps'
     - 'docker-compose down $CI_REGISTRY_IMAGE'
