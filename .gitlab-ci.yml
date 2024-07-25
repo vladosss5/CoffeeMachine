@@ -1,7 +1,7 @@
 stages:
   - deploy
-  - build
   - test
+  - build
 
 build_job:
   stage: build
