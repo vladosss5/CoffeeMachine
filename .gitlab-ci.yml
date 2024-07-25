@@ -17,7 +17,7 @@ build_job:
     - 'dotnet build'
   artifacts: 
     paths:
-      - dist/
+      - src/CoffeeMachine.API/bin/
 
 test_job:
   stage: test

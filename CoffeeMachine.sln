@@ -14,7 +14,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		DockerfileApi = src\CoffeeMachine.API\Dockerfile
 		.gitlab-ci.yml = .gitlab-ci.yml
-		gitlab-ci-sample.yml = gitlab-ci-sample.yml
 		deploy\docker-compose.yml = deploy\docker-compose.yml
 		src\CoffeeMachine.API\Dockerfile = src\CoffeeMachine.API\Dockerfile
 	EndProjectSection
