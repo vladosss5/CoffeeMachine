@@ -14,9 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		DockerfileApi = src\CoffeeMachine.API\Dockerfile
 		.gitlab-ci.yml = .gitlab-ci.yml
-		gitlab-ci-sample.yml = gitlab-ci-sample.yml
-		deploy\docker-compose.yml = deploy\docker-compose.yml
-		deploy\tests\docker-compose-tests.yml = deploy\tests\docker-compose-tests.yml
+		docker-compose.yml = docker-compose.yml
+		Dockerfile = Dockerfile
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoffeeMachine.UnitTests", "src\CoffeeMachine.UnitTests\CoffeeMachine.UnitTests.csproj", "{C8DFC20C-84BC-40EF-AFE2-B3DDB14E5514}"

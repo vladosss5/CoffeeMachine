@@ -1,47 +1,35 @@
-﻿version: '3.5'
-networks:
+﻿networks:
   coffeemachine_net:
     driver: bridge
 
 services:
-  integration-tests:
-    image: mcr.microsoft.com/dotnet/sdk:8.0
+  coffeemachine.api:
+    image: coffeemachine.api:latest
+    container_name: coffeemachine.api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 5000:5000
+    networks:
+      - coffeemachine_net
     depends_on:
-      - coffeemachine_test_db
+      - coffeemachine_db
       - keycloak
-    volumes:
-      - ./src/CoffeeMachine.API:/app
-    working_dir: /app
-    command: dotnet test
-      
-  
-#  coffeemachine.api:
-#    image: coffeemachine.api
-#    container_name: api
-#    build:
-#      context: .
-#      dockerfile: src/CoffeeMachine.API/Dockerfile
-#    ports:
-#      - 5000:5000
-#    networks:
-#      - coffeemachine_net
-#    depends_on:
-#      - coffeemachine_db
-#      - keycloak
-#    environment:
-#      - ASPNETCORE_ENVIRONMENT=Development
-#      - ASPNETCORE_URLS=http://+:5000
-#      - ConnectionString=host=postgres;port=5432;database=CoffeeMachine;Username=postgres;Password=toor;
-#      - KeycloakUrl=http://keycloak:8080
-  
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
+      - ConnectionString=host=localhost;port=7654;database=CoffeeMachine;Username=root;Password=toor;
+      - KeycloakUrl=http://keycloak:8080/
+        
   keycloak:
     image: quay.io/keycloak/keycloak:20.0.2
-    container_name: keycloak-test
+    container_name: keycloak
     command:
       - start --auto-build --db postgres --hostname-strict-https false --hostname-strict false --proxy edge --http-enabled true --import-realm --spi-user-profile-legacy-user-profile-read-only-attributes *_RES_ACCESS_MODE
     environment:
-      KC_DB_URL: jdbc:postgresql://coffeemachine_test_db:5432/Keycloak
-      KC_DB_USERNAME: postgres
+      KC_DB_URL: jdbc:postgresql://coffeemachine_db:5432/Keycloak
+      KC_DB_USERNAME: root
       KC_DB_PASSWORD: toor
       KC_DB_SCHEMA: public
       KC_FEATURES: preview
@@ -52,7 +40,7 @@ services:
     ports:
       - 8282:8080
     depends_on:
-      - coffeemachine_test_db
+      - coffeemachine_db
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://0.0.0.0:8080/realms/master" ]
       start_period: 10s
@@ -60,11 +48,11 @@ services:
       retries: 3
       timeout: 5s
 
-  coffeemachine_test_db:
-    container_name: postgres_test_db
+  coffeemachine_db:
+    container_name: postgres-container
     image: postgres:16.2
     environment:
-      POSTGRES_USER: postgres
+      POSTGRES_USER: root
       POSTGRES_PASSWORD: toor
       POSTGRES_DB: Keycloak
     ports:
@@ -78,7 +66,7 @@ services:
     networks:
       coffeemachine_net:
     volumes:
-      - postgres-data:/var/lib/postgresql-tests/data
-
+      - postgres-data:/var/lib/postgresql/data
+        
 volumes:
   postgres-data:
